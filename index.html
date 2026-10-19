@@ -204,6 +204,62 @@ body[data-modo="pick"] main .wrap{max-width:560px}
 .grade-t td.me .hr{color:var(--accent-ink)}
 .loc{font-size:10px;display:block;letter-spacing:.04em}
 @media (max-width:420px){.ritem{grid-template-columns:1fr}.rcols{justify-content:flex-start}}
+/* ===== Estagiário: telemóvel (base), tablet e PC ===== */
+.al-grid{display:grid;gap:14px;align-items:start}
+.al-col{display:grid;gap:14px;align-content:start;min-width:0}
+.al-brand{display:none}
+.al-wide-only{display:none}
+.doslist{display:none}
+.dl-it{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;font:inherit;font-size:14px;color:var(--ink);background:none;border:0;border-radius:6px;padding:7px 8px;cursor:pointer}
+.dl-it small{color:var(--muted);font-variant-numeric:tabular-nums}
+.dl-it:hover{background:var(--sunk)}
+.dl-it.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.dl-it:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.dos-main{display:grid;gap:12px;min-width:0}
+.pres-g .al-side{order:0}
+@media (min-width:700px){
+  body[data-modo="aluno"] main .wrap{max-width:1000px;padding-block:20px 104px}
+  .alnav{justify-content:center}
+  .alnav button{flex:0 1 150px;flex-direction:row;gap:8px;font-size:14px;padding:12px 8px}
+  .al-grid{grid-template-columns:1fr 1fr}
+  .dos-ov{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+  .pres-g{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr)}
+  .pres-g .stats{grid-template-columns:1fr 1fr 1fr}
+  .secs.al-col{grid-template-columns:1fr 1fr;gap:8px}
+  .grade-t.al{font-size:12px}
+  .grade-t.al th{font-size:13px;padding:8px 2px}
+  .grade-t.al th.tc{width:40px;font-size:16px}
+  .grade-t.al .hr{font-size:12px}
+  .grade-t.al td{padding:8px 2px}
+  .loc{font-size:12px}
+  .fi-b{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .fi-b .rcols{grid-column:1/-1}
+  .kpi b{font-size:44px}
+  .shift{grid-template-columns:56px 1fr auto}
+}
+@media (min-width:1100px){
+  body[data-modo="aluno"] header.top{display:none}
+  body[data-modo="aluno"]::before{background:var(--bg)}
+  body[data-modo="aluno"] main{margin-left:236px}
+  body[data-modo="aluno"] main .wrap{max-width:1180px;padding-block:28px 48px}
+  .alnav{top:0;bottom:0;right:auto;width:236px;flex-direction:column;justify-content:flex-start;gap:2px;border-top:0;border-right:1px solid var(--line);padding:max(20px,env(safe-area-inset-top,0px)) 12px 20px max(12px,env(safe-area-inset-left,0px))}
+  .alnav .al-brand{display:grid;gap:3px;padding:4px 10px 18px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+  .al-brand b{font-family:var(--display);font-weight:700;font-size:24px;text-transform:uppercase;line-height:1;color:var(--ink)}
+  .al-brand span{font-size:13px;color:var(--muted)}
+  .alnav button{flex:none;width:100%;flex-direction:row;justify-content:flex-start;gap:12px;font-size:15px;padding:10px 12px;border-radius:8px}
+  .alnav button[aria-current="true"]{background:var(--accent-soft)}
+  .alnav button:hover{background:var(--sunk)}
+  .al-wide-only{display:block}
+  .al-narrow-only{display:none}
+  .al-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+  .dos2{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;align-items:start}
+  .doslist{display:grid;gap:2px;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px}
+  .doslist .prog{padding:2px 8px 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .al-back{display:none}
+  .tefbar{top:12px}
+  .secs.al-col{grid-template-columns:1fr 1fr}
+}
+
 .modal{position:fixed;inset:0;z-index:20;background:rgba(8,14,20,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px))}
 .sheet{background:var(--surface);color:var(--ink);border-radius:12px;width:100%;max-width:560px;padding:18px;display:grid;gap:14px}
 .sheet h2{font-family:var(--display);font-weight:700;font-size:22px;text-transform:uppercase;margin:0}
@@ -709,7 +765,8 @@ function alMonthRows(y,mo){const f=`${y}-${String(mo+1).padStart(2,'0')}-01`,t=d
 const ANAV=[['hoje','Hoje','M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10'],['horario','Horário','M4 6h16v14H4zM4 10h16M8 3v4M16 3v4'],['pres','Presenças','M4 12l5 5L20 6'],['dossier','Dossier','M4 5h7v15H4zM13 5h7v15h-7z'],['perfil','Perfil','M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0']];
 function renderAluno(){
   $('#main').innerHTML=(isTef()?`<div class="tefbar"><span>Modo TEF: <b>${esc(AUI.tef.nome)}</b> está a validar</span><button class="btn sm" type="button" data-act="al_tefEnd">Terminar</button></div>`:'')+VA[AUI.v]();
-  $('#alnav').innerHTML=ANAV.map(([k,l,ic])=>`<button type="button" data-act="al_v" data-k="${k}" aria-current="${AUI.v===k}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ic}"/></svg>${l}</button>`).join('');
+  const me=alMe();
+  $('#alnav').innerHTML=`<div class="al-brand"><b>Estágios Playlife</b><span>${esc(me.nome)}${me.local?' · '+esc(locNome(me.local)):''}</span></div>`+ANAV.map(([k,l,ic])=>`<button type="button" data-act="al_v" data-k="${k}" aria-current="${AUI.v===k}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ic}"/></svg>${l}</button>`).join('');
 }
 const VA={};
 VA.hoje=()=>{
@@ -719,15 +776,17 @@ VA.hoje=()=>{
   const porReg=alExpected(alInicio(),addD(td,-1)).filter(s=>!AL.reg[s.key]).length;
   const pend=Object.values(AL.reg).filter(r=>!r.falta&&!r.tef).length;
   const fN=(AL.cfg.form||[]).filter(f=>f.data>=td).sort((a,b)=>a.data.localeCompare(b.data))[0];
-  return `<div class="panel"><div class="kpi"><div><span class="lab">Horas feitas</span><b>${fmtH(t.total)}</b><small class="muted">${req?`de ${req} h · ${pct}%`:'meta por definir'}</small></div><div><span class="lab">Dossier</span><b>${dp.pct}%</b><small class="muted">preenchido e validado</small></div></div>
+  return `<div class="al-grid"><div class="al-col"><div class="panel"><div class="kpi"><div><span class="lab">Horas feitas</span><b>${fmtH(t.total)}</b><small class="muted">${req?`de ${req} h · ${pct}%`:'meta por definir'}</small></div><div><span class="lab">Dossier</span><b>${dp.pct}%</b><small class="muted">preenchido e validado</small></div></div>
   <div class="lbl">Horas de estágio</div><div class="track lg"><i class="${pct>=100?'done':''}" style="width:${pct}%"></i></div>
   <p class="small muted" style="margin:6px 0 0">${fmtH(t.conf)} em sala confirmadas pelo TEF · ${fmtH(t.form)} em formações${t.pend?` · ${fmtH(t.pend)} à espera de confirmação`:''}</p>
   <div class="lbl">Dossier de estágio</div><div class="track lg"><i class="${dp.pct>=100?'done':''}" style="width:${dp.pct}%"></i></div></div>
   ${porReg||pend?`<div class="panel warnp"><b>Atenção</b><p class="small" style="margin:4px 0 8px">${porReg?`${porReg} turno(s) por registar. `:''}${pend?`${pend} registo(s) sem confirmação do TEF.`:''}</p><button class="btn sm" type="button" data-act="al_v" data-k="pres">Ver presenças</button></div>`:''}
+  ${fN?`<div class="al-wide-only">${nextForm(fN)}</div>`:''}</div><div class="al-col">
   <div class="panel"><h3>Hoje · ${fmtD(td)}</h3>${hojeS.length?`<div class="shifts">${hojeS.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turno de estágio hoje.</p>'}<button class="btn sm" type="button" data-act="al_extra">Registar turno extra</button></div>
-  ${fN?(()=>{const d=pd(fN.data);return `<div class="next"><div class="datebox"><b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span></div><div><div class="lab">Próxima formação · ${fN.n}.ª</div><div class="t">${esc(fN.tema||'Tema por definir')}</div><div class="small muted">${esc(fN.formador||'Formador por definir')}${fN.ini?' · '+esc(fN.ini+'–'+fN.fim):''}${fN.local?' · '+esc(fN.local):''}</div></div></div>`})():''}
-  <div class="panel"><h3>Próximos turnos</h3>${prox.length?`<div class="shifts">${prox.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turnos nos próximos 14 dias.</p>'}</div>`;
+  ${fN?`<div class="al-narrow-only">${nextForm(fN)}</div>`:''}
+  <div class="panel"><h3>Próximos turnos</h3>${prox.length?`<div class="shifts">${prox.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turnos nos próximos 14 dias.</p>'}</div></div></div>`;
 };
+function nextForm(fN){const d=pd(fN.data);return `<div class="next"><div class="datebox"><b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span></div><div><div class="lab">Próxima formação · ${fN.n}.ª</div><div class="t">${esc(fN.tema||'Tema por definir')}</div><div class="small muted">${esc(fN.formador||'Formador por definir')}${fN.ini?' · '+esc(fN.ini+'–'+fN.fim):''}${fN.local?' · '+esc(fN.local):''}</div></div></div>`}
 VA.horario=()=>{
   const m=alMe(),w=AUI.week,dias=[...Array(7)].map((_,i)=>addD(w,i));
   const head=dias.map(d=>{const dt=pd(d);return `<th class="${d===hoje()?'hj':''}">${D3[dt.getDay()]}<br>${dt.getDate()}</th>`}).join('');
@@ -738,44 +797,45 @@ VA.horario=()=>{
   return `<div class="bar-head"><h2 class="sec">O meu horário</h2></div>
   <div class="bar-head"><button class="btn sm" type="button" data-act="al_week" data-d="-7" aria-label="Semana anterior">‹</button><b>${fmtD(w)} – ${fmtD(addD(w,6))}</b><button class="btn sm" type="button" data-act="al_week" data-d="7" aria-label="Semana seguinte">›</button><button class="btn sm ghost" type="button" data-act="al_week" data-d="0">Hoje</button></div>
   <div class="tbl-wrap"><table class="grade-t al"><thead><tr><th></th>${head}</tr></thead><tbody>${rows}</tbody></table></div>
-  <div class="panel"><div class="bar-head"><h3 style="margin:0">Esta semana</h3><span class="sp"></span><b>${fmtH(wk)}</b></div>${lista.length?lista.map(({d,s})=>`<div class="ritem"><span><b>${fmtD(d)}</b> · ${TCOD[s.ini]||''} ${s.ini}–${s.fim}</span><span class="pill acc">${esc(locNome(s.local)||'—')}</span></div>`).join(''):'<p class="empty">Sem turnos nesta semana.</p>'}</div>
-  <div class="panel"><h3>Formações de sexta</h3>${forms||'<p class="empty">Sem formações.</p>'}</div>`;
+  <div class="al-grid"><div class="panel"><div class="bar-head"><h3 style="margin:0">Esta semana</h3><span class="sp"></span><b>${fmtH(wk)}</b></div>${lista.length?lista.map(({d,s})=>`<div class="ritem"><span><b>${fmtD(d)}</b> · ${TCOD[s.ini]||''} ${s.ini}–${s.fim}</span><span class="pill acc">${esc(locNome(s.local)||'—')}</span></div>`).join(''):'<p class="empty">Sem turnos nesta semana.</p>'}</div>
+  <div class="panel"><h3>Formações de sexta</h3>${forms||'<p class="empty">Sem formações.</p>'}</div></div>`;
 };
 VA.pres=()=>{
   const y=AUI.year,mo=AUI.mon,td=hoje();
   const rows=alMonthRows(y,mo);let c=0,p=0,f=0;
   rows.forEach(s=>{const st=alStatus(s,s.rg);if(st==='conf')c+=dur(s.rg.start,s.rg.end);else if(st==='pend')p+=dur(s.rg.start,s.rg.end);else if(st==='falta'||st==='por')f++});
   return `<div class="bar-head"><button class="btn sm" type="button" data-act="al_mon" data-d="-1" aria-label="Mês anterior">‹</button><h2 class="sec" style="flex:1;text-align:center">${MESL[mo]} ${y}</h2><button class="btn sm" type="button" data-act="al_mon" data-d="1" aria-label="Mês seguinte">›</button></div>
-  <div class="stats"><div class="stat"><b>${fmtH(c)}</b><span>confirmadas</span></div><div class="stat"><b>${fmtH(p)}</b><span>sem confirmação</span></div><div class="stat"><b>${f}</b><span>faltas / por registar</span></div></div>
-  <div class="panel">${rows.length?`<div class="shifts">${rows.map(s=>shiftBtn(s,s.rg)).join('')}</div>`:'<p class="empty">Sem turnos neste mês.</p>'}</div>
+  <div class="al-grid pres-g"><div class="al-col al-side"><div class="stats"><div class="stat"><b>${fmtH(c)}</b><span>confirmadas</span></div><div class="stat"><b>${fmtH(p)}</b><span>sem confirmação</span></div><div class="stat"><b>${f}</b><span>faltas / por registar</span></div></div>
   <p class="small muted" style="margin:0">Toca num turno para registar a entrada e a saída. O TEF em sala confirma com o PIN dele. Só as horas confirmadas contam.</p>
-  <div class="inline"><button class="btn" type="button" data-act="al_pdf">Relatório do mês (PDF)</button><button class="btn primary" type="button" data-act="al_send">Enviar dados ao coordenador</button></div>`;
+  <div class="inline"><button class="btn" type="button" data-act="al_pdf">Relatório do mês (PDF)</button><button class="btn primary" type="button" data-act="al_send">Enviar dados ao coordenador</button></div></div>
+  <div class="al-col al-main"><div class="panel">${rows.length?`<div class="shifts">${rows.map(s=>shiftBtn(s,s.rg)).join('')}</div>`:'<p class="empty">Sem turnos neste mês.</p>'}</div></div></div>`;
 };
 VA.dossier=()=>{
   const dp=dosProg(AL.dos);
   if(AUI.sec){const s=DOS.find(x=>x.id===AUI.sec);
-    return `<div class="bar-head"><button class="btn sm" type="button" data-act="al_back">‹ Dossier</button><span class="sp"></span>${s.tipo==='leitura'?'':isTef()?'':'<button class="btn sm" type="button" data-act="al_tefStart">Validação pelo TEF</button>'}</div>
+    const aside=`<aside class="doslist" aria-label="Secções do dossier"><div class="prog" data-bar="tot">${barHTML(dp)}</div>${DOS.map(x=>`<button type="button" class="dl-it${x.id===s.id?' on':''}" data-act="al_sec" data-s="${x.id}"><span>${x.n}. ${esc(x.t)}</span><small>${pctOf(dp.secs[x.id])}%</small></button>`).join('')}</aside>`;
+    return `<div class="dos2">${aside}<div class="dos-main"><div class="bar-head"><button class="btn sm al-back" type="button" data-act="al_back">‹ Dossier</button><span class="sp"></span>${s.tipo==='leitura'?'':isTef()?'':'<button class="btn sm" type="button" data-act="al_tefStart">Validação pelo TEF</button>'}</div>
     <h2 class="sec">${s.n}. ${esc(s.t)}</h2><div class="prog" data-bar="${s.id}">${barHTML(dp.secs[s.id])}</div>
     ${s.tipo==='ficha'?'<p class="small muted" style="margin:0">Toca em cada item para escrever. O item fica preenchido quando tiver todos os campos.</p>':''}
     ${s.tipo==='rubrica'?'<p class="small muted" style="margin:0">Marca "Aluno" quando dominares o item. O TEF marca "PT" na validação.</p>':''}
     ${s.tipo==='checklist'?'<p class="small muted" style="margin:0">Esta checklist é preenchida pelo TEF ou professor que assistiu à aula, em modo TEF.</p>':''}
-    <div class="dsec">${dosSecHTML(s,AL.dos,{edit:true,tef:isTef(),open:AUI.open})}</div>`}
+    <div class="dsec">${dosSecHTML(s,AL.dos,{edit:true,tef:isTef(),open:AUI.open})}</div></div></div>`}
   const m=alMe(),id=AL.dos.ident||{};
   const hor=[1,2,3,4,5,6,0].map(dia=>{const sl=(AL.cfg.horarios||[]).filter(s=>s.estId===m.id&&s.dia===dia&&(!s.ate||s.ate>=hoje())&&(!s.de||s.de<=addD(hoje(),6)));return sl.length?`${DIAS[dia]}: ${sl.map(s=>(TCOD[s.ini]||'')+' '+s.ini+'–'+s.fim).join(', ')}`:''}).filter(Boolean).join(' · ');
-  return `<h2 class="sec">Dossier de estágio</h2>
+  return `<h2 class="sec">Dossier de estágio</h2><div class="al-grid dos-ov"><div class="al-col">
   <div class="panel"><div class="bar-head"><b>Progresso total</b></div><div class="prog" data-bar="tot">${barHTML(dp)}</div></div>
   <div class="panel"><h3>Identificação</h3><dl class="kv"><dt>Nome</dt><dd>${esc(m.nome)}</dd><dt>Tutor</dt><dd>${esc(m.tutor)||'—'}</dd><dt>Horário</dt><dd>${esc(hor)||'—'}</dd></dl>
-  <div class="fgrid" style="margin-top:10px"><div class="fld"><label for="id_c">Contacto</label><input id="id_c" type="tel" value="${esc(id.contacto||'')}" data-chg="al_ident" data-k="contacto"></div><div class="fld"><label for="id_e">Entidade formação</label><input id="id_e" value="${esc(id.entidade||m.escola||'')}" data-chg="al_ident" data-k="entidade"></div><div class="fld full"><label for="id_o">Observações</label><textarea id="id_o" rows="2" data-chg="al_ident" data-k="obs">${esc(id.obs||'')}</textarea></div></div></div>
-  <div class="secs">${DOS.map(s=>`<button class="secbtn" type="button" data-act="al_sec" data-s="${s.id}"><span class="n">${s.n}</span><span style="min-width:0"><b>${esc(s.t)}</b><span class="prog" data-bar="${s.id}">${barHTML(dp.secs[s.id])}</span></span></button>`).join('')}</div>`;
+  <div class="fgrid" style="margin-top:10px"><div class="fld"><label for="id_c">Contacto</label><input id="id_c" type="tel" value="${esc(id.contacto||'')}" data-chg="al_ident" data-k="contacto"></div><div class="fld"><label for="id_e">Entidade formação</label><input id="id_e" value="${esc(id.entidade||m.escola||'')}" data-chg="al_ident" data-k="entidade"></div><div class="fld full"><label for="id_o">Observações</label><textarea id="id_o" rows="2" data-chg="al_ident" data-k="obs">${esc(id.obs||'')}</textarea></div></div></div></div>
+  <div class="secs al-col">${DOS.map(s=>`<button class="secbtn" type="button" data-act="al_sec" data-s="${s.id}"><span class="n">${s.n}</span><span style="min-width:0"><b>${esc(s.t)}</b><span class="prog" data-bar="${s.id}">${barHTML(dp.secs[s.id])}</span></span></button>`).join('')}</div></div>`;
 };
 VA.perfil=()=>{
   const m=alMe();
-  return `<h2 class="sec">${esc(m.nome)}</h2>
+  return `<h2 class="sec">${esc(m.nome)}</h2><div class="al-grid"><div class="al-col">
   <div class="panel"><dl class="kv"><dt>Clube</dt><dd>${esc(locNome(m.local))||'—'}</dd><dt>Tutor</dt><dd>${esc(m.tutor)||'—'}</dd><dt>Escola</dt><dd>${esc(m.escola)||'—'}</dd><dt>Período</dt><dd>${m.inicio||m.fim?`${fmtDY(m.inicio)} → ${fmtDY(m.fim)}`:'—'}</dd><dt>Horas exigidas</dt><dd>${m.horasReq?m.horasReq+' h':'—'}</dd></dl></div>
-  <div class="panel"><h3>Enviar ao coordenador</h3><p class="small muted" style="margin:0 0 10px">Envia as tuas presenças e o dossier pelo menos uma vez por semana. ${AL.enviadoEm?'Último envio: '+new Date(AL.enviadoEm).toLocaleString('pt-PT')+'.':'Ainda não enviaste.'}</p><div class="inline"><button class="btn primary" type="button" data-act="al_send">Enviar ficheiro</button><button class="btn" type="button" data-act="al_copy">Copiar como texto</button></div></div>
+  <div class="panel"><h3>Enviar ao coordenador</h3><p class="small muted" style="margin:0 0 10px">Envia as tuas presenças e o dossier pelo menos uma vez por semana. ${AL.enviadoEm?'Último envio: '+new Date(AL.enviadoEm).toLocaleString('pt-PT')+'.':'Ainda não enviaste.'}</p><div class="inline"><button class="btn primary" type="button" data-act="al_send">Enviar ficheiro</button><button class="btn" type="button" data-act="al_copy">Copiar como texto</button></div></div></div><div class="al-col">
   <div class="panel"><h3>Atualizar horários</h3><p class="small muted" style="margin:0 0 8px">Configuração de ${AL.cfg.geradoEm?new Date(AL.cfg.geradoEm).toLocaleString('pt-PT'):'—'}. Abre a nova ligação do coordenador ou cola-a aqui.</p><textarea id="cfgTxt" rows="2" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn" type="button" data-act="al_cfgPaste">Aplicar</button></div>
   <div class="inline"><button class="btn ghost" type="button" data-act="al_trocar">Não és ${esc(m.nome.split(' ')[0])}? Mudar</button></div>
-  <p class="small muted">Os teus dados ficam guardados neste telemóvel. Não limpes os dados do browser sem enviares primeiro ao coordenador.</p>`;
+  <p class="small muted">Os teus dados ficam guardados neste dispositivo. Não limpes os dados do browser sem enviares primeiro ao coordenador.</p></div></div>`;
 };
 
 /* PIN do TEF */
@@ -803,7 +863,7 @@ A.al_shift=el=>{const k=el.dataset.k,date=k.split('|')[0],rg=AL.reg[k];let s=alE
 A.al_extra=()=>{const t=hoje();alOpenReg({date:t,ini:'09:00',fim:'12:00',key:t+'|x'+Date.now(),extra:true})};
 
 /* Navegação e dossier */
-A.al_v=el=>{AUI.v=el.dataset.k;if(AUI.v!=='dossier')AUI.sec=null;renderAluno();window.scrollTo(0,0)};
+A.al_v=el=>{AUI.v=el.dataset.k;AUI.sec=null;renderAluno();window.scrollTo(0,0)};
 A.al_week=el=>{const d=Number(el.dataset.d);AUI.week=d?addD(AUI.week,d):segunda(hoje());renderAluno()};
 A.al_mon=el=>{AUI.mon+=Number(el.dataset.d);if(AUI.mon<0){AUI.mon=11;AUI.year--}if(AUI.mon>11){AUI.mon=0;AUI.year++}renderAluno()};
 A.al_sec=el=>{AUI.sec=el.dataset.s;renderAluno();window.scrollTo(0,0)};
