@@ -260,6 +260,7 @@ body[data-modo="pick"] main .wrap{max-width:560px}
   .secs.al-col{grid-template-columns:1fr 1fr}
 }
 
+.cod{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;letter-spacing:.12em;background:var(--sunk);padding:2px 8px;border-radius:5px}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(8,14,20,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px))}
 .sheet{background:var(--surface);color:var(--ink);border-radius:12px;width:100%;max-width:560px;padding:18px;display:grid;gap:14px}
 .sheet h2{font-family:var(--display);font-weight:700;font-size:22px;text-transform:uppercase;margin:0}
@@ -348,7 +349,7 @@ try{const raw=localStorage.getItem(KEY);HAD=!!raw;S=JSON.parse(raw)}catch(e){S=n
 if(!S||!Array.isArray(S.est)){S=seed();HAD=false}
 S.pins=S.pins||{};S.recebidos=S.recebidos||{};if(S.coordPin==null)S.coordPin='2026';
 if(aplicaPlano()&&HAD)try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}try{if(MODO==='coord')coordPush()}catch(e){}}
 
 const UI={loc:'PNF',tab:'inicio',week:segunda(hoje()),hEst:'',fOpen:null,aEst:''};
 try{const t=localStorage.getItem(KEY+'_tab');if(t)UI.tab=t}catch(e){}
@@ -382,7 +383,7 @@ function render(){
   $('#tabsNav').hidden=!coord;$('#alnav').hidden=!aluno;
   const m=aluno?alMe():null;
   $('#hdrSub').textContent=coord?'Coordenação · sala de exercício 2026/27':aluno?`${m.nome}${m.local?' · '+locNome(m.local):''}`:'Sala de exercício · 2026/27';
-  $('#hdrBtns').innerHTML=coord?'<button class="btn" data-act="dados" type="button">Dados</button><button class="btn ghost" data-act="sair" type="button">Sair</button>':'';
+  $('#hdrBtns').innerHTML=coord?(coordSrv()?syncPill():'')+'<button class="btn" data-act="dados" type="button">Dados</button><button class="btn ghost" data-act="sair" type="button">Sair</button>':'';
   if(coord)renderCoord();else if(aluno)renderAluno();else renderPick();
 }
 function renderCoord(){
@@ -745,7 +746,8 @@ function dosSecHTML(s,dos,o){
 const AK='estagio_aluno_v2';
 let AL={cfg:null,me:null,reg:{},dos:{}};
 try{const x=JSON.parse(localStorage.getItem(AK));if(x&&typeof x==='object')AL=Object.assign(AL,x)}catch(e){}
-function alSave(){try{localStorage.setItem(AK,JSON.stringify(AL))}catch(e){toast('Não foi possível guardar neste dispositivo')}}
+function alSaveLocal(){try{localStorage.setItem(AK,JSON.stringify(AL))}catch(e){toast('Não foi possível guardar neste dispositivo')}}
+function alSave(){AL.upd=Date.now();alSaveLocal();try{alPush()}catch(e){}}
 const AUI={v:'hoje',mon:new Date().getMonth(),year:new Date().getFullYear(),sec:null,open:{},tef:null,week:segunda(hoje()),cur:null};
 const MESL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const locNome=l=>l==='PNF'?'Penafiel':l==='LSD'?'Lousada':(l||'');
@@ -832,10 +834,10 @@ VA.perfil=()=>{
   const m=alMe();
   return `<h2 class="sec">${esc(m.nome)}</h2><div class="al-grid"><div class="al-col">
   <div class="panel"><dl class="kv"><dt>Clube</dt><dd>${esc(locNome(m.local))||'—'}</dd><dt>Tutor</dt><dd>${esc(m.tutor)||'—'}</dd><dt>Escola</dt><dd>${esc(m.escola)||'—'}</dd><dt>Período</dt><dd>${m.inicio||m.fim?`${fmtDY(m.inicio)} → ${fmtDY(m.fim)}`:'—'}</dd><dt>Horas exigidas</dt><dd>${m.horasReq?m.horasReq+' h':'—'}</dd></dl></div>
-  <div class="panel"><h3>Enviar ao coordenador</h3><p class="small muted" style="margin:0 0 10px">Envia as tuas presenças e o dossier pelo menos uma vez por semana. ${AL.enviadoEm?'Último envio: '+new Date(AL.enviadoEm).toLocaleString('pt-PT')+'.':'Ainda não enviaste.'}</p><div class="inline"><button class="btn primary" type="button" data-act="al_send">Enviar ficheiro</button><button class="btn" type="button" data-act="al_copy">Copiar como texto</button></div></div></div><div class="al-col">
-  <div class="panel"><h3>Atualizar horários</h3><p class="small muted" style="margin:0 0 8px">Configuração de ${AL.cfg.geradoEm?new Date(AL.cfg.geradoEm).toLocaleString('pt-PT'):'—'}. Abre a nova ligação do coordenador ou cola-a aqui.</p><textarea id="cfgTxt" rows="2" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn" type="button" data-act="al_cfgPaste">Aplicar</button></div>
+  ${alSrv()?`<div class="panel"><h3>Sincronização</h3><p class="small muted" style="margin:0 0 10px">As tuas presenças e o dossier vão para o coordenador automaticamente, e os horários atualizam-se sozinhos. ${AL.pend?'<b>Há alterações por enviar: liga-te à internet.</b>':AL.syncEm?'Última sincronização: '+new Date(AL.syncEm).toLocaleString('pt-PT')+'.':''}</p><button class="btn" type="button" data-act="al_sync">Sincronizar agora</button></div>`:`<div class="panel"><h3>Enviar ao coordenador</h3><p class="small muted" style="margin:0 0 10px">Envia as tuas presenças e o dossier pelo menos uma vez por semana. ${AL.enviadoEm?'Último envio: '+new Date(AL.enviadoEm).toLocaleString('pt-PT')+'.':'Ainda não enviaste.'}</p><div class="inline"><button class="btn primary" type="button" data-act="al_send">Enviar ficheiro</button><button class="btn" type="button" data-act="al_copy">Copiar como texto</button></div></div>`}</div><div class="al-col">
+  ${alSrv()?'':`<div class="panel"><h3>Atualizar horários</h3><p class="small muted" style="margin:0 0 8px">Configuração de ${AL.cfg.geradoEm?new Date(AL.cfg.geradoEm).toLocaleString('pt-PT'):'—'}. Abre a nova ligação do coordenador ou cola-a aqui.</p><textarea id="cfgTxt" rows="2" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn" type="button" data-act="al_cfgPaste">Aplicar</button></div>`}
   <div class="inline"><button class="btn ghost" type="button" data-act="al_trocar">Não és ${esc(m.nome.split(' ')[0])}? Mudar</button></div>
-  <p class="small muted">Os teus dados ficam guardados neste dispositivo. Não limpes os dados do browser sem enviares primeiro ao coordenador.</p></div></div>`;
+  <p class="small muted">${alSrv()?'Os teus dados ficam guardados neste dispositivo e na conta da Playlife.':'Os teus dados ficam guardados neste dispositivo. Não limpes os dados do browser sem enviares primeiro ao coordenador.'}</p></div></div>`;
 };
 
 /* PIN do TEF */
@@ -843,7 +845,7 @@ function tefOpts(){return `<option value="">Escolhe o TEF</option>${(AL.cfg.tefs
 function tefPinModal(onOk,title){AUI.pinOk=onOk;showModal(`<h2>${esc(title)}</h2><p class="small muted" style="margin:0">O TEF em sala escolhe o nome e escreve o PIN.</p><div class="fgrid"><div class="fld"><label for="tp_n">TEF</label><select id="tp_n">${tefOpts()}</select></div><div class="fld"><label for="tp_p">PIN</label><input id="tp_p" type="password" inputmode="numeric" autocomplete="off"></div></div><p class="ferr" id="ferr" hidden></p><div class="factions"><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Cancelar</button><button class="btn primary" type="button" data-act="al_pinOk">Confirmar</button></div>`)}
 function ferr(msg){const e=$('#ferr');if(e){e.textContent=msg;e.hidden=false}}
 function checkPin(){const n=$('#tp_n').value,p=$('#tp_p').value.trim(),t=(AL.cfg.tefs||[]).find(x=>x.nome===n);if(!t){ferr('Escolhe o TEF que está em sala.');return null}if(!t.pin){ferr('Este TEF ainda não tem PIN. Pede ao coordenador para o definir.');return null}const z=x=>String(x).trim().replace(/^0+/,'');if(z(p)!==z(t.pin)){ferr('PIN incorreto.');return null}return n}
-A.al_pinOk=()=>{const n=checkPin();if(n){const f=AUI.pinOk;closeModal();f(n)}};
+A.al_pinOk=async()=>{const n=await checkPinAny();if(n){const f=AUI.pinOk;closeModal();f(n)}};
 A.al_tefStart=()=>tefPinModal(n=>{AUI.tef={nome:n,ate:Date.now()+15*60000};renderAluno();toast('Modo TEF ativo durante 15 minutos')},'Validação pelo TEF');
 A.al_tefEnd=()=>{AUI.tef=null;renderAluno()};
 
@@ -856,7 +858,7 @@ function alOpenReg(s){AUI.cur=s;const rg=AL.reg[s.key]||{},lock=!!rg.tef,dt=pd(s
   <div class="factions">${lock?'':`<button class="btn danger sm" type="button" data-act="al_rFalta">Não compareci</button>${AL.reg[s.key]?'<button class="btn danger sm" type="button" data-act="al_rDel">Apagar</button>':''}`}<span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button>${lock?'':'<button class="btn" type="button" data-act="al_rSave">Guardar sem confirmar</button><button class="btn primary" type="button" data-act="al_rConf">Registar e confirmar</button>'}</div>`)}
 function alCollect(){const s=AUI.cur,a=$('#r_in').value,b=$('#r_out').value;if(!a||!b||mins(b)<=mins(a)){ferr('Verifica as horas de entrada e de saída.');return null}const old=AL.reg[s.key]||{};return {date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',extra:!!s.extra,start:a,end:b,nota:$('#r_nota').value.trim(),criado:old.criado||Date.now()}}
 A.al_rSave=()=>{const x=alCollect();if(!x)return;AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Guardado. Falta a confirmação do TEF')};
-A.al_rConf=()=>{const x=alCollect();if(!x)return;const n=checkPin();if(!n)return;x.tef=n;x.confEm=Date.now();AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Presença confirmada por '+n)};
+A.al_rConf=async()=>{const x=alCollect();if(!x)return;const n=await checkPinAny();if(!n)return;x.tef=n;x.confEm=Date.now();AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Presença confirmada por '+n)};
 A.al_rFalta=()=>{const s=AUI.cur,n=$('#r_nota').value.trim();if(!n){ferr('Escreve o motivo da falta na nota.');return}AL.reg[s.key]={date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',start:s.ini,end:s.fim,falta:true,nota:n,criado:Date.now()};alSave();closeModal();renderAluno()};
 A.al_rDel=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar apagar';return}delete AL.reg[AUI.cur.key];alSave();closeModal();renderAluno()};
 A.al_shift=el=>{const k=el.dataset.k,date=k.split('|')[0],rg=AL.reg[k];let s=alExpected(date,date).find(x=>x.key===k);if(!s&&rg)s={date,ini:rg.ini,fim:rg.fim,local:rg.local,key:k,extra:true};if(s)alOpenReg(s)};
@@ -889,9 +891,9 @@ async function shareBlob(blob,name,title){
   try{if(navigator.canShare&&window.File){const f=new File([blob],name,{type:blob.type});if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title});return 'share'}}}catch(e){if(e&&e.name==='AbortError')return 'abort'}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();return 'down'}catch(e){return null}
 }
-A.al_send=async()=>{const m=alMe();const r=await shareBlob(new Blob([JSON.stringify(alPayload())],{type:'application/json'}),`estagio_${m.nome.replace(/\s+/g,'_')}_${hoje()}.json`,'Dados de estágio – '+m.nome);if(r==='abort')return;AL.enviadoEm=Date.now();alSave();if(r==='down')toast('Ficheiro guardado. Envia-o ao coordenador');if(!r)A.al_copy()};
+A.al_send=async()=>{const m=alMe();const r=await shareBlob(new Blob([JSON.stringify(alPayload())],{type:'application/json'}),`estagio_${m.nome.replace(/\s+/g,'_')}_${hoje()}.json`,'Dados de estágio – '+m.nome);if(r==='abort')return;AL.enviadoEm=Date.now();alSaveLocal();if(r==='down')toast('Ficheiro guardado. Envia-o ao coordenador');if(!r)A.al_copy()};
 A.al_copy=()=>{const txt=JSON.stringify(alPayload());showModal(`<h2>Dados para o coordenador</h2><p class="small muted" style="margin:0">Copia este texto e envia-o ao coordenador (WhatsApp ou email).</p><textarea id="cpTxt" rows="6" readonly>${esc(txt)}</textarea><div class="factions"><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button><button class="btn primary" type="button" data-act="al_copyGo">Copiar</button></div>`)};
-A.al_copyGo=()=>{const t=$('#cpTxt');const ok=()=>{AL.enviadoEm=Date.now();alSave();toast('Copiado')};if(navigator.clipboard)navigator.clipboard.writeText(t.value).then(ok,()=>{t.select();toast('Selecionado: copia com o menu do telemóvel')});else{t.select();toast('Selecionado: copia com o menu do telemóvel')}};
+A.al_copyGo=()=>{const t=$('#cpTxt');const ok=()=>{AL.enviadoEm=Date.now();alSaveLocal();toast('Copiado')};if(navigator.clipboard)navigator.clipboard.writeText(t.value).then(ok,()=>{t.select();toast('Selecionado: copia com o menu do telemóvel')});else{t.select();toast('Selecionado: copia com o menu do telemóvel')}};
 A.al_pdf=async()=>{
   if(!window.jspdf){toast('O gerador de PDF não carregou. Verifica a internet.');return}
   const m=alMe(),y=AUI.year,mo=AUI.mon,td=hoje();const rows=alMonthRows(y,mo).filter(s=>s.date<=td||s.rg);const t=alTot();
@@ -919,23 +921,24 @@ const MK='estagios_modo';
 let MODO='';try{MODO=localStorage.getItem(MK)||''}catch(e){}
 function setModo(m){MODO=m;try{if(m)localStorage.setItem(MK,m);else localStorage.removeItem(MK)}catch(e){}render();window.scrollTo(0,0)}
 const decodeCfg=str=>JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
-function applyCfg(c){if(!c||c.tipo!=='estagio-cfg'||!Array.isArray(c.est))return false;AL.cfg=c;if(AL.me&&!c.est.some(e=>e.id===AL.me))AL.me=null;alSave();return true}
+function applyCfg(c){if(!c||c.tipo!=='estagio-cfg'||!Array.isArray(c.est))return false;AL.cfg=c;if(AL.me&&!c.est.some(e=>e.id===AL.me))AL.me=null;alSaveLocal();return true}
 function renderPick(){
   const est=AL.cfg?.est||[];
   $('#main').innerHTML=`<div class="pick"><div><h2 class="sec">Bem-vindo</h2><p class="muted" style="margin:4px 0 0">Escolhe como vais usar a app neste dispositivo.</p></div>
-  <div class="panel"><h3>Sou estagiário</h3>${est.length?`<p class="small muted" style="margin:0 0 10px">Escolhe o teu nome. Fica guardado neste telemóvel.</p><div class="pick-list">${est.map(e=>`<button class="btn" type="button" data-act="al_pick" data-id="${e.id}">${esc(e.nome)}</button>`).join('')}</div>`:`<p class="small muted" style="margin:0 0 8px">Abre a ligação que o coordenador enviou no grupo. Se a app não abrir com os teus horários, cola aqui a ligação:</p><textarea id="cfgTxt" rows="3" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn primary" type="button" data-act="al_cfgPaste">Aplicar</button>`}</div>
+  ${(AL.srv&&AL.srv.url)||SERVIDOR_FIXO?`<div class="panel"><h3>Sou estagiário</h3><p class="small muted" style="margin:0 0 10px">Escreve o código pessoal que o coordenador te enviou.</p><div class="inline"><input id="alCod" autocomplete="off" autocapitalize="characters" placeholder="Código" aria-label="Código pessoal" style="text-transform:uppercase;letter-spacing:.15em;max-width:180px"><button class="btn primary" type="button" data-act="al_codigo">Entrar</button></div><p class="ferr" id="ferr" hidden></p></div>`:''}
+  ${(AL.srv&&AL.srv.url)||SERVIDOR_FIXO?'':`<div class="panel"><h3>Sou estagiário</h3>${est.length?`<p class="small muted" style="margin:0 0 10px">Escolhe o teu nome. Fica guardado neste telemóvel.</p><div class="pick-list">${est.map(e=>`<button class="btn" type="button" data-act="al_pick" data-id="${e.id}">${esc(e.nome)}</button>`).join('')}</div>`:`<p class="small muted" style="margin:0 0 8px">Abre a ligação que o coordenador enviou no grupo. Se a app não abrir com os teus horários, cola aqui a ligação:</p><textarea id="cfgTxt" rows="3" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn primary" type="button" data-act="al_cfgPaste">Aplicar</button>`}</div>`}
   <div class="panel"><h3>Coordenação</h3><div class="inline"><input id="cpin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN da coordenação" autocomplete="off"><button class="btn" type="button" data-act="coordIn">Entrar</button></div><p class="ferr" id="cerr" hidden></p></div></div>`;
 }
-A.al_pick=el=>{AL.me=el.dataset.id;AUI.v='hoje';alMigrate();alSave();setModo('aluno')};
-A.al_trocar=()=>{AL.me=null;alSave();setModo('')};
-A.al_cfgPaste=()=>{const v=($('#cfgTxt').value||'').trim();const i=v.indexOf('#cfg=');try{if(applyCfg(decodeCfg(i>=0?v.slice(i+5):v))){toast('Configuração atualizada');render()}else throw 0}catch(e){ferr('Isto não é uma ligação de configuração válida.')}};
+A.al_pick=el=>{if(AL.dono&&AL.dono!==el.dataset.id){AL.reg={};AL.dos={};AL.upd=0}AL.me=AL.dono=el.dataset.id;AUI.v='hoje';alMigrate();alSaveLocal();setModo('aluno')};
+A.al_trocar=async()=>{if(alSrv()){await alPushNow();AL={cfg:null,me:null,reg:{},dos:{},migr:true,srv:{url:AL.srv.url,codigo:''}}}else AL.me=null;alSaveLocal();setModo('')};
+A.al_cfgPaste=async()=>{const v=($('#cfgTxt').value||'').trim();const ia=v.indexOf('#acesso=');if(ia>=0){try{const o=unb64(v.slice(ia+8));if(!(await alEntrar(o.s,o.c)))ferr(AL.erro||'Não foi possível entrar.')}catch(e){ferr('Esta ligação não é válida.')}return}const i=v.indexOf('#cfg=');try{if(applyCfg(decodeCfg(i>=0?v.slice(i+5):v))){toast('Configuração atualizada');render()}else throw 0}catch(e){ferr('Isto não é uma ligação de configuração válida.')}};
 A.coordIn=()=>{if($('#cpin').value===String(S.coordPin||'2026')){migrOld();setModo('coord')}else{const e=$('#cerr');e.textContent='PIN incorreto.';e.hidden=false}};
 A.sair=()=>setModo('');
 
 /* Compatibilidade com a app de presenças anterior */
 const OLDT={};for(let d=0;d<5;d++)OLDT[d]=[['06:30','10:30'],['10:30','13:30'],['13:30','16:30'],['16:30','19:30'],['19:30','22:30']];OLDT[5]=[['09:00','13:00'],['15:30','19:30']];OLDT[6]=[['09:30','12:30']];
 function convOld(reg){const o={};Object.values(reg||{}).forEach(x=>{if(!x||!x.date)return;const t=typeof x.r==='number'&&OLDT[x.d]?OLDT[x.d][x.r]:null;const ini=t?t[0]:x.start,fim=t?t[1]:x.end;const k=x.date+'|'+(t?ini:'x'+(x.criado||ini));o[k]={date:x.date,ini,fim,local:'',start:x.start,end:x.end,nota:x.nota||'',tef:x.tef||'',confEm:x.confEm||null,falta:!!x.falta,extra:!t,criado:x.criado||Date.now()};if(!o[k].tef)delete o[k].tef});return o}
-function alMigrate(){if(AL.migr)return;AL.migr=true;try{const m=alMe(),oc=JSON.parse(localStorage.getItem('estagio_cfg_v1')||'null'),or=JSON.parse(localStorage.getItem('estagio_reg_v1')||'null');if(m&&oc&&or){const o=(oc.estagiarios||[]).find(e=>e.nome===m.nome);if(o&&or[o.id]){const cv=convOld(or[o.id]);Object.keys(cv).forEach(k=>{if(!AL.reg[k])AL.reg[k]=cv[k]})}}}catch(e){}alSave()}
+function alMigrate(){if(AL.migr)return;AL.migr=true;try{const m=alMe(),oc=JSON.parse(localStorage.getItem('estagio_cfg_v1')||'null'),or=JSON.parse(localStorage.getItem('estagio_reg_v1')||'null');if(m&&oc&&or){const o=(oc.estagiarios||[]).find(e=>e.nome===m.nome);if(o&&or[o.id]){const cv=convOld(or[o.id]);Object.keys(cv).forEach(k=>{if(!AL.reg[k])AL.reg[k]=cv[k]});AL.upd=Date.now()}}}catch(e){}alSaveLocal()}
 
 /* ================= COORDENAÇÃO: receber e partilhar ================= */
 function recebeAluno(o){
@@ -954,13 +957,14 @@ const regsApp=id=>Object.values(S.recebidos?.[id]?.reg||{});
 V.partilha=()=>{
   const rows=S.est.map(e=>{const r=S.recebidos[e.id],h=horasEst(e.id),dp=dosProg(r?.dos);return `<tr><td><b>${esc(e.nome)}</b></td><td>${r?fmtDY(String(r.exportadoEm).slice(0,10)):'<span class="muted">nunca</span>'}</td><td class="num">${fmtH(h.app)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${r?`<div class="prog">${barHTML(dp)}</div>`:'—'}</td></tr>`}).join('');
   const semPin=S.tutores.filter(n=>!S.pins[n]).length;
-  return `<h2 class="sec">Partilha com os estagiários</h2>
-  <div class="panel"><h3>Ligação para os estagiários</h3><p class="small muted" style="margin:0 0 10px">A ligação leva para os telemóveis: nomes, clubes, tutores, horários, formações e a lista de TEF com PIN. Não leva fichas pessoais, NIF, contactos nem avaliações. Volta a enviá-la no grupo sempre que mudares horários ou formações.</p>${semPin?`<p style="margin:0 0 10px"><span class="pill warn">${semPin} TEF sem PIN: não vão conseguir confirmar presenças</span></p>`:''}<button class="btn primary" type="button" data-act="cfgLink">Copiar ligação</button><textarea id="cfgOut" rows="3" readonly hidden style="margin-top:10px"></textarea></div>
-  <div class="panel"><h3>Receber dados dos estagiários</h3><p class="small muted" style="margin:0 0 10px">Cada estagiário envia o ficheiro em Perfil → Enviar ao coordenador. Também aceita os ficheiros da app de presenças antiga.</p><div class="inline" style="margin-bottom:8px"><input type="file" id="alFiles" multiple accept=".json,application/json" data-chg="alFiles" aria-label="Ficheiros dos estagiários"></div><textarea id="alTxt" rows="2" placeholder="Ou cola aqui o texto enviado pelo estagiário" aria-label="Texto do estagiário"></textarea><div class="inline" style="margin-top:8px"><button class="btn" type="button" data-act="alTxtImp">Importar texto</button></div>
+  const on=!!coordSrv();
+  return `<h2 class="sec">Partilha com os estagiários</h2>${srvPanelHTML()}
+  ${on?'':`<div class="panel"><h3>Ligação para os estagiários (sem servidor)</h3><p class="small muted" style="margin:0 0 10px">A ligação leva para os telemóveis: nomes, clubes, tutores, horários, formações e a lista de TEF com PIN. Não leva fichas pessoais, NIF, contactos nem avaliações. Volta a enviá-la no grupo sempre que mudares horários ou formações.</p>${semPin?`<p style="margin:0 0 10px"><span class="pill warn">${semPin} TEF sem PIN: não vão conseguir confirmar presenças</span></p>`:''}<button class="btn primary" type="button" data-act="cfgLink">Copiar ligação</button><textarea id="cfgOut" rows="3" readonly hidden style="margin-top:10px"></textarea></div>`}
+  <div class="panel"><h3>${on?'Dados dos estagiários':'Receber dados dos estagiários'}</h3>${on?'':`<p class="small muted" style="margin:0 0 10px">Cada estagiário envia o ficheiro em Perfil → Enviar ao coordenador. Também aceita os ficheiros da app de presenças antiga.</p><div class="inline" style="margin-bottom:8px"><input type="file" id="alFiles" multiple accept=".json,application/json" data-chg="alFiles" aria-label="Ficheiros dos estagiários"></div><textarea id="alTxt" rows="2" placeholder="Ou cola aqui o texto enviado pelo estagiário" aria-label="Texto do estagiário"></textarea><div class="inline" style="margin-top:8px"><button class="btn" type="button" data-act="alTxtImp">Importar texto</button></div>`}
   <div class="tbl-wrap" style="margin-top:12px"><table><thead><tr><th>Estagiário</th><th>Dados de</th><th class="num">Confirmadas</th><th class="num">Por confirmar</th><th>Dossier</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>
   <div class="panel"><h3>TEF e PIN</h3><p class="small muted" style="margin:0 0 8px">Um por linha: <b>Nome;PIN</b>. O PIN é o que o TEF escreve para confirmar presenças e validar o dossier. Estes nomes são também a lista de tutores.</p><textarea id="tefTxt" rows="10" aria-label="TEF e PIN">${esc(S.tutores.map(n=>n+';'+(S.pins[n]||'')).join('\n'))}</textarea><div class="inline" style="margin-top:8px"><button class="btn primary" type="button" data-act="savePins">Guardar TEF</button></div></div>
   <div class="panel"><h3>Coordenação</h3><div class="fgrid"><div class="fld"><label for="cpNew">PIN da coordenação</label><input id="cpNew" value="${esc(S.coordPin)}" inputmode="numeric" autocomplete="off"></div></div><div class="inline" style="margin-top:8px"><button class="btn" type="button" data-act="saveCoord">Guardar PIN</button></div></div>
-  <p class="small muted" style="margin:0">A confirmação por PIN assenta na confiança: a ligação leva os PIN dos TEF, por isso não impede fraude. Se suspeitares de abuso, muda os PIN e envia uma ligação nova.</p>`;
+  <p class="small muted" style="margin:0">${on?'Com a sincronização online, os PIN ficam só na tua Google Sheet e são verificados lá. Após 5 tentativas erradas, o TEF fica bloqueado 15 minutos.':'A confirmação por PIN assenta na confiança: a ligação leva os PIN dos TEF, por isso não impede fraude. Se suspeitares de abuso, muda os PIN e envia uma ligação nova.'}</p>`;
 };
 A.cfgLink=()=>{const b=btoa(unescape(encodeURIComponent(JSON.stringify(cfgAlunos()))));const url=location.href.split('#')[0]+'#cfg='+b;const t=$('#cfgOut');t.value=url;t.hidden=false;
   const sel=()=>{t.select();toast('Ligação selecionada: copia com Ctrl+C')};if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>toast('Ligação copiada. Cola-a no grupo dos estagiários'),sel);else sel()};
@@ -985,6 +989,129 @@ V.dossier=()=>{
 A.dEst=el=>{UI.dEst=el.dataset.id;UI.dSec=null;render()};
 A.dSec=el=>{UI.dSec=UI.dSec===el.dataset.s?null:el.dataset.s;render()};
 
+/* ================= SINCRONIZAÇÃO (Google Sheet) ================= */
+const SERVIDOR_FIXO=''; // opcional: endereço /exec do script, para quem abre a app sem ligação pessoal
+const SK='estagios_srv';
+let SRV=null;try{SRV=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){}
+const srvSave=()=>{try{if(SRV)localStorage.setItem(SK,JSON.stringify(SRV));else localStorage.removeItem(SK)}catch(e){}};
+async function api(url,body){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error('O servidor respondeu com erro '+r.status+'.');
+  let j;try{j=await r.json()}catch(e){throw new Error('O servidor não respondeu como esperado. Confirma o endereço do script e se está publicado para "Qualquer pessoa".')}
+  return j;
+}
+const SY={st:'',msg:'',em:0};
+function syncSet(st,msg){SY.st=st;SY.msg=msg;if(st==='ok')SY.em=Date.now();const el=$('#syncBadge');if(el){el.className='pill '+({ok:'ok',work:'acc',err:'bad'}[st]||'');el.textContent=msg;el.hidden=!st}}
+const syncPill=()=>`<span id="syncBadge" class="pill ${({ok:'ok',work:'acc',err:'bad'}[SY.st]||'')}"${SY.st?'':' hidden'}>${esc(SY.msg)}</span>`;
+const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const unb64=s=>JSON.parse(decodeURIComponent(escape(atob(s.trim()))));
+
+/* --- Coordenação --- */
+const coordSrv=()=>SRV&&SRV.url&&SRV.chave?SRV:null;
+function estadoServ(){const c=JSON.parse(JSON.stringify(S));delete c.recebidos;delete c.migrOld;return c}
+function cfgServ(){const c=cfgAlunos();c.tefs=c.tefs.map(t=>({nome:t.nome}));return c}
+let cpT=null;
+function coordPush(){if(!coordSrv())return;clearTimeout(cpT);syncSet('work','Por guardar…');cpT=setTimeout(coordPushNow,1500)}
+async function coordPushNow(){
+  const s=coordSrv();if(!s)return;clearTimeout(cpT);syncSet('work','A guardar…');
+  try{const j=await api(s.url,{acao:'coordGravar',chave:s.chave,rev:s.rev||0,estado:estadoServ(),cfg:cfgServ(),pins:S.pins||{},codigos:S.codigos||{}});
+    if(j.ok){s.rev=j.rev;srvSave();syncSet('ok','Sincronizado');return true}
+    if(j.conflito){coordAplica(j.estado,j.rev);toast('Os dados foram alterados noutro dispositivo. Carreguei a versão mais recente: repete a última alteração.');return false}
+    throw new Error(j.erro||'Erro ao guardar.')}
+  catch(e){syncSet('err','Sem ligação');return false}
+}
+function coordAplica(estado,rev){const rec=S.recebidos||{};S=Object.assign(seed(),estado||{});S.pins=S.pins||{};S.recebidos=rec;S.migrOld=true;aplicaPlano();SRV.rev=rev;srvSave();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(MODO==='coord')render()}
+async function coordPull(avisar){
+  const s=coordSrv();if(!s)return;syncSet('work','A sincronizar…');
+  try{const j=await api(s.url,{acao:'coordLer',chave:s.chave});if(!j.ok)throw new Error(j.erro||'Erro ao ler.');
+    if(j.estado&&(j.rev||0)>(s.rev||0))coordAplica(j.estado,j.rev);
+    else if(!j.estado){s.rev=0;srvSave();await coordPushNow()}
+    Object.entries(j.alunos||{}).forEach(([id,d])=>{if(d)S.recebidos[id]={exportadoEm:new Date(d.upd||0).toISOString(),reg:d.reg||{},dos:d.dos||{}}});
+    try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+    syncSet('ok','Sincronizado');if(MODO==='coord')render();if(avisar)toast('Dados atualizados');return true}
+  catch(e){syncSet('err','Sem ligação');if(avisar)toast(e.message);return false}
+}
+A.srvOn=async el=>{
+  const url=$('#srvUrl').value.trim(),chave=$('#srvKey').value;const e=$('#srvErr');
+  const erro=m=>{e.textContent=m;e.hidden=false};
+  if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url)){erro('O endereço tem de começar por https://script.google.com/ e terminar em /exec.');return}
+  if(chave.length<6){erro('A chave tem de ter pelo menos 6 carateres.');return}
+  el.disabled=true;el.textContent='A ligar…';
+  try{const j=await api(url,{acao:'coordLer',chave});if(!j.ok)throw new Error(j.erro||'Não foi possível ligar.');SRV={tipo:'coord',url,chave,rev:0};srvSave();await coordPull();toast('Ligado à Google Sheet')}
+  catch(x){erro(x.message);el.disabled=false;el.textContent='Ligar'}
+};
+A.srvSync=()=>coordPull(true);
+A.srvOff=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar: desligar';return}SRV=null;srvSave();syncSet('','');render();toast('Desligado. Os dados ficam só neste dispositivo.')};
+const CODE_ABC='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const novoCodigo=()=>{let c;const usados=new Set(Object.values(S.codigos||{}));do{c=[...Array(6)].map(()=>CODE_ABC[Math.floor(Math.random()*CODE_ABC.length)]).join('')}while(usados.has(c));return c};
+const linkAluno=id=>location.href.split('#')[0]+'#acesso='+b64({s:coordSrv().url,c:S.codigos[id]});
+A.codGerar=el=>{S.codigos=S.codigos||{};const id=el.dataset.id;if(S.codigos[id]&&!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar novo código';return}S.codigos[id]=novoCodigo();save();render();toast('Código criado. O código antigo deixa de funcionar.')};
+A.codCopiar=el=>{const e=estById(el.dataset.id);const txt=`Olá ${e.nome.split(' ')[0]}! Esta é a tua app de estágio da Playlife. Abre a ligação no telemóvel e guarda-a no ecrã principal:\n${linkAluno(e.id)}\n\nO teu código pessoal é ${S.codigos[e.id]}. Não o partilhes.`;
+  const done=()=>toast('Mensagem copiada. Envia-a só a '+e.nome.split(' ')[0]);
+  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(done,()=>showModal(`<h2>Mensagem para ${esc(e.nome)}</h2><textarea rows="6" readonly>${esc(txt)}</textarea><div class="factions"><span class="sp"></span><button class="btn" type="button" data-act="close">Fechar</button></div>`));
+  else showModal(`<h2>Mensagem para ${esc(e.nome)}</h2><textarea rows="6" readonly>${esc(txt)}</textarea><div class="factions"><span class="sp"></span><button class="btn" type="button" data-act="close">Fechar</button></div>`)};
+function srvPanelHTML(){
+  const s=coordSrv();
+  if(s){const cods=S.codigos||{};
+    return `<div class="panel"><div class="bar-head"><h3 style="margin:0">Sincronização online</h3><span class="sp"></span>${syncPill()}</div><p class="small muted" style="margin:6px 0 10px">Ligado à Google Sheet. As tuas alterações são guardadas sozinhas, e os horários, as formações e a lista de TEF chegam aos estagiários quando abrem a app. As presenças e o dossier deles chegam-te da mesma forma.</p><div class="inline"><button class="btn" type="button" data-act="srvSync">Sincronizar agora</button><button class="btn ghost danger" type="button" data-act="srvOff">Desligar</button></div></div>
+    <div class="panel"><h3>Acesso dos estagiários</h3><p class="small muted" style="margin:0 0 10px">Cada estagiário tem um código pessoal. Copia a mensagem e envia-a em privado a cada um: a ligação já leva o código, por isso basta abri-la.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Código</th><th></th></tr></thead><tbody>${S.est.map(e=>`<tr><td>${esc(e.nome)}</td><td>${cods[e.id]?`<code class="cod">${cods[e.id]}</code>`:'<span class="muted">sem código</span>'}</td><td class="num"><div class="inline" style="justify-content:flex-end">${cods[e.id]?`<button class="btn sm primary" type="button" data-act="codCopiar" data-id="${e.id}">Copiar mensagem</button>`:''}<button class="btn sm" type="button" data-act="codGerar" data-id="${e.id}">${cods[e.id]?'Novo código':'Criar código'}</button></div></td></tr>`).join('')||'<tr><td colspan="3" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>`}
+  return `<div class="panel"><h3>Sincronização online (Google Sheet)</h3><p class="small muted" style="margin:0 0 10px">Liga a app à tua Google Sheet para deixar de enviar ligações e ficheiros. Se a folha já tiver dados, são esses que ficam neste dispositivo; se estiver vazia, recebe os dados deste dispositivo.</p>
+  <div class="fgrid"><div class="fld full"><label for="srvUrl">Endereço do script (termina em /exec)</label><input id="srvUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec"></div><div class="fld"><label for="srvKey">Chave da coordenação</label><input id="srvKey" type="password" autocomplete="off"></div></div>
+  <p class="ferr" id="srvErr" hidden></p><div class="inline" style="margin-top:8px"><button class="btn primary" type="button" data-act="srvOn">Ligar</button></div>
+  <p class="small muted" style="margin:10px 0 0">Na primeira ligação, a chave que escreveres fica a ser a chave da coordenação. Usa a mesma noutros dispositivos (por exemplo, o do Pedro Alex).</p></div>`;
+}
+
+/* --- Estagiário --- */
+const alSrv=()=>AL.srv&&AL.srv.url&&AL.srv.codigo?AL.srv:null;
+let apT=null;
+function alPush(){if(!alSrv())return;clearTimeout(apT);apT=setTimeout(alPushNow,1500)}
+async function alPushNow(){
+  const s=alSrv();if(!s)return;clearTimeout(apT);
+  try{const j=await api(s.url,{acao:'alunoGravar',codigo:s.codigo,dados:{upd:AL.upd||Date.now(),nome:alMe()?.nome||'',reg:AL.reg,dos:AL.dos}});
+    if(j.ok){AL.pend=false;AL.syncEm=Date.now()}
+    else if(j.antigo){AL.reg=j.dados.reg||{};AL.dos=j.dados.dos||{};AL.upd=j.dados.upd;AL.pend=false;toast('Havia dados mais recentes noutro dispositivo: atualizei.');if(MODO==='aluno')render()}
+    else throw new Error(j.erro)}
+  catch(e){AL.pend=true}
+  alSaveLocal();
+}
+async function alPull(avisar,semPush){
+  const s=alSrv();if(!s)return false;
+  try{const j=await api(s.url,{acao:'alunoLer',codigo:s.codigo});if(!j.ok)throw new Error(j.erro||'Erro ao ler.');
+    if(!j.cfg||!(j.cfg.est||[]).length)throw new Error('O coordenador ainda não publicou os horários. Tenta mais tarde.');
+    AL.cfg=j.cfg;AL.me=j.id;
+    if(j.dados&&(j.dados.upd||0)>(AL.upd||0)){AL.reg=j.dados.reg||{};AL.dos=j.dados.dos||{};AL.upd=j.dados.upd}
+    AL.syncEm=Date.now();alSaveLocal();
+    if(!semPush&&(AL.pend||(AL.upd&&(!j.dados||(j.dados.upd||0)<AL.upd))))alPushNow();
+    if(avisar)toast('Atualizado');return true}
+  catch(e){if(avisar)toast(e.message);AL.erro=e.message;return false}
+}
+async function alEntrar(url,codigo){
+  codigo=String(codigo||'').trim().toUpperCase();
+  const antes=AL.srv&&AL.srv.codigo,meAntes=AL.me;
+  if(antes!==codigo&&(antes||!meAntes))AL={cfg:null,me:null,reg:{},dos:{},migr:true};
+  const prev={reg:AL.reg,dos:AL.dos};
+  AL.srv={url,codigo};alSaveLocal();
+  const ok=await alPull(false,true);
+  if(ok){if(!antes&&meAntes&&meAntes!==AL.me){AL.reg={};AL.dos={};AL.upd=0}
+    else if(!antes&&meAntes===AL.me&&Object.keys(prev.reg||{}).length){AL.upd=Date.now();alPushNow()}
+    AL.migr=true;alSaveLocal();AUI.v='hoje';setModo('aluno');return true}
+  return false;
+}
+A.al_codigo=async el=>{const url=(AL.srv&&AL.srv.url)||SERVIDOR_FIXO;const c=$('#alCod').value;if(!c.trim()){ferr('Escreve o teu código.');return}el.disabled=true;el.textContent='A entrar…';
+  if(!(await alEntrar(url,c))){ferr(AL.erro||'Não foi possível entrar.');el.disabled=false;el.textContent='Entrar'}};
+A.al_sync=async el=>{el.disabled=true;await alPull(true);if(MODO==='aluno')render()};
+
+/* Verificação do PIN: no servidor quando há ligação online */
+async function checkPinAny(){
+  const n=$('#tp_n').value,p=$('#tp_p').value.trim();
+  if(!alSrv())return checkPin();
+  if(!n){ferr('Escolhe o TEF que está em sala.');return null}
+  ferr('A verificar…');
+  try{const j=await api(alSrv().url,{acao:'pin',codigo:alSrv().codigo,tef:n,pin:p});if(j.ok){$('#ferr').hidden=true;return n}ferr(j.erro||'PIN incorreto.');return null}
+  catch(e){ferr('Sem ligação à internet. Guarda sem confirmar e confirma quando tiveres rede.');return null}
+}
+
 document.addEventListener('click',ev=>{const el=ev.target.closest('[data-act]');if(el&&A[el.dataset.act]){A[el.dataset.act](el,ev)}else if(ev.target.id==='modal')closeModal()});
 document.addEventListener('change',ev=>{const el=ev.target.closest('[data-chg]');if(el&&C[el.dataset.chg])C[el.dataset.chg](el)});
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidden)closeModal();if(ev.key==='Enter'&&ev.target.id==='novoTutor')A.addTutor();if(ev.key==='Enter'&&ev.target.id==='cpin')A.coordIn()});
@@ -992,9 +1119,16 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidd
   if(!MODO&&HAD)MODO='coord';
   const h=location.hash;
   if(h.startsWith('#cfg=')){try{if(applyCfg(decodeCfg(h.slice(5)))){toast('Horários e formações atualizados');if(MODO!=='coord'&&AL.me)MODO='aluno'}}catch(e){toast('A ligação de configuração não é válida')}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+  let acesso=null;
+  if(h.startsWith('#acesso=')){try{acesso=unb64(h.slice(8))}catch(e){toast('Esta ligação não é válida')}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
   if(MODO==='coord')migrOld();
   if(MODO==='aluno'&&alMe())alMigrate();
   render();
+  if(acesso&&acesso.s&&acesso.c){if(MODO==='coord')toast('Esta é a ligação de um estagiário. Sai da coordenação para a testar.');else alEntrar(acesso.s,acesso.c).then(ok=>{if(!ok){toast(AL.erro||'Não foi possível entrar');render()}})}
+  else if(MODO==='coord'&&coordSrv())coordPull();
+  else if(MODO==='aluno'&&alSrv())alPull().then(()=>{if(MODO==='aluno')render()});
+  const refresca=()=>{if(document.visibilityState!=='visible')return;if(MODO==='coord'&&coordSrv())coordPull();else if(MODO==='aluno'&&alSrv())alPull().then(ok=>{if(ok&&MODO==='aluno'&&$('#modal').hidden&&!document.activeElement.matches('input,textarea,select'))render()})};
+  document.addEventListener('visibilitychange',refresca);window.addEventListener('online',refresca);
 })();
 </script>
 
