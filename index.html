@@ -612,7 +612,8 @@ function juntar(o){
     if(e){Object.keys(x).forEach(k=>{if(k!=='id'&&x[k]!==''&&x[k]!=null&&(e[k]===''||e[k]==null||['nomeCompleto','email','nascimento','morada','cp','estadoCivil','nif','cc','funcao','dataFicha','emNome','emParent','emTel'].includes(k)))e[k]=x[k]});if(e.id!==x.id){const old=x.id;['horarios','registos','aval'].forEach(c=>(o[c]||[]).forEach(r=>{if(r.estId===old)r.estId=e.id}))}uE++}
     else{S.est.push(x);nE++}});
   ['horarios','registos','aval'].forEach(c=>(o[c]||[]).forEach(r=>{if(!S[c].some(y=>y.id===r.id))S[c].push(r)}));
-  (o.tutores||[]).forEach(t=>{if(!S.tutores.includes(t))S.tutores.push(t)});
+  if(o.pins&&Object.keys(o.pins).length){const usados=new Set([...S.est.map(e=>e.tutor),...S.horarios.map(h=>h.tutor)].filter(Boolean));S.tutores=[...(o.tutores||[]),...S.tutores.filter(t=>usados.has(t)&&!(o.tutores||[]).includes(t))];S.pins=Object.assign({},o.pins)}
+  else (o.tutores||[]).forEach(t=>{if(!S.tutores.includes(t))S.tutores.push(t)});
   return `${uE} ficha(s) atualizada(s), ${nE} estagiário(s) novo(s)`;
 }
 A.importar=el=>{const p=$('#ferr');try{const o=JSON.parse($('#impTxt').value);if(!o||!Array.isArray(o.est)||!Array.isArray(o.form))throw 0;let msg='Dados importados';if(el.dataset.modo==='juntar')msg=juntar(o);else S=Object.assign(seed(),o);S.pins=S.pins||{};S.recebidos=S.recebidos||{};aplicaPlano();save();closeModal();render();toast(msg)}catch(e){p.textContent='O texto não é uma exportação válida desta app.';p.hidden=false}};
@@ -781,7 +782,7 @@ VA.perfil=()=>{
 function tefOpts(){return `<option value="">Escolhe o TEF</option>${(AL.cfg.tefs||[]).map(t=>`<option>${esc(t.nome)}</option>`).join('')}`}
 function tefPinModal(onOk,title){AUI.pinOk=onOk;showModal(`<h2>${esc(title)}</h2><p class="small muted" style="margin:0">O TEF em sala escolhe o nome e escreve o PIN.</p><div class="fgrid"><div class="fld"><label for="tp_n">TEF</label><select id="tp_n">${tefOpts()}</select></div><div class="fld"><label for="tp_p">PIN</label><input id="tp_p" type="password" inputmode="numeric" autocomplete="off"></div></div><p class="ferr" id="ferr" hidden></p><div class="factions"><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Cancelar</button><button class="btn primary" type="button" data-act="al_pinOk">Confirmar</button></div>`)}
 function ferr(msg){const e=$('#ferr');if(e){e.textContent=msg;e.hidden=false}}
-function checkPin(){const n=$('#tp_n').value,p=$('#tp_p').value.trim(),t=(AL.cfg.tefs||[]).find(x=>x.nome===n);if(!t){ferr('Escolhe o TEF que está em sala.');return null}if(!t.pin){ferr('Este TEF ainda não tem PIN. Pede ao coordenador para o definir.');return null}if(p!==String(t.pin)){ferr('PIN incorreto.');return null}return n}
+function checkPin(){const n=$('#tp_n').value,p=$('#tp_p').value.trim(),t=(AL.cfg.tefs||[]).find(x=>x.nome===n);if(!t){ferr('Escolhe o TEF que está em sala.');return null}if(!t.pin){ferr('Este TEF ainda não tem PIN. Pede ao coordenador para o definir.');return null}const z=x=>String(x).trim().replace(/^0+/,'');if(z(p)!==z(t.pin)){ferr('PIN incorreto.');return null}return n}
 A.al_pinOk=()=>{const n=checkPin();if(n){const f=AUI.pinOk;closeModal();f(n)}};
 A.al_tefStart=()=>tefPinModal(n=>{AUI.tef={nome:n,ate:Date.now()+15*60000};renderAluno();toast('Modo TEF ativo durante 15 minutos')},'Validação pelo TEF');
 A.al_tefEnd=()=>{AUI.tef=null;renderAluno()};
