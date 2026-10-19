@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A6C96">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>Estágios Playlife</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -111,6 +112,7 @@ textarea{width:100%;resize:vertical}
 .fitem.past .fnum{color:var(--accent)}
 .fbody{border-top:1px solid var(--line);margin-top:10px;padding-top:12px;display:grid;gap:12px}
 .pres{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.presrow{display:flex;gap:6px;align-items:center}.presrow label{flex:1;min-width:0}.presrow select{padding:4px 6px;font-size:13px}
 .pres label{display:flex;gap:8px;align-items:center;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;cursor:pointer}
 .pres input{width:18px;height:18px;accent-color:var(--accent)}
 .grade{font-family:var(--display);font-weight:700;font-size:28px;line-height:1}
@@ -145,6 +147,63 @@ td input[type=number]{width:64px}
 .warnp{border-color:var(--warn);background:var(--warn-soft)}
 .loclist li{align-items:center;flex-wrap:wrap}
 .loclist .sp{flex:1}
+body[data-modo="aluno"] main .wrap{padding-block:14px 100px;max-width:720px}
+body[data-modo="pick"] main .wrap{max-width:560px}
+.alnav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.alnav button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:11.5px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 7px;cursor:pointer}
+.alnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.alnav button[aria-current="true"]{color:var(--accent);font-weight:600}
+.alnav button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.shifts{display:grid;gap:6px;margin-bottom:10px}
+.shift{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;text-align:left;font:inherit;color:inherit;background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;width:100%}
+.shift:focus-visible,.secbtn:focus-visible,.fi-h:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shift .sd b{display:block;font-family:var(--display);font-size:18px;text-transform:uppercase;line-height:1}
+.shift .sd small,.shift .sm small{display:block;color:var(--muted);font-size:12px}
+.shift .sm{min-width:0;font-size:14px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.kpi b{display:block;font-family:var(--display);font-size:36px;line-height:1.05}
+.kpi small{display:block;font-size:13px}
+.kpi .lab,.lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.lbl{margin:12px 0 5px}
+.track.lg{height:12px;border-radius:6px}
+.tefbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);border-radius:var(--r);padding:8px 12px;font-size:14px}
+.secs{display:grid;gap:8px}
+.secbtn{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;cursor:pointer}
+.secbtn .n{font-family:var(--display);font-weight:700;font-size:24px;color:var(--muted);text-align:center}
+.secbtn .prog,.row-btn .prog{min-width:0;margin-top:4px}
+.dsec{display:grid;gap:8px}
+.leit{max-width:65ch;font-size:15px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:4px 16px 8px}
+.leit h4{font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:.03em;margin:14px 0 4px}
+.leit p{margin:0 0 9px}
+.chk{display:flex;gap:10px;align-items:center;font-weight:600;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer}
+.chk input,.mini input{accent-color:var(--accent);width:18px;height:18px;margin:0}
+.rlist{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:2px 12px 6px}
+.rg{font-family:var(--display);font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin:14px 0 2px}
+.ritem{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.ritem:last-child{border-bottom:0}
+.ritem.done>span:first-child{color:var(--muted)}
+.rcols{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.mini{display:inline-flex;gap:5px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.mini.pt{color:var(--warn);font-weight:600}
+.fi{border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.fi.done{border-left:3px solid var(--ok)}
+.fi-h{display:flex;justify-content:space-between;gap:10px;align-items:center;width:100%;font:inherit;color:inherit;background:none;border:0;padding:11px 12px;text-align:left;cursor:pointer}
+.fi-b{display:grid;gap:8px;padding:0 12px 12px}
+.tefbox{border:1px solid var(--warn);background:var(--warn-soft);border-radius:8px;padding:10px 12px}
+.tefbox p{margin:2px 0 8px}
+.pick{display:grid;gap:14px}
+.pick-list{display:grid;gap:8px}
+.pick-list .btn{text-align:left;padding:12px 14px;font-size:15px}
+.rel .fgrid{margin-top:8px}
+.grade-t.al{min-width:0;font-size:10px}
+.grade-t.al th{font-size:11px;padding:6px 1px}
+.grade-t.al th.tc{width:28px;font-size:14px}
+.grade-t.al td{padding:4px 1px;text-align:center}
+.grade-t.al .hr{font-size:10px;margin:0}
+.grade-t td.me{background:var(--accent);color:var(--accent-ink)}
+.grade-t td.me .hr{color:var(--accent-ink)}
+.loc{font-size:10px;display:block;letter-spacing:.04em}
+@media (max-width:420px){.ritem{grid-template-columns:1fr}.rcols{justify-content:flex-start}}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(8,14,20,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px))}
 .sheet{background:var(--surface);color:var(--ink);border-radius:12px;width:100%;max-width:560px;padding:18px;display:grid;gap:14px}
 .sheet h2{font-family:var(--display);font-weight:700;font-size:22px;text-transform:uppercase;margin:0}
@@ -172,14 +231,16 @@ td input[type=number]{width:64px}
 
 
 <header class="top"><div class="wrap">
-  <div class="brand"><h1>Estágios Playlife</h1><p>Sala de exercício · 2026/27 · PNF / LSD</p></div>
-  <button class="btn" data-act="dados" type="button">Dados</button>
+  <div class="brand"><h1>Estágios Playlife</h1><p id="hdrSub">Sala de exercício · 2026/27</p></div>
+  <div class="inline" id="hdrBtns"></div>
 </div></header>
-<nav class="tabs" aria-label="Separadores"><div class="wrap" id="tabs"></div></nav>
+<nav class="tabs" id="tabsNav" aria-label="Separadores"><div class="wrap" id="tabs"></div></nav>
 <main><div class="wrap" id="main"></div></main>
+<nav class="alnav" id="alnav" aria-label="Menu do estagiário" hidden></nav>
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div id="toast" role="status"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" async></script>
 <script>
 const KEY='estagios_playlife_v1';
 const $=s=>document.querySelector(s);
@@ -206,27 +267,48 @@ function seed(){
   const datas=['2026-10-30','2026-11-06','2026-11-13','2026-11-20','2026-11-27','2026-12-04','2026-12-11','2026-12-18','2027-01-08','2027-01-15','2027-01-22','2027-01-29','2027-02-05','2027-02-12'];
   const form=datas.map((d,i)=>({id:uid(),n:i+1,data:d,ini:'',fim:'',duracao:2,tema:'',formador:'',local:'',sumario:'',pres:{}}));
   const criterios=[['Assiduidade e pontualidade',1],['Apresentação e postura profissional',1],['Relação e comunicação com clientes',1.5],['Conhecimento técnico',1.5],['Prescrição e correção do exercício',2],['Iniciativa e autonomia',1],['Trabalho em equipa',1],['Participação nas formações',1]].map(([nome,peso])=>({id:uid(),nome,peso}));
-  return {v:1,est,tutores:[],horarios:[],registos:[],form,aval:[],criterios};
+  return {v:1,est,tutores:[],pins:{},coordPin:'2026',coordEmail:'',recebidos:{},horarios:[],registos:[],form,aval:[],criterios};
 }
-let S;
-try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
-if(!S||!Array.isArray(S.est))S=seed();
+const PLANO={
+'2026-10-30':['Características e Funções de um TEF em Sala de Exercício','Pedro Alex','Penafiel','conhecer o papel do TEF e as regras de organização e segurança da sala.',['O Papel do TEF: Muito Mais do que "Dar Treinos"','Sala de Exercício: Organização, Segurança e Experiência do Cliente']],
+'2026-11-06':['Protocolo de Avaliação Física','Pedro Alex','Penafiel','aplicar o protocolo de avaliação física da Playlife e ler os resultados.',['Avaliação Física: O Ponto de Partida para Resultados Reais','Do Diagnóstico à Prescrição: Pensar como um Profissional']],
+'2026-11-13':['Instrutor de Referência / Venda do PT','Mário Teixeira','Lousada','construir relação de confiança com o cliente e apresentar o PT de forma ética.',['Tornar-se um Instrutor de Referência','Relacionamento com o Cliente: A Base de Tudo','Venda de PT: Natural, Ética e Eficaz','Da Primeira Impressão ao Cliente Fidelizado']],
+'2026-11-20':['Processo de Influência PT / Protocolos de Follow Up','Cristiano Moutinho','Penafiel','aplicar os protocolos de follow up e reconhecer os momentos de influência no ginásio.',['O Processo de Influência: Muito Antes da Venda','Momentos-Chave de Influência no Ginásio','Criar Consistência e Profissionalismo no Acompanhamento','Tudo o que é Estruturado Gera Resultados']],
+'2026-11-27':['Prescrição e Metodologias de Treino / Patologias da Coluna Vertebral','Pedro Alex','Penafiel','individualizar a prescrição e adaptar o treino a clientes com queixas da coluna.',['Prescrição de Treino: A Arte de Individualizar','Metodologias de Treino: Escolher a Ferramenta Certa','Coluna Vertebral: Compreender para Não Lesionar','Patologias da Coluna Vertebral mais Comuns: Treinar com Segurança e Inteligência']],
+'2026-12-04':['Patologias mais Comuns do Tornozelo / Joelho / Anca','Mário Teixeira','Lousada','identificar as limitações mais frequentes do membro inferior e adaptar o exercício.',['Da Base ao Movimento: A Importância do Membro Inferior','Tornozelo: Pequena Articulação, Grandes Problemas','Joelho: A Articulação mais Exposta','Anca: O Centro de Controlo do Movimento']],
+'2026-12-11':['Doenças Metabólicas / Doenças Cardiovasculares','Mário Teixeira','Lousada','prescrever exercício seguro para clientes com doença metabólica ou cardiovascular e reconhecer sinais de alarme.',['O Exercício como "Medicação": O Papel do TEF na Saúde','Doenças Metabólicas: O Inimigo Silencioso','Doenças Cardiovasculares: Risco, Sinais e Cuidados','Prescrição Segura: Treinar com Critério e Confiança']],
+'2026-12-18':['Pilates','Ricardo Malta','Penafiel','conhecer os princípios do Pilates e saber para que clientes o recomendar.',['Princípios Fundamentais','Técnica e Consciência Corporal','Adaptação ao Cliente','Benefícios e Aplicação Prática']],
+'2027-01-08':['Indoor Cycling (Schwinn Cycling)','Mário Teixeira','Lousada','conhecer o método Schwinn e estar apto a apoiar ou orientar uma aula.',['Fundamentos do Schwinn Cycling e Técnica na Bicicleta','Estrutura e Planeamento de Aula, com Coaching Musical','Coaching, Energia e Correção Técnica em Grupo','Experiência Premium em Aula']],
+'2027-01-15':['Hyrox / Crossfit','Miguel Pereira','Lousada','conhecer a metodologia do treino funcional de alta intensidade e como escalá-lo.',['Metodologia de Treino Funcional','Técnica Antes da Intensidade','Gestão de Esforço e Performance','Escalabilidade do Treino']],
+'2027-01-22':['Desportos de Academia','Ana Rita Vieira','Penafiel','conhecer a estrutura das aulas de grupo e a forma de liderar uma turma.',['Energia e Liderança em Aula','Estrutura de Aula Eficiente','Técnica e Segurança em Grupo','Experiência do Cliente']],
+'2027-01-29':['I-Motion (EMS)','Pedro Sousa','Penafiel','conhecer o funcionamento do EMS, as contraindicações e a estrutura de uma sessão.',['O que é EMS e Como Funciona','Segurança e Contraindicações','Estrutura de Sessão EMS','Resultados e Expectativas']],
+'2027-02-05':['Nutrição','Patrícia Moreira','Penafiel','saber os limites do papel do TEF na alimentação e quando encaminhar para a nutricionista.',['Fundamentos da Nutrição no Fitness','Nutrição para Objetivos','Papel do Nutricionista no Acompanhamento Nutricional','Hábitos e Comportamento Alimentar']],
+'2027-02-12':['Comercial','Catarina Machado','Lousada','apresentar os serviços da Playlife e conduzir uma conversa comercial até ao fecho.',['Mentalidade Comercial no Fitness','Comunicação que Converte','Apresentação de Serviços','Fecho e Fidelização']]};
+function aplicaPlano(){let n=0;S.form.forEach(f=>{const p=PLANO[f.data];if(!p)return;const[tema,formador,local,obj,cont]=p;let m=0;
+  if(!f.tema){f.tema=tema;m=1}if(!f.formador){f.formador=formador;m=1}if(!f.local){f.local=local;m=1}if(!f.sumario){f.sumario='Objetivo: '+obj+'\nConteúdos: '+cont.join('; ')+'.';m=1}if(!f.ini){f.ini='14:30';f.fim='16:30';f.duracao=2;m=1}n+=m});return n}
+const CERT_MIN=12;
+let S,HAD=false;
+try{const raw=localStorage.getItem(KEY);HAD=!!raw;S=JSON.parse(raw)}catch(e){S=null}
+if(!S||!Array.isArray(S.est)){S=seed();HAD=false}
+S.pins=S.pins||{};S.recebidos=S.recebidos||{};if(S.coordPin==null)S.coordPin='2026';
+if(aplicaPlano()&&HAD)try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-save();
 
 const UI={loc:'PNF',tab:'inicio',week:segunda(hoje()),hEst:'',fOpen:null,aEst:''};
 try{const t=localStorage.getItem(KEY+'_tab');if(t)UI.tab=t}catch(e){}
 
-const TABS=[['inicio','Início'],['estagiarios','Estagiários'],['horarios','Horários'],['horas','Horas'],['formacoes','Formações'],['avaliacao','Avaliação'],['equipamentos','Equipamentos']];
+const TABS=[['inicio','Início'],['estagiarios','Estagiários'],['horarios','Horários'],['horas','Horas'],['formacoes','Formações'],['avaliacao','Avaliação'],['equipamentos','Equipamentos'],['dossier','Dossier'],['partilha','Partilha']];
 const estById=id=>S.est.find(e=>e.id===id);
 const nomeEst=id=>estById(id)?.nome||'(removido)';
 const TCOD={'06:30':'T1','10:30':'T2','13:30':'T3','16:30':'T4','19:30':'T5','09:00':'T1','09:30':'T1','15:30':'T2'};
 const turnoCod=s=>TCOD[s.ini]?TCOD[s.ini]+' · ':'';
 const fDur=f=>(f.ini&&f.fim)?dur(f.ini,f.fim):(Number(f.duracao)||0)*60;
 function horasEst(id){
-  const sala=S.registos.filter(r=>r.estId===id).reduce((a,r)=>a+dur(r.ini,r.fim),0);
+  const man=S.registos.filter(r=>r.estId===id),ks=new Set(man.map(r=>r.data+'|'+r.ini));
+  const manual=man.reduce((a,r)=>a+dur(r.ini,r.fim),0);
+  let app=0,pend=0;Object.values(S.recebidos?.[id]?.reg||{}).forEach(r=>{if(r.falta)return;const m=dur(r.start,r.end);if(!r.tef)pend+=m;else if(!ks.has(r.date+'|'+r.ini))app+=m});
   const form=S.form.filter(f=>f.pres[id]).reduce((a,f)=>a+fDur(f),0);
-  return {sala,form,total:sala+form};
+  return {sala:manual+app,app,pend,form,total:manual+app+form};
 }
 function notaAval(a){let s=0,w=0;S.criterios.forEach(c=>{const v=a.notas?.[c.id];if(v){s+=v*c.peso;w+=c.peso}});return w?Math.round(s/w/5*200)/10:null}
 const ativo=(s,date)=>s.dia===pd(date).getDay()&&(!s.de||s.de<=date)&&(!s.ate||s.ate>=date);
@@ -239,6 +321,15 @@ function progHTML(e){
 }
 
 function render(){
+  const coord=MODO==='coord',aluno=!coord&&MODO==='aluno'&&AL.cfg&&alMe();
+  document.body.dataset.modo=coord?'coord':aluno?'aluno':'pick';
+  $('#tabsNav').hidden=!coord;$('#alnav').hidden=!aluno;
+  const m=aluno?alMe():null;
+  $('#hdrSub').textContent=coord?'Coordenação · sala de exercício 2026/27':aluno?`${m.nome}${m.local?' · '+locNome(m.local):''}`:'Sala de exercício · 2026/27';
+  $('#hdrBtns').innerHTML=coord?'<button class="btn" data-act="dados" type="button">Dados</button><button class="btn ghost" data-act="sair" type="button">Sair</button>':'';
+  if(coord)renderCoord();else if(aluno)renderAluno();else renderPick();
+}
+function renderCoord(){
   $('#tabs').innerHTML=TABS.map(([k,l])=>`<button class="tab" type="button" data-act="tab" data-k="${k}" aria-current="${UI.tab===k}">${l}</button>`).join('');
   $('#main').innerHTML=(V[UI.tab]||V.inicio)();
 }
@@ -257,12 +348,16 @@ V.inicio=()=>{
   if(semMeta)todo.push(['warn',`${semMeta} estagiário(s) sem horas exigidas definidas`,'estagiarios']);
   if(!S.horarios.length)todo.push(['warn','Ainda não há turnos de estágio no horário','horarios']);
   if(fSemTema)todo.push(['warn',`${fSemTema} formação(ões) sem tema ou formador`,'formacoes']);
+  const pendApp=S.est.reduce((a,e)=>a+regsApp(e.id).filter(r=>!r.falta&&!r.tef).length,0);
+  if(pendApp)todo.push(['warn',`${pendApp} presença(s) registada(s) pelos estagiários sem confirmação do TEF`,'horas']);
+  const semPin=S.tutores.filter(n=>!S.pins[n]).length;
+  if(S.tutores.length&&semPin)todo.push(['warn',`${semPin} TEF sem PIN para confirmar presenças`,'partilha']);
   if(semEquip)todo.push(['acc',`${semEquip} estagiário(s) com equipamento por entregar`,'equipamentos']);
   const proxHTML=prox?(()=>{const d=pd(prox.data);return `<div class="next"><div class="datebox"><b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span></div><div><div class="lab">Próxima formação · ${prox.n}.ª de ${S.form.length}</div><div class="t">${esc(prox.tema||'Tema por definir')}</div><div class="small muted">${esc(prox.formador||'Formador por definir')} · ${prox.ini?esc(prox.ini+'–'+prox.fim):fmtH(fDur(prox))}${prox.local?' · '+esc(prox.local):''}</div></div></div>`})():`<div class="panel">Todas as formações já foram realizadas.</div>`;
   const rows=S.est.map(e=>{
     const pres=S.form.filter(f=>formRealizada(f)&&f.pres[e.id]).length;
     const av=S.aval.filter(a=>a.estId===e.id).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
-    return `<tr><td><b>${esc(e.nome)}</b></td><td>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:'<span class="muted">—</span>'}</td><td>${esc(e.tutor)||'<span class="muted">—</span>'}</td><td>${progHTML(e)}</td><td class="num">${feitas?`${pres}/${feitas}`:'—'}</td><td class="num">${av?`<b>${n1(notaAval(av))}</b> <span class="muted small">${esc(av.momento)}</span>`:'<span class="muted">—</span>'}</td></tr>`}).join('');
+    return `<tr><td><b>${esc(e.nome)}</b></td><td>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:'<span class="muted">—</span>'}</td><td>${esc(e.tutor)||'<span class="muted">—</span>'}</td><td>${progHTML(e)}</td><td class="num">${(()=>{const pos=pres+(S.form.length-feitas);const c=pres>=CERT_MIN?'ok':pos<CERT_MIN?'bad':'';return feitas?`<span class="pill ${c}" title="${pres>=CERT_MIN?'Já tem as presenças para certificação':pos<CERT_MIN?'Já não chega às '+CERT_MIN+' presenças':'Pode faltar a '+(pos-CERT_MIN)+' sessão(ões)'}">${pres}/${feitas}</span>`:'—'})()}</td><td>${S.recebidos[e.id]?`<div class="prog">${barHTML(dosProg(S.recebidos[e.id].dos))}</div>`:'<span class="muted small">sem dados</span>'}</td><td class="num">${av?`<b>${n1(notaAval(av))}</b> <span class="muted small">${esc(av.momento)}</span>`:'<span class="muted">—</span>'}</td></tr>`}).join('');
   if(!S.est.length)todo.unshift(['warn','Ainda não há estagiários: importa o ficheiro de dados em "Dados" ou adiciona-os','estagiarios']);
   return `${proxHTML}
   <div class="stats">
@@ -273,7 +368,7 @@ V.inicio=()=>{
   </div>
   ${todo.length?`<div class="panel"><h3>Por tratar</h3><ul class="todo">${todo.map(([c,t,tab])=>`<li><span class="pill ${c}">${c==='acc'?'pendente':'falta'}</span><button class="btn ghost sm" type="button" data-act="tab" data-k="${tab}">${esc(t)}</button></li>`).join('')}</ul></div>`:''}
   <div><div class="bar-head" style="margin-bottom:8px"><h2 class="sec">Ponto de situação</h2></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Local</th><th>Tutor</th><th>Horas</th><th class="num">Formações</th><th class="num">Avaliação</th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>`;
+  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Local</th><th>Tutor</th><th>Horas</th><th class="num">Formações</th><th>Dossier</th><th class="num">Avaliação</th></tr></thead><tbody>${rows||'<tr><td colspan="7" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>`;
 };
 
 V.estagiarios=()=>{
@@ -319,11 +414,13 @@ V.horarios=()=>{
 V.horas=()=>{
   const f=UI.hEst;
   const regs=S.registos.filter(r=>!f||r.estId===f).sort((a,b)=>(b.data+b.ini).localeCompare(a.data+a.ini));
-  const resumo=S.est.map(e=>{const h=horasEst(e.id);return `<tr><td>${esc(e.nome)}</td><td class="num">${fmtH(h.sala)}</td><td class="num">${fmtH(h.form)}</td><td>${progHTML(e)}</td></tr>`}).join('');
-  const lista=regs.map(r=>`<tr><td>${fmtD(r.data)}</td><td>${esc(nomeEst(r.estId))}</td><td>${r.ini}–${r.fim}</td><td class="num">${fmtH(dur(r.ini,r.fim))}</td><td><span class="pill">${esc(r.tipo)}</span>${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><button class="btn sm" type="button" data-act="editReg" data-id="${r.id}">Editar</button></td></tr>`).join('');
+  const resumo=S.est.map(e=>{const h=horasEst(e.id);return `<tr><td>${esc(e.nome)}</td><td class="num">${fmtH(h.sala)}</td><td class="num">${fmtH(h.form)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${progHTML(e)}</td></tr>`}).join('');
+  const appRows=S.est.filter(e=>!f||e.id===f).flatMap(e=>regsApp(e.id).map(r=>({k:r.date+r.ini,h:`<tr><td>${fmtD(r.date)}</td><td>${esc(e.nome)}</td><td>${r.start}–${r.end}</td><td class="num">${r.falta?'—':fmtH(dur(r.start,r.end))}</td><td>${r.falta?'<span class="pill bad">Falta</span>':r.tef?`<span class="pill ok">Confirmado</span> <span class="small muted">${esc(r.tef)}</span>`:'<span class="pill warn">Por confirmar</span>'}${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><span class="small muted">app</span></td></tr>`})));
+  const lista0=regs.map(r=>({k:r.data+r.ini,h:`<tr><td>${fmtD(r.data)}</td><td>${esc(nomeEst(r.estId))}</td><td>${r.ini}–${r.fim}</td><td class="num">${fmtH(dur(r.ini,r.fim))}</td><td><span class="pill">${esc(r.tipo)}</span>${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><button class="btn sm" type="button" data-act="editReg" data-id="${r.id}">Editar</button></td></tr>`}));
+  const lista=[...lista0,...appRows].sort((a,b)=>b.k.localeCompare(a.k)).map(x=>x.h).join('');
   return `<div class="bar-head"><h2 class="sec">Registo de horas</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editReg">Registar horas</button></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Sala</th><th class="num">Formações</th><th>Total / exigido</th></tr></thead><tbody>${resumo}</tbody></table></div>
-  <p class="small muted" style="margin:0">As horas de formação contam automaticamente a partir das presenças marcadas no separador Formações.</p>
+  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Sala</th><th class="num">Formações</th><th class="num">Por confirmar</th><th>Total / exigido</th></tr></thead><tbody>${resumo}</tbody></table></div>
+  <p class="small muted" style="margin:0">As horas de formação contam a partir das presenças marcadas em Formações. As presenças registadas pelos estagiários na app só contam depois de confirmadas pelo TEF.</p>
   <div class="bar-head"><h3 style="margin:0">Registos</h3><span class="sp"></span><select id="hEst" data-chg="hEst" aria-label="Filtrar por estagiário"><option value="">Todos os estagiários</option>${S.est.map(e=>`<option value="${e.id}"${f===e.id?' selected':''}>${esc(e.nome)}</option>`).join('')}</select></div>
   ${lista?`<div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Estagiário</th><th>Horário</th><th class="num">Horas</th><th>Tipo</th><th></th></tr></thead><tbody>${lista}</tbody></table></div>`:'<div class="panel empty">Sem registos. Usa "Registar horas" ou gera-os a partir do horário no separador Horários.</div>'}`;
 };
@@ -334,16 +431,16 @@ V.formacoes=()=>{
     return `<div class="fitem${formRealizada(f)?' past':''}"><button class="row-btn" type="button" data-act="fToggle" data-id="${f.id}" aria-expanded="${open}"><span class="fnum">${f.n}</span><span style="min-width:0"><b>${esc(f.tema||'Tema por definir')}</b><br><span class="small muted">${fmtD(f.data)} · ${esc(f.formador||'formador por definir')} · ${f.ini?esc(f.ini+'–'+f.fim):fmtH(fDur(f))}</span></span><span class="pill ${np?'ok':''}">${np}/${S.est.length}</span></button>
     ${open?`<div class="fbody"><dl class="kv"><dt>Data</dt><dd>${fmtDY(f.data)}</dd><dt>Horário</dt><dd>${f.ini?esc(f.ini+'–'+f.fim):'por definir'} (${fmtH(fDur(f))})</dd><dt>Local</dt><dd>${esc(f.local)||'—'}</dd><dt>Sumário</dt><dd>${esc(f.sumario)||'—'}</dd></dl>
       <div class="bar-head"><h3 style="margin:0">Presenças</h3><span class="sp"></span><button class="btn sm" type="button" data-act="presTodos" data-id="${f.id}">Marcar todos</button><button class="btn sm" type="button" data-act="editForm" data-id="${f.id}">Editar formação</button></div>
-      <div class="pres">${S.est.map(e=>`<label><input type="checkbox" data-chg="pres" data-f="${f.id}" data-e="${e.id}"${f.pres[e.id]?' checked':''}>${esc(e.nome)}</label>`).join('')}</div></div>`:''}</div>`}).join('');
+      <div class="pres">${S.est.map(e=>`<div class="presrow"><label><input type="checkbox" data-chg="pres" data-f="${f.id}" data-e="${e.id}"${f.pres[e.id]?' checked':''}>${esc(e.nome)}</label><select data-chg="fnota" data-f="${f.id}" data-e="${e.id}" aria-label="Avaliação de ${esc(e.nome)} nesta formação"${f.pres[e.id]?'':' disabled'}><option value="">nota</option>${[1,2,3,4,5].map(n=>`<option${(f.notas||{})[e.id]===n?' selected':''}>${n}</option>`).join('')}</select></div>`).join('')}</div><p class="small muted" style="margin:0">Nota do formador de 1 a 5: participação e execução prática.</p></div>`:''}</div>`}).join('');
   return `<div class="bar-head"><h2 class="sec">Formações de sexta</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editForm">Adicionar formação</button></div>
-  <p class="small muted" style="margin:0">14 sessões de 30 out 2026 a 12 fev 2027, até 2h cada. Não há sessões a 25 dez e 1 jan.</p>
+  <p class="small muted" style="margin:0">14 sessões às sextas, das 14h30 às 16h30, de 30 out 2026 a 12 fev 2027, alternando entre Penafiel e Lousada. Certificado com pelo menos ${CERT_MIN} presenças e avaliação final positiva.</p>
   <div style="display:grid;gap:8px">${items}</div>`;
 };
 
 V.avaliacao=()=>{
   const sel=UI.aEst||S.est[0]?.id||'';
   const e=estById(sel);
-  const resumo=S.est.map(x=>{const g=m=>{const a=S.aval.filter(a=>a.estId===x.id&&a.momento===m).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];return a?`<b>${n1(notaAval(a))}</b>`:'<span class="muted">—</span>'};return `<tr><td>${esc(x.nome)}</td><td class="num">${g('Intercalar')}</td><td class="num">${g('Final')}</td></tr>`}).join('');
+  const resumo=S.est.map(x=>{const g=m=>{const a=S.aval.filter(a=>a.estId===x.id&&a.momento===m).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];return a?`<b>${n1(notaAval(a))}</b>`:'<span class="muted">—</span>'};const ns=S.form.map(f=>(f.notas||{})[x.id]).filter(Boolean);return `<tr><td>${esc(x.nome)}</td><td class="num">${ns.length?n1(ns.reduce((a,b)=>a+b,0)/ns.length)+' <span class="small muted">('+ns.length+')</span>':'<span class="muted">—</span>'}</td><td class="num">${g('Intercalar')}</td><td class="num">${g('Final')}</td></tr>`}).join('');
   const avs=e?S.aval.filter(a=>a.estId===e.id).sort((a,b)=>(a.data||'').localeCompare(b.data||'')):[];
   const fichas=avs.map(a=>`<div class="panel" style="display:grid;gap:10px"><div class="bar-head"><span class="pill acc">${esc(a.momento)}</span><span class="small muted">${fmtDY(a.data)}${a.avaliador?' · '+esc(a.avaliador):''}</span><span class="sp"></span><span class="grade">${n1(notaAval(a))}<small> /20</small></span><button class="btn sm" type="button" data-act="editAval" data-id="${a.id}">Editar</button></div>
     <div class="crit">${S.criterios.map(c=>{const v=a.notas?.[c.id]||0;return `<span>${esc(c.nome)}${c.peso!==1?` <span class="muted small">×${String(c.peso).replace('.',',')}</span>`:''}</span><span class="dots" aria-label="${v} em 5">${[1,2,3,4,5].map(n=>`<i class="${n<=v?'on':''}"></i>`).join('')}</span>`}).join('')}</div>
@@ -352,7 +449,7 @@ V.avaliacao=()=>{
   <div class="chips">${S.est.map(x=>`<button type="button" class="chip${x.id===sel?' sel':''}" data-act="aEst" data-id="${x.id}">${esc(x.nome)}</button>`).join('')}</div>
   ${e?`<div class="bar-head"><h3 style="margin:0">${esc(e.nome)}</h3><span class="sp"></span><button class="btn primary" type="button" data-act="editAval" data-est="${e.id}">Nova avaliação</button></div>${fichas||'<div class="panel empty">Sem avaliações para este estagiário.</div>'}`:''}
   <p class="small muted" style="margin:0">Cada critério vale de 1 a 5. A nota final é a média ponderada convertida para a escala 0–20.</p>
-  <div><h3>Resumo</h3><div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Intercalar</th><th class="num">Final</th></tr></thead><tbody>${resumo}</tbody></table></div></div>`;
+  <div><h3>Resumo</h3><div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Formações (1–5)</th><th class="num">Intercalar</th><th class="num">Final</th></tr></thead><tbody>${resumo}</tbody></table></div></div>`;
 };
 
 V.equipamentos=()=>{
@@ -518,19 +615,326 @@ function juntar(o){
   (o.tutores||[]).forEach(t=>{if(!S.tutores.includes(t))S.tutores.push(t)});
   return `${uE} ficha(s) atualizada(s), ${nE} estagiário(s) novo(s)`;
 }
-A.importar=el=>{const p=$('#ferr');try{const o=JSON.parse($('#impTxt').value);if(!o||!Array.isArray(o.est)||!Array.isArray(o.form))throw 0;let msg='Dados importados';if(el.dataset.modo==='juntar')msg=juntar(o);else S=Object.assign(seed(),o);save();closeModal();render();toast(msg)}catch(e){p.textContent='O texto não é uma exportação válida desta app.';p.hidden=false}};
+A.importar=el=>{const p=$('#ferr');try{const o=JSON.parse($('#impTxt').value);if(!o||!Array.isArray(o.est)||!Array.isArray(o.form))throw 0;let msg='Dados importados';if(el.dataset.modo==='juntar')msg=juntar(o);else S=Object.assign(seed(),o);S.pins=S.pins||{};S.recebidos=S.recebidos||{};aplicaPlano();save();closeModal();render();toast(msg)}catch(e){p.textContent='O texto não é uma exportação válida desta app.';p.hidden=false}};
 A.repor=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar: apagar tudo';return}S=seed();save();closeModal();render();toast('Dados repostos')};
 
 const C={};
 C.hEst=el=>{UI.hEst=el.value;render()};
+C.fnota=el=>{const f=S.form.find(x=>x.id===el.dataset.f);f.notas=f.notas||{};if(el.value)f.notas[el.dataset.e]=Number(el.value);else delete f.notas[el.dataset.e];save();toast('Nota gravada')};
 C.pres=el=>{const f=S.form.find(x=>x.id===el.dataset.f);if(el.checked)f.pres[el.dataset.e]=true;else delete f.pres[el.dataset.e];save();render()};
 C.eq=el=>{const e=estById(el.dataset.id),k=el.dataset.k;e[k]=el.type==='number'?Math.max(0,Number(el.value)||0):el.value;if((k==='entT'||k==='entC')&&e[k]>0&&!e.entData)e.entData=hoje();save();render();toast('Gravado')};
 C.impFile=el=>{const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#impTxt').value=r.result};r.readAsText(f)};
 
+/* ================= DOSSIER: estrutura ================= */
+const C3=['Grupos musculares','Pontos-chave','Erros comuns'];
+const DOS=[
+{id:'mv',t:'Missão e valores',tipo:'leitura',html:`<h4>Porquê treinar connosco?</h4><p>Somos uma equipa focada na promoção de estilos de vida saudáveis com o intuito de alcançar o bem-estar geral e a qualidade de vida plena.</p><p>Situamo-nos orgulhosamente na cidade de Penafiel, região do Vale do Sousa, e temos a certeza de que todos se sentirão confortáveis no nosso espaço.</p><p>Assumimos o compromisso de lhe oferecer o melhor serviço possível, com um acompanhamento de excelência a um preço justo.</p>
+<h4>Missão</h4><p>A nossa missão é transmitir conhecimento e motivação para a prática de exercício físico e corretos hábitos nutricionais, como instrumentos chave na construção de um estilo de vida saudável, cultivando em simultâneo um espírito de comunidade e urbanidade.</p>
+<h4>Valores</h4><p><b>Paixão por ser saudável.</b> Acreditamos que ser ativo e adotar estilos de vida saudáveis interfere diretamente na sua qualidade de vida. O nosso compromisso é partilhar consigo o nosso conhecimento, recursos, ferramentas e entusiasmo com o objetivo de fazê-lo acreditar que é possível adquirir as habilidades e a confiança necessária para atingir os seus objetivos. SER MAIS SAUDÁVEL…</p><p><b>Alcançar resultados.</b> Ambicionamos que alcance sempre os seus objetivos e a nossa equipa compromete-se a acompanhá-lo nesse caminho.</p><p><b>Serviço de excelência.</b> Queremos superar as suas expectativas e assim torná-lo um promotor ativo da adoção de estilos de vida saudáveis.</p><p><b>Padrões de qualidade.</b> Procuramos sempre oferecer-lhe um serviço de elevada qualidade. Definimos a nossa qualidade através da avaliação de diversos itens como limpeza, segurança, serviços prestados, resultados alcançados, disponibilidade e facilidade de acesso.</p><p><b>Ambiente convidativo.</b> Esforçamo-nos para criar um ambiente agradável e divertido que reflita os interesses de todas as pessoas que servimos. Queremos que as nossas instalações sejam um espaço confortável e agradável para prática de exercício físico, onde possa livremente interagir e criar novos laços sociais.</p><p><b>Boa relação qualidade/preço.</b> Investimos todos os dias para estar na vanguarda dos serviços que disponibilizamos, otimizamos os nossos recursos para lhe fazer chegar o melhor serviço ao melhor preço.</p><p><b>Inovação.</b> Valorizamos a mudança e criação de novos projetos. Esforçamo-nos para sermos agentes ativos na inovação e criação de novas ideias e conceitos.</p>`},
+{id:'mf',t:'Manifesto da cultura Playlife',tipo:'leitura',html:`<p><b>1. Comunicação interna.</b> Somos uma empresa de colaboradores empáticos e simpáticos entre nós. Somos compreensivos com os colegas e exigentes connosco e com os outros. O ambiente é agradável.</p><p><b>2. Confiança.</b> Confiamos uns nos outros. Acreditamos uns nos outros, pois sabemos que agem de boa-fé.</p><p><b>3. Exigência.</b> Prestamos contas uns aos outros. Estamos à vontade para criticar e pedir contas, mesmo aos superiores hierárquicos. Não compactuamos com a mediocridade, por isso cada membro deve auto exigir e exigir aos outros. Festejamos as vitórias e puxamos pelos outros, mas não permitimos que se arranjem desculpas para justificar os resultados fracos.</p><p><b>4. Gestão de conflitos.</b> A divergência de opiniões é um impulso importante, um estímulo para as equipas e para as empresas. É por isso crítico distinguir o conflito ideológico (de pessoas apaixonadas e que se batem pelas suas convicções), que é saudável e positivo, do conflito pessoal, que é mesquinho e estéril. Um diálogo musculado, ideológico, faz parte da nossa cultura. Não discutimos pessoas, discutimos ideias. Elogiamos pessoas, criticamos comportamentos.</p><p><b>5. Sentido de urgência.</b> A nossa empresa é como um barco, e como tal, para chegar a um bom porto precisa da ação e colaboração de todos. Se há uma coisa para fazer, é para fazer já, e não deixar para depois.</p><p><b>6. Sentido de propriedade.</b> A empresa é um organismo vivo do qual todos fazem parte, sem exceção. A empresa pertence-nos e nós pertencemos-lhe. Seremos os primeiros a arregaçar as mangas nos momentos críticos.</p><p><b>7. Transparência.</b> A nossa cultura assenta no reconhecimento de dizermos a verdade, de nos cingirmos aos factos. De pessoas verdadeiras e transparentes.</p><p><b>8. Foco.</b> Não há resultados sem concentração. Somos uma cultura que busca a performance, e uma cultura de performance é uma cultura de foco.</p><p><b>9. Simpatia.</b> A cordialidade e a simpatia são regra da nossa empresa. Sem isso não podemos almejar ser uma equipa vencedora e de sucesso.</p><p><b>10. Reconhecimento.</b> Somos uma empresa em que os colaboradores reconhecem e valorizam o esforço, a dedicação e a qualidade dos outros.</p><p><b>11. Resiliência.</b> Acreditamos que em cada desafio há uma oportunidade.</p><p><b>12. Exemplo.</b> Primamos pelo exemplo a todos os níveis. Queremos ser um exemplo para todos os nossos clientes e colegas. Fazemos da promoção da saúde o nosso estilo de vida.</p>`},
+{id:'tef',t:'Características e funções do TEF',tipo:'rubrica',itens:['Recebe e integra os novos clientes (trata pelo nome próprio)','Ensina o cliente a utilizar os equipamentos e a executar os exercícios corretamente de acordo com o seu plano de treino','Corrige a execução dos exercícios por parte do cliente sempre que se justificar','Colabora com o cliente no sentido da sua evolução (+carga, -tempo, +rápido, etc.)','Conhece os objetivos do cliente e motiva-o para os atingir','Gera compromisso para o próximo treino','Promove conexões com os clientes','Tem uma postura ativa e dinâmica','Cumprimenta todos os clientes que estão a treinar quando começa o turno e despede-se de todos quando acaba','É simpático e disponível','Nunca coloca a prescrição de um colega em causa','Mantém os equipamentos organizados, arrumados, limpos e preservados','Gere a climatização e a luminosidade','É responsável por tudo o que acontece na sala de exercício','Tem uma conduta Playlife','Divulga ativamente os eventos / atividades do Playlife e parceiros','Garante a total aplicação do regulamento interno e manual de operações, e notifica o diretor técnico sempre que verificar que assim não ocorre','Regista e notifica sugestões e reclamações ao diretor técnico','Regista e notifica avarias ao diretor do clube']},
+{id:'exp',t:'Experiência “do” treino',tipo:'rubrica',grupos:[['Receção ao cliente',['O professor acompanha o cliente ao primeiro equipamento de treino','O cliente é tratado pelo nome','O cliente é recebido até 2 minutos após entrar na sala de exercício']],['Acompanhamento de treino',['O professor tem conhecimento da rotina de treino do cliente','O professor sabe qual é o objetivo do cliente e o compromisso de treino semanal','Não há clientes à espera do professor para prosseguir o seu treino','O professor interage várias vezes durante o treino','Não há clientes a executar de forma errada os exercícios']],['Despedida do cliente',['O professor despede-se sempre do cliente após o treino','O professor gera sempre compromisso para o próximo treino com o cliente']]]},
+{id:'card',t:'Equipamentos cárdio',tipo:'ficha',campos:['Notas','Erros mais comuns'],itens:['Passadeira','Elíptica','Bicicleta','Remo','VMX','True Transverse','Climber','Air Bike']},
+{id:'maq',t:'Máquinas de musculação',tipo:'ficha',campos:C3,itens:['Leg Press','Leg Extension','Leg Curl','Máquina Abdutores','Máquina Adutores','Máquina Agachamento','Máquina Elevação Pélvica','Smith Machine','Máquina Supino','Chest Press','Peck Deck','Peck Back','Pulley Row','Lat Pulldown','Deltoide Press','Lower Back','Upper Abdominal','Máquina Lombar','Máquina de Gémeos']},
+{id:'pc',t:'Exercícios com peso corporal',tipo:'ficha',campos:C3,itens:['Birdog','CatCow','Agachamento com peso corporal','Agachamento com salto','Lunge com peso corporal','Lunge búlgaro','Walking lunges','Wall-sit','Elevação da bacia','Pistol','Remada TRX','Aberturas em Y TRX','Triceps dips','Prancha frontal','Prancha lateral','Russian twist','Sit ups','Abdominal crunch','Mountain climbers','Jumping jacks','Push ups','Pull ups']},
+{id:'cb',t:'Exercícios com carga (básicos)',tipo:'ficha',campos:C3,itens:['Supino com halteres','Supino com barra','Crucifixo com halteres','Aberturas polia','Aberturas banco polia','Remada baixa com barra','Remada com halteres unilateral no banco','Voos polia','Voos com halteres','Voos com halteres no banco a 45°','Remada baixa com KTB','Pullover na polia','Pullover com halter','Remada baixa na polia','Elevação frontal com halteres/barra','Press ombros com halteres/barra','Remada alta com barra em Z','Elevação lateral com halteres','Encolhimento com halteres','Press ombros sentado com halteres/barra','Bíceps curl com barra','Press tríceps à barriga com barra','Press tríceps à testa com barra','Bíceps concentrado com halteres','Bíceps curl com halteres','Bíceps martelo com halteres','Bíceps curl com barra polia','Tríceps extensão cotovelo com corda/barra polia','Tríceps kick back','Agachamento com barra','Flexão plantar com barra','Lunges com barra','Front squat com barra','Lunge com halteres','Agachamento sumo com KTB','Goblet squat com KTB','Subidas à caixa com KTB','Abdução polia','Adução polia','Kick back glúteo polia']},
+{id:'cc',t:'Exercícios com carga (complexos)',tipo:'ficha',campos:C3,itens:['Power clean com barra','KTB swing','Deadlift com barra','Deadlift com halteres','Clean and press com barra','Overhead squat com barra','Bons dias com barra','Clean and jerk com barra','Thrusters com barra','Push press com barra','Devil press com halteres','Snatch com halteres','Remada unilateral com halteres em prancha','Remada baixa T','Cluster','OH lunge','Lunge búlgaro com barra','Lunge búlgaro com halteres','Pistol com KTB','Wall ball','Ground to overhead','Man makers']},
+{id:'m1',t:'Módulo 1: Prescrição de exercício',tipo:'rubrica',grupos:[['Fatores que influenciam a prescrição',['Historial desportivo','Autoestima e motivação','Conhecimentos técnicos do indivíduo','Tempo disponível','Equipamento disponível','Experiências e áreas de conhecimento do instrutor']],['Princípios do treino',['Princípio da adaptação','Princípio da sobrecarga','Princípio da progressão','Princípio da especificidade','Princípio da continuidade','Princípio da ciclicidade','Princípio da individualização','Princípio da multilateralidade ou globalidade','Princípio da regressão']],['Adaptações do sistema muscular',['Morfológico / anatómico','Neurológico','Metabólico / bioquímico']],['Adaptações do sistema cardiorrespiratório',['Adaptações respiratórias','Adaptações metabólicas','Adaptações musculares e neurológicas','Adaptações funcionais']],['Periodização',['Microciclos','Mesociclos','Macrociclos']]]},
+{id:'m2',t:'Módulo 2: Treino de força',tipo:'rubrica',grupos:[['Formas de manifestação de força',['Força máxima','Força absoluta','Força relativa','Força rápida','Força inicial','Força explosiva','Força reativa','Força resistência']],['Determinação de 1RM',['Determinação direta','Determinação estimada']],['Variáveis do treino de força',['Intensidade','Séries','Repouso entre séries','Repetições','Frequência','Volume','Ordem dos exercícios','Velocidade de execução']],['Conceito de músculo',['Agonista','Antagonista','Sinergista']],['Conceito de ROM',['Range of movement']],['Protocolos de treino',['Séries em pirâmide','Super slow sets','Superséries','Circuito','Drop sets','Treino excêntrico (trabalho negativo)']]]},
+{id:'m3',t:'Módulo 3: Treino cardiorrespiratório',tipo:'rubrica',grupos:[['Componentes de uma sessão de treino',['Aquecimento','Fase fundamental','Retorno à calma']],['Variáveis de treino',['Frequência','Intensidade','Tempo','Tipo']],['Métodos de treino cardiovascular',['Contínuo','Intervalado']],['Conceito de VO2 máx',['VO2 máx']]]},
+{id:'af',t:'Avaliação física',tipo:'rubrica',grupos:[['Avaliação da saúde',['Estratificação de risco','Fatores de risco cardiovascular','Categorização do risco cardiovascular','Anamnese']],['Avaliação da composição corporal',['IMC','Bioimpedância','Pregas adiposas','Perímetros','Razão cintura-anca','% Massa gorda e valores de referência']],['Valores de repouso',['Frequência cardíaca de repouso','Pressão arterial de repouso']],['Avaliação da aptidão cardiorrespiratória',['Teste da milha a caminhar','Teste da milha a correr','Teste Cooper']],['Avaliação da aptidão muscular',['Teste direto de 1RM','Teste indireto de 1RM','Teste push ups','Teste curl ups']],['Avaliação da flexibilidade',['Sit and reach']],['Avaliação postural',['Estática','Dinâmica (overhead squat)']],['Perímetros',['Braço','Tórax','Abdominal','Cintura','Quadril','Coxa','Perna']]]},
+{id:'ag',t:'Aulas de grupo: checklist',tipo:'checklist',grupos:[['Postura e assiduidade',['Chega mais cedo à sala','Cria um ambiente acolhedor para receção aos alunos','Gere o tempo de aula eficazmente']],['Comunicação',['Introduz-se aos alunos cumprimentando-os e apresentando-se','Recebe-os e identifica-os pelo seu nome','Sabe os objetivos dos seus alunos','Não se prende com um sócio demasiado tempo nem evidencia favoritismo','Estimula a sua felicidade e consegue gerar novo compromisso de treino','Explica e estimula à compreensão dos objetivos do seu treino']],['Conhecimentos e aspetos metodológicos',['Conhece e aplica os fundamentos da metodologia da sua área','Conhece e aplica os princípios subjacentes à condução de uma aula que proporcione experiências desejadas','Executa as suas funções e tarefas subjacentes de modo consistente']],['Interação / dinamização',['Promove o seu trabalho/horário utilizando para o efeito as plataformas de comunicação da empresa e/ou pessoais','Cria e desenvolve dinâmicas de grupo que permitam a conexão entre os seus alunos de forma a mantê-los motivados e comprometidos com o “próximo” treino']]]},
+{id:'rel',t:'Aulas de grupo: relatórios',tipo:'relatorios',min:3}
+];
+DOS.forEach((s,n)=>{s.n=n+1;if(s.grupos){s.itens=[];s.grupos.forEach(([g,l])=>l.forEach(t=>s.itens.push({g,t})))}else if(s.itens)s.itens=s.itens.map(t=>({t}));(s.itens||[]).forEach((it,i)=>it.id=s.id+'.'+i)});
+const REL_C=[['aula','Aula'],['data','Data'],['obj','Objetivo'],['mais','Pontos (+)'],['menos','Pontos (−)'],['obs','Observações']];
+const CK=[['cumpre','Cumpre'],['melhorar','A melhorar'],['na','N/A']];
+const relCheio=r=>REL_C.slice(0,5).every(([k])=>String(r[k]||'').trim());
+const fichaCheia=(s,d)=>s.campos.every((c,i)=>String(d?.v?.[i]||'').trim());
+function secProg(s,dos){
+  dos=dos||{};
+  if(s.tipo==='leitura')return {p:dos[s.id]?.lido?2:0,m:2};
+  if(s.tipo==='relatorios'){const sc=(dos.rel||[]).map(r=>(relCheio(r)?1:0)+(r.pt?1:0)).sort((a,b)=>b-a).slice(0,s.min);return {p:sc.reduce((a,b)=>a+b,0),m:2*s.min}}
+  let p=0;s.itens.forEach(it=>{const d=dos[it.id]||{};if(s.tipo==='checklist'){if(d.r)p+=2}else{if(s.tipo==='ficha'?fichaCheia(s,d):d.al)p++;if(d.pt)p++}});
+  return {p,m:2*s.itens.length};
+}
+function dosProg(dos){let p=0,m=0;const secs={};DOS.forEach(s=>{const x=secProg(s,dos);secs[s.id]=x;p+=x.p;m+=x.m});return {p,m,pct:m?Math.round(p/m*100):0,secs}}
+const pctOf=x=>x.m?Math.round(x.p/x.m*100):0;
+const barHTML=x=>{const p=pctOf(x);return `<div class="track"><i class="${p>=100?'done':''}" style="width:${p}%"></i></div><span class="small">${p}%</span>`};
+const fichaPill=(s,d)=>d.pt?'<span class="pill ok">validado</span>':fichaCheia(s,d)?'<span class="pill acc">preenchido</span>':'<span class="pill">por preencher</span>';
+const idu=id=>id.replace('.','_');
+function ptCell(id,d,o){
+  if(o.tef)return `<label class="mini pt"><input type="checkbox" data-chg="al_pt" data-i="${id}"${d.pt?' checked':''}>PT</label>`;
+  return d.pt?`<span class="pill ok" title="${esc(d.pt)}">PT · ${esc(d.pt.split(' ')[0])}</span>`:'<span class="pill">PT</span>';
+}
+function dosSecHTML(s,dos,o){
+  dos=dos||{};
+  if(s.tipo==='leitura'){const x=dos[s.id]||{};
+    if(o.ro)return `<p>${x.lido?'<span class="pill ok">Lido e compreendido</span>':'<span class="pill">Ainda não leu</span>'}</p>`;
+    return `<div class="leit">${s.html}</div><label class="chk"><input type="checkbox" data-chg="al_lido" data-s="${s.id}"${x.lido?' checked':''}> Li e compreendi</label>`}
+  if(s.tipo==='rubrica'||s.tipo==='checklist'){let g0=null;return `<div class="rlist">${s.itens.map(it=>{const d=dos[it.id]||{};const h=it.g&&it.g!==g0?`<h4 class="rg">${esc(g0=it.g)}</h4>`:'';
+    if(s.tipo==='checklist')return h+`<div class="ritem${d.r?' done':''}"><span>${esc(it.t)}${d.pt?`<small class="muted"> · ${esc(d.pt)}</small>`:''}</span><span class="rcols">${CK.map(([v,l])=>`<label class="mini"><input type="radio" name="ck_${idu(it.id)}" value="${v}" data-chg="al_ck" data-i="${it.id}"${d.r===v?' checked':''}${o.tef?'':' disabled'}>${l}</label>`).join('')}</span></div>`;
+    return h+`<div class="ritem${d.pt?' done':''}"><span>${esc(it.t)}</span><span class="rcols"><label class="mini"><input type="checkbox" data-chg="al_al" data-i="${it.id}"${d.al?' checked':''}${o.edit&&!d.pt?'':' disabled'}>Aluno</label>${ptCell(it.id,d,o)}</span></div>`}).join('')}</div>`}
+  if(s.tipo==='ficha'){
+    if(o.ro)return `<div class="tbl-wrap"><table><thead><tr><th>Item</th>${s.campos.map(c=>`<th>${esc(c)}</th>`).join('')}<th>PT</th></tr></thead><tbody>${s.itens.map(it=>{const d=dos[it.id]||{};return `<tr><td><b>${esc(it.t)}</b></td>${s.campos.map((c,i)=>`<td class="small">${esc(d.v?.[i]||'')||'<span class="muted">—</span>'}</td>`).join('')}<td>${d.pt?`<span class="pill ok">${esc(d.pt)}</span>`:'—'}</td></tr>`}).join('')}</tbody></table></div>`;
+    return s.itens.map(it=>{const d=dos[it.id]||{},op=o.open&&o.open[it.id];return `<div class="fi${d.pt?' done':''}"><button type="button" class="fi-h" data-act="al_tog" data-i="${it.id}" aria-expanded="${!!op}"><b>${esc(it.t)}</b><span data-pill="${it.id}">${fichaPill(s,d)}</span></button>${op?`<div class="fi-b">${s.campos.map((c,i)=>`<div class="fld"><label for="fv_${idu(it.id)}_${i}">${esc(c)}</label><textarea id="fv_${idu(it.id)}_${i}" rows="2" data-chg="al_fld" data-i="${it.id}" data-k="${i}"${o.edit&&!d.pt?'':' disabled'}>${esc(d.v?.[i]||'')}</textarea></div>`).join('')}<div class="rcols">${ptCell(it.id,d,o)}</div></div>`:''}</div>`}).join('')}
+  if(s.tipo==='relatorios'){const R=dos.rel||[];
+    const cards=R.map((r,ix)=>{const dis=o.edit&&!r.pt?'':' disabled';return `<div class="panel rel"><div class="bar-head"><b>Relatório ${ix+1}</b><span class="sp"></span>${r.pt?`<span class="pill ok">validado · ${esc(r.pt)}</span>`:relCheio(r)?'<span class="pill acc">preenchido</span>':'<span class="pill">por preencher</span>'}${o.edit&&!r.pt?`<button class="btn sm danger" type="button" data-act="al_relDel" data-r="${ix}">Apagar</button>`:''}</div><div class="fgrid">${REL_C.map(([k,l])=>`<div class="fld${k==='aula'||k==='data'?'':' full'}"><label for="rl_${ix}_${k}">${l}</label>${k==='data'?`<input type="date" id="rl_${ix}_${k}" value="${esc(r[k]||'')}" data-chg="al_relf" data-r="${ix}" data-k="${k}"${dis}>`:`<textarea id="rl_${ix}_${k}" rows="2" data-chg="al_relf" data-r="${ix}" data-k="${k}"${dis}>${esc(r[k]||'')}</textarea>`}</div>`).join('')}</div>${o.tef?`<label class="mini pt"><input type="checkbox" data-chg="al_relpt" data-r="${ix}"${r.pt?' checked':''}>Validado pelo TEF</label>`:''}</div>`}).join('');
+    return `<p class="small muted" style="margin:0">Um relatório por cada aula de grupo lecionada. Contam os 3 melhores.</p>${cards||(o.ro?'<p class="empty">Sem relatórios.</p>':'')}${o.edit?'<button class="btn" type="button" data-act="al_relAdd">Adicionar relatório</button>':''}`}
+  return '';
+}
+
+/* ================= ESTAGIÁRIO ================= */
+const AK='estagio_aluno_v2';
+let AL={cfg:null,me:null,reg:{},dos:{}};
+try{const x=JSON.parse(localStorage.getItem(AK));if(x&&typeof x==='object')AL=Object.assign(AL,x)}catch(e){}
+function alSave(){try{localStorage.setItem(AK,JSON.stringify(AL))}catch(e){toast('Não foi possível guardar neste dispositivo')}}
+const AUI={v:'hoje',mon:new Date().getMonth(),year:new Date().getFullYear(),sec:null,open:{},tef:null,week:segunda(hoje()),cur:null};
+const MESL=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const locNome=l=>l==='PNF'?'Penafiel':l==='LSD'?'Lousada':(l||'');
+const alMe=()=>AL.cfg?.est?.find(e=>e.id===AL.me)||null;
+const isTef=()=>!!(AUI.tef&&Date.now()<AUI.tef.ate);
+function alSlots(d){const m=alMe();return (AL.cfg.horarios||[]).filter(s=>s.estId===m.id&&ativo(s,d)).sort((a,b)=>a.ini.localeCompare(b.ini))}
+function alExpected(from,to){const out=[];let n=0;for(let d=from;d<=to&&n<800;d=addD(d,1),n++)alSlots(d).forEach(s=>out.push({date:d,ini:s.ini,fim:s.fim,local:s.local,key:d+'|'+s.ini}));return out}
+function alInicio(){const m=alMe();const des=(AL.cfg.horarios||[]).filter(s=>s.estId===m.id&&s.de).map(s=>s.de).sort();let a=m.inicio||des[0]||addD(hoje(),-60);if(a<addD(hoje(),-300))a=addD(hoje(),-300);return a}
+function alTot(){const m=alMe();let conf=0,pend=0,falt=0;Object.values(AL.reg).forEach(r=>{if(r.falta)falt++;else if(r.tef)conf+=dur(r.start,r.end);else pend+=dur(r.start,r.end)});const form=(AL.cfg.form||[]).filter(f=>f.pres&&f.pres[m.id]).reduce((a,f)=>a+fDur(f),0);return {conf,pend,falt,form,total:conf+form}}
+const ST={conf:['ok','Confirmado'],pend:['warn','Falta confirmação'],falta:['bad','Faltou'],por:['bad','Por registar'],fut:['','Agendado']};
+function alStatus(s,rg){if(rg){if(rg.falta)return 'falta';return rg.tef?'conf':'pend'}return s.date<hoje()?'por':'fut'}
+function shiftBtn(s,rg){const st=alStatus(s,rg),p=ST[st],x=rg||{},dt=pd(s.date);
+  return `<button class="shift" type="button" data-act="al_shift" data-k="${esc(s.key)}"><span class="sd"><b>${D3[dt.getDay()]}</b><small>${dt.getDate()} ${MES[dt.getMonth()]}</small></span><span class="sm"><b>${s.extra?'Extra':(TCOD[s.ini]||'Turno')}</b> · ${x.start||s.ini}–${x.end||s.fim}${s.local?' · '+esc(locNome(s.local)):''}${x.tef?`<small>Confirmado por ${esc(x.tef)}</small>`:''}${x.nota?`<small>“${esc(x.nota)}”</small>`:''}</span><span class="pill ${p[0]}">${p[1]}</span></button>`}
+function alMonthRows(y,mo){const f=`${y}-${String(mo+1).padStart(2,'0')}-01`,t=ds(new Date(y,mo+1,0));const rows=alExpected(f,t).map(s=>({...s,rg:AL.reg[s.key]}));const seen=new Set(rows.map(r=>r.key));
+  Object.entries(AL.reg).forEach(([k,x])=>{if(!seen.has(k)&&x.date>=f&&x.date<=t)rows.push({date:x.date,ini:x.ini,fim:x.fim,local:x.local,key:k,extra:true,rg:x})});return rows.sort((a,b)=>(a.date+a.ini).localeCompare(b.date+b.ini))}
+
+const ANAV=[['hoje','Hoje','M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10'],['horario','Horário','M4 6h16v14H4zM4 10h16M8 3v4M16 3v4'],['pres','Presenças','M4 12l5 5L20 6'],['dossier','Dossier','M4 5h7v15H4zM13 5h7v15h-7z'],['perfil','Perfil','M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0']];
+function renderAluno(){
+  $('#main').innerHTML=(isTef()?`<div class="tefbar"><span>Modo TEF: <b>${esc(AUI.tef.nome)}</b> está a validar</span><button class="btn sm" type="button" data-act="al_tefEnd">Terminar</button></div>`:'')+VA[AUI.v]();
+  $('#alnav').innerHTML=ANAV.map(([k,l,ic])=>`<button type="button" data-act="al_v" data-k="${k}" aria-current="${AUI.v===k}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ic}"/></svg>${l}</button>`).join('');
+}
+const VA={};
+VA.hoje=()=>{
+  const m=alMe(),t=alTot(),dp=dosProg(AL.dos),td=hoje(),req=Number(m.horasReq)||0;
+  const pct=req?Math.min(100,Math.round(t.total/(req*60)*100)):0;
+  const hojeS=alExpected(td,td),prox=alExpected(addD(td,1),addD(td,14)).slice(0,5);
+  const porReg=alExpected(alInicio(),addD(td,-1)).filter(s=>!AL.reg[s.key]).length;
+  const pend=Object.values(AL.reg).filter(r=>!r.falta&&!r.tef).length;
+  const fN=(AL.cfg.form||[]).filter(f=>f.data>=td).sort((a,b)=>a.data.localeCompare(b.data))[0];
+  return `<div class="panel"><div class="kpi"><div><span class="lab">Horas feitas</span><b>${fmtH(t.total)}</b><small class="muted">${req?`de ${req} h · ${pct}%`:'meta por definir'}</small></div><div><span class="lab">Dossier</span><b>${dp.pct}%</b><small class="muted">preenchido e validado</small></div></div>
+  <div class="lbl">Horas de estágio</div><div class="track lg"><i class="${pct>=100?'done':''}" style="width:${pct}%"></i></div>
+  <p class="small muted" style="margin:6px 0 0">${fmtH(t.conf)} em sala confirmadas pelo TEF · ${fmtH(t.form)} em formações${t.pend?` · ${fmtH(t.pend)} à espera de confirmação`:''}</p>
+  <div class="lbl">Dossier de estágio</div><div class="track lg"><i class="${dp.pct>=100?'done':''}" style="width:${dp.pct}%"></i></div></div>
+  ${porReg||pend?`<div class="panel warnp"><b>Atenção</b><p class="small" style="margin:4px 0 8px">${porReg?`${porReg} turno(s) por registar. `:''}${pend?`${pend} registo(s) sem confirmação do TEF.`:''}</p><button class="btn sm" type="button" data-act="al_v" data-k="pres">Ver presenças</button></div>`:''}
+  <div class="panel"><h3>Hoje · ${fmtD(td)}</h3>${hojeS.length?`<div class="shifts">${hojeS.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turno de estágio hoje.</p>'}<button class="btn sm" type="button" data-act="al_extra">Registar turno extra</button></div>
+  ${fN?(()=>{const d=pd(fN.data);return `<div class="next"><div class="datebox"><b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span></div><div><div class="lab">Próxima formação · ${fN.n}.ª</div><div class="t">${esc(fN.tema||'Tema por definir')}</div><div class="small muted">${esc(fN.formador||'Formador por definir')}${fN.ini?' · '+esc(fN.ini+'–'+fN.fim):''}${fN.local?' · '+esc(fN.local):''}</div></div></div>`})():''}
+  <div class="panel"><h3>Próximos turnos</h3>${prox.length?`<div class="shifts">${prox.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turnos nos próximos 14 dias.</p>'}</div>`;
+};
+VA.horario=()=>{
+  const m=alMe(),w=AUI.week,dias=[...Array(7)].map((_,i)=>addD(w,i));
+  const head=dias.map(d=>{const dt=pd(d);return `<th class="${d===hoje()?'hj':''}">${D3[dt.getDay()]}<br>${dt.getDate()}</th>`}).join('');
+  const rows=GRID.map(([cod,mp])=>`<tr><th class="tc">${cod}</th>${dias.map(d=>{const dia=pd(d).getDay(),h=mp[dia];if(!h)return '<td class="off"></td>';const s=alSlots(d).find(x=>x.ini===h[0]);return `<td class="${s?'me':''}${d===hoje()?' hj':''}"><span class="hr">${h[0]}<br>${h[1]}</span>${s&&s.local?`<b class="loc">${esc(s.local)}</b>`:''}</td>`}).join('')}</tr>`).join('');
+  const lista=dias.flatMap(d=>alSlots(d).map(s=>({d,s})));
+  const wk=lista.reduce((a,x)=>a+dur(x.s.ini,x.s.fim),0);
+  const forms=(AL.cfg.form||[]).slice().sort((a,b)=>a.data.localeCompare(b.data)).map(f=>`<div class="ritem"><span><b>${f.n}.</b> ${fmtD(f.data)} · ${esc(f.tema||'Tema por definir')}<small class="muted" style="display:block">${esc(f.formador||'')}${f.local?' · '+esc(f.local):''}${f.ini?' · '+esc(f.ini+'–'+f.fim):''}</small>${f.sumario?`<small style="display:block;margin-top:2px">${esc(f.sumario.split('\n')[0])}</small>`:''}</span><span>${f.pres&&f.pres[m.id]?'<span class="pill ok">presente</span>':f.data<hoje()?'<span class="pill">sem presença</span>':'<span class="pill acc">agendada</span>'}</span></div>`).join('');
+  return `<div class="bar-head"><h2 class="sec">O meu horário</h2></div>
+  <div class="bar-head"><button class="btn sm" type="button" data-act="al_week" data-d="-7" aria-label="Semana anterior">‹</button><b>${fmtD(w)} – ${fmtD(addD(w,6))}</b><button class="btn sm" type="button" data-act="al_week" data-d="7" aria-label="Semana seguinte">›</button><button class="btn sm ghost" type="button" data-act="al_week" data-d="0">Hoje</button></div>
+  <div class="tbl-wrap"><table class="grade-t al"><thead><tr><th></th>${head}</tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="panel"><div class="bar-head"><h3 style="margin:0">Esta semana</h3><span class="sp"></span><b>${fmtH(wk)}</b></div>${lista.length?lista.map(({d,s})=>`<div class="ritem"><span><b>${fmtD(d)}</b> · ${TCOD[s.ini]||''} ${s.ini}–${s.fim}</span><span class="pill acc">${esc(locNome(s.local)||'—')}</span></div>`).join(''):'<p class="empty">Sem turnos nesta semana.</p>'}</div>
+  <div class="panel"><h3>Formações de sexta</h3>${forms||'<p class="empty">Sem formações.</p>'}</div>`;
+};
+VA.pres=()=>{
+  const y=AUI.year,mo=AUI.mon,td=hoje();
+  const rows=alMonthRows(y,mo);let c=0,p=0,f=0;
+  rows.forEach(s=>{const st=alStatus(s,s.rg);if(st==='conf')c+=dur(s.rg.start,s.rg.end);else if(st==='pend')p+=dur(s.rg.start,s.rg.end);else if(st==='falta'||st==='por')f++});
+  return `<div class="bar-head"><button class="btn sm" type="button" data-act="al_mon" data-d="-1" aria-label="Mês anterior">‹</button><h2 class="sec" style="flex:1;text-align:center">${MESL[mo]} ${y}</h2><button class="btn sm" type="button" data-act="al_mon" data-d="1" aria-label="Mês seguinte">›</button></div>
+  <div class="stats"><div class="stat"><b>${fmtH(c)}</b><span>confirmadas</span></div><div class="stat"><b>${fmtH(p)}</b><span>sem confirmação</span></div><div class="stat"><b>${f}</b><span>faltas / por registar</span></div></div>
+  <div class="panel">${rows.length?`<div class="shifts">${rows.map(s=>shiftBtn(s,s.rg)).join('')}</div>`:'<p class="empty">Sem turnos neste mês.</p>'}</div>
+  <p class="small muted" style="margin:0">Toca num turno para registar a entrada e a saída. O TEF em sala confirma com o PIN dele. Só as horas confirmadas contam.</p>
+  <div class="inline"><button class="btn" type="button" data-act="al_pdf">Relatório do mês (PDF)</button><button class="btn primary" type="button" data-act="al_send">Enviar dados ao coordenador</button></div>`;
+};
+VA.dossier=()=>{
+  const dp=dosProg(AL.dos);
+  if(AUI.sec){const s=DOS.find(x=>x.id===AUI.sec);
+    return `<div class="bar-head"><button class="btn sm" type="button" data-act="al_back">‹ Dossier</button><span class="sp"></span>${s.tipo==='leitura'?'':isTef()?'':'<button class="btn sm" type="button" data-act="al_tefStart">Validação pelo TEF</button>'}</div>
+    <h2 class="sec">${s.n}. ${esc(s.t)}</h2><div class="prog" data-bar="${s.id}">${barHTML(dp.secs[s.id])}</div>
+    ${s.tipo==='ficha'?'<p class="small muted" style="margin:0">Toca em cada item para escrever. O item fica preenchido quando tiver todos os campos.</p>':''}
+    ${s.tipo==='rubrica'?'<p class="small muted" style="margin:0">Marca "Aluno" quando dominares o item. O TEF marca "PT" na validação.</p>':''}
+    ${s.tipo==='checklist'?'<p class="small muted" style="margin:0">Esta checklist é preenchida pelo TEF ou professor que assistiu à aula, em modo TEF.</p>':''}
+    <div class="dsec">${dosSecHTML(s,AL.dos,{edit:true,tef:isTef(),open:AUI.open})}</div>`}
+  const m=alMe(),id=AL.dos.ident||{};
+  const hor=[1,2,3,4,5,6,0].map(dia=>{const sl=(AL.cfg.horarios||[]).filter(s=>s.estId===m.id&&s.dia===dia&&(!s.ate||s.ate>=hoje())&&(!s.de||s.de<=addD(hoje(),6)));return sl.length?`${DIAS[dia]}: ${sl.map(s=>(TCOD[s.ini]||'')+' '+s.ini+'–'+s.fim).join(', ')}`:''}).filter(Boolean).join(' · ');
+  return `<h2 class="sec">Dossier de estágio</h2>
+  <div class="panel"><div class="bar-head"><b>Progresso total</b></div><div class="prog" data-bar="tot">${barHTML(dp)}</div></div>
+  <div class="panel"><h3>Identificação</h3><dl class="kv"><dt>Nome</dt><dd>${esc(m.nome)}</dd><dt>Tutor</dt><dd>${esc(m.tutor)||'—'}</dd><dt>Horário</dt><dd>${esc(hor)||'—'}</dd></dl>
+  <div class="fgrid" style="margin-top:10px"><div class="fld"><label for="id_c">Contacto</label><input id="id_c" type="tel" value="${esc(id.contacto||'')}" data-chg="al_ident" data-k="contacto"></div><div class="fld"><label for="id_e">Entidade formação</label><input id="id_e" value="${esc(id.entidade||m.escola||'')}" data-chg="al_ident" data-k="entidade"></div><div class="fld full"><label for="id_o">Observações</label><textarea id="id_o" rows="2" data-chg="al_ident" data-k="obs">${esc(id.obs||'')}</textarea></div></div></div>
+  <div class="secs">${DOS.map(s=>`<button class="secbtn" type="button" data-act="al_sec" data-s="${s.id}"><span class="n">${s.n}</span><span style="min-width:0"><b>${esc(s.t)}</b><span class="prog" data-bar="${s.id}">${barHTML(dp.secs[s.id])}</span></span></button>`).join('')}</div>`;
+};
+VA.perfil=()=>{
+  const m=alMe();
+  return `<h2 class="sec">${esc(m.nome)}</h2>
+  <div class="panel"><dl class="kv"><dt>Clube</dt><dd>${esc(locNome(m.local))||'—'}</dd><dt>Tutor</dt><dd>${esc(m.tutor)||'—'}</dd><dt>Escola</dt><dd>${esc(m.escola)||'—'}</dd><dt>Período</dt><dd>${m.inicio||m.fim?`${fmtDY(m.inicio)} → ${fmtDY(m.fim)}`:'—'}</dd><dt>Horas exigidas</dt><dd>${m.horasReq?m.horasReq+' h':'—'}</dd></dl></div>
+  <div class="panel"><h3>Enviar ao coordenador</h3><p class="small muted" style="margin:0 0 10px">Envia as tuas presenças e o dossier pelo menos uma vez por semana. ${AL.enviadoEm?'Último envio: '+new Date(AL.enviadoEm).toLocaleString('pt-PT')+'.':'Ainda não enviaste.'}</p><div class="inline"><button class="btn primary" type="button" data-act="al_send">Enviar ficheiro</button><button class="btn" type="button" data-act="al_copy">Copiar como texto</button></div></div>
+  <div class="panel"><h3>Atualizar horários</h3><p class="small muted" style="margin:0 0 8px">Configuração de ${AL.cfg.geradoEm?new Date(AL.cfg.geradoEm).toLocaleString('pt-PT'):'—'}. Abre a nova ligação do coordenador ou cola-a aqui.</p><textarea id="cfgTxt" rows="2" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn" type="button" data-act="al_cfgPaste">Aplicar</button></div>
+  <div class="inline"><button class="btn ghost" type="button" data-act="al_trocar">Não és ${esc(m.nome.split(' ')[0])}? Mudar</button></div>
+  <p class="small muted">Os teus dados ficam guardados neste telemóvel. Não limpes os dados do browser sem enviares primeiro ao coordenador.</p>`;
+};
+
+/* PIN do TEF */
+function tefOpts(){return `<option value="">Escolhe o TEF</option>${(AL.cfg.tefs||[]).map(t=>`<option>${esc(t.nome)}</option>`).join('')}`}
+function tefPinModal(onOk,title){AUI.pinOk=onOk;showModal(`<h2>${esc(title)}</h2><p class="small muted" style="margin:0">O TEF em sala escolhe o nome e escreve o PIN.</p><div class="fgrid"><div class="fld"><label for="tp_n">TEF</label><select id="tp_n">${tefOpts()}</select></div><div class="fld"><label for="tp_p">PIN</label><input id="tp_p" type="password" inputmode="numeric" autocomplete="off"></div></div><p class="ferr" id="ferr" hidden></p><div class="factions"><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Cancelar</button><button class="btn primary" type="button" data-act="al_pinOk">Confirmar</button></div>`)}
+function ferr(msg){const e=$('#ferr');if(e){e.textContent=msg;e.hidden=false}}
+function checkPin(){const n=$('#tp_n').value,p=$('#tp_p').value.trim(),t=(AL.cfg.tefs||[]).find(x=>x.nome===n);if(!t){ferr('Escolhe o TEF que está em sala.');return null}if(!t.pin){ferr('Este TEF ainda não tem PIN. Pede ao coordenador para o definir.');return null}if(p!==String(t.pin)){ferr('PIN incorreto.');return null}return n}
+A.al_pinOk=()=>{const n=checkPin();if(n){const f=AUI.pinOk;closeModal();f(n)}};
+A.al_tefStart=()=>tefPinModal(n=>{AUI.tef={nome:n,ate:Date.now()+15*60000};renderAluno();toast('Modo TEF ativo durante 15 minutos')},'Validação pelo TEF');
+A.al_tefEnd=()=>{AUI.tef=null;renderAluno()};
+
+/* Registo de presença */
+function alOpenReg(s){AUI.cur=s;const rg=AL.reg[s.key]||{},lock=!!rg.tef,dt=pd(s.date);
+  showModal(`<h2>${DIAS[dt.getDay()]} ${fmtDY(s.date)}</h2><p class="small muted" style="margin:0">${s.extra?'Turno extra':(TCOD[s.ini]||'Turno')+' · previsto '+s.ini+'–'+s.fim}${s.local?' · '+esc(locNome(s.local)):''}</p>
+  ${lock?`<p style="margin:0"><span class="pill ok">Confirmado por ${esc(rg.tef)}</span> <span class="small muted">${new Date(rg.confEm).toLocaleString('pt-PT')}</span></p><p class="small muted" style="margin:0">Um registo confirmado já não pode ser alterado.</p>`:''}
+  <div class="fgrid"><div class="fld"><label for="r_in">Entrada</label><input type="time" id="r_in" value="${rg.start||s.ini}"${lock?' disabled':''}></div><div class="fld"><label for="r_out">Saída</label><input type="time" id="r_out" value="${rg.end||s.fim}"${lock?' disabled':''}></div><div class="fld full"><label for="r_nota">Nota (opcional)</label><input id="r_nota" value="${esc(rg.nota||'')}" placeholder="ex.: troca de turno, saí mais cedo"${lock?' disabled':''}></div></div>
+  ${lock?'':`<div class="tefbox"><b>Confirmação do TEF</b><p class="small muted">O TEF em sala escolhe o nome e escreve o PIN.</p><div class="fgrid"><div class="fld"><label for="tp_n">TEF</label><select id="tp_n">${tefOpts()}</select></div><div class="fld"><label for="tp_p">PIN</label><input id="tp_p" type="password" inputmode="numeric" autocomplete="off"></div></div></div><p class="ferr" id="ferr" hidden></p>`}
+  <div class="factions">${lock?'':`<button class="btn danger sm" type="button" data-act="al_rFalta">Não compareci</button>${AL.reg[s.key]?'<button class="btn danger sm" type="button" data-act="al_rDel">Apagar</button>':''}`}<span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button>${lock?'':'<button class="btn" type="button" data-act="al_rSave">Guardar sem confirmar</button><button class="btn primary" type="button" data-act="al_rConf">Registar e confirmar</button>'}</div>`)}
+function alCollect(){const s=AUI.cur,a=$('#r_in').value,b=$('#r_out').value;if(!a||!b||mins(b)<=mins(a)){ferr('Verifica as horas de entrada e de saída.');return null}const old=AL.reg[s.key]||{};return {date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',extra:!!s.extra,start:a,end:b,nota:$('#r_nota').value.trim(),criado:old.criado||Date.now()}}
+A.al_rSave=()=>{const x=alCollect();if(!x)return;AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Guardado. Falta a confirmação do TEF')};
+A.al_rConf=()=>{const x=alCollect();if(!x)return;const n=checkPin();if(!n)return;x.tef=n;x.confEm=Date.now();AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Presença confirmada por '+n)};
+A.al_rFalta=()=>{const s=AUI.cur,n=$('#r_nota').value.trim();if(!n){ferr('Escreve o motivo da falta na nota.');return}AL.reg[s.key]={date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',start:s.ini,end:s.fim,falta:true,nota:n,criado:Date.now()};alSave();closeModal();renderAluno()};
+A.al_rDel=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar apagar';return}delete AL.reg[AUI.cur.key];alSave();closeModal();renderAluno()};
+A.al_shift=el=>{const k=el.dataset.k,date=k.split('|')[0],rg=AL.reg[k];let s=alExpected(date,date).find(x=>x.key===k);if(!s&&rg)s={date,ini:rg.ini,fim:rg.fim,local:rg.local,key:k,extra:true};if(s)alOpenReg(s)};
+A.al_extra=()=>{const t=hoje();alOpenReg({date:t,ini:'09:00',fim:'12:00',key:t+'|x'+Date.now(),extra:true})};
+
+/* Navegação e dossier */
+A.al_v=el=>{AUI.v=el.dataset.k;if(AUI.v!=='dossier')AUI.sec=null;renderAluno();window.scrollTo(0,0)};
+A.al_week=el=>{const d=Number(el.dataset.d);AUI.week=d?addD(AUI.week,d):segunda(hoje());renderAluno()};
+A.al_mon=el=>{AUI.mon+=Number(el.dataset.d);if(AUI.mon<0){AUI.mon=11;AUI.year--}if(AUI.mon>11){AUI.mon=0;AUI.year++}renderAluno()};
+A.al_sec=el=>{AUI.sec=el.dataset.s;renderAluno();window.scrollTo(0,0)};
+A.al_back=()=>{AUI.sec=null;renderAluno();window.scrollTo(0,0)};
+A.al_tog=el=>{AUI.open[el.dataset.i]=!AUI.open[el.dataset.i];renderAluno()};
+A.al_relAdd=()=>{(AL.dos.rel=AL.dos.rel||[]).push({id:uid()});alSave();renderAluno()};
+A.al_relDel=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar';return}AL.dos.rel.splice(Number(el.dataset.r),1);alSave();renderAluno()};
+const dget=id=>(AL.dos[id]=AL.dos[id]||{});
+function alBars(){const dp=dosProg(AL.dos);document.querySelectorAll('[data-bar]').forEach(el=>{const k=el.dataset.bar;el.innerHTML=barHTML(k==='tot'?dp:dp.secs[k])});document.querySelectorAll('[data-pill]').forEach(el=>{const id=el.dataset.pill,s=DOS.find(x=>id.startsWith(x.id+'.'));if(s)el.innerHTML=fichaPill(s,AL.dos[id]||{})})}
+const tefOk=()=>{if(isTef())return true;toast('O modo TEF terminou');renderAluno();return false};
+C.al_lido=el=>{AL.dos[el.dataset.s]={lido:el.checked,em:Date.now()};alSave();renderAluno()};
+C.al_al=el=>{dget(el.dataset.i).al=el.checked;alSave();renderAluno()};
+C.al_pt=el=>{if(!tefOk())return;const d=dget(el.dataset.i);if(el.checked){d.pt=AUI.tef.nome;d.ptEm=Date.now()}else{delete d.pt;delete d.ptEm}alSave();renderAluno()};
+C.al_fld=el=>{const d=dget(el.dataset.i);d.v=d.v||[];d.v[Number(el.dataset.k)]=el.value;alSave();alBars()};
+C.al_ck=el=>{if(!tefOk())return;AL.dos[el.dataset.i]={r:el.value,pt:AUI.tef.nome,ptEm:Date.now()};alSave();renderAluno()};
+C.al_relf=el=>{const r=AL.dos.rel[Number(el.dataset.r)];r[el.dataset.k]=el.value;alSave();alBars()};
+C.al_relpt=el=>{if(!tefOk())return;const r=AL.dos.rel[Number(el.dataset.r)];if(el.checked){r.pt=AUI.tef.nome;r.ptEm=Date.now()}else{delete r.pt;delete r.ptEm}alSave();renderAluno()};
+C.al_ident=el=>{const d=AL.dos.ident=AL.dos.ident||{};d[el.dataset.k]=el.value;alSave()};
+
+/* Envio de dados, PDF */
+function alPayload(){const m=alMe();return {tipo:'estagio-aluno',v:2,id:m.id,nome:m.nome,exportadoEm:new Date().toISOString(),reg:AL.reg,dos:AL.dos}}
+async function shareBlob(blob,name,title){
+  try{if(navigator.canShare&&window.File){const f=new File([blob],name,{type:blob.type});if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title});return 'share'}}}catch(e){if(e&&e.name==='AbortError')return 'abort'}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();return 'down'}catch(e){return null}
+}
+A.al_send=async()=>{const m=alMe();const r=await shareBlob(new Blob([JSON.stringify(alPayload())],{type:'application/json'}),`estagio_${m.nome.replace(/\s+/g,'_')}_${hoje()}.json`,'Dados de estágio – '+m.nome);if(r==='abort')return;AL.enviadoEm=Date.now();alSave();if(r==='down')toast('Ficheiro guardado. Envia-o ao coordenador');if(!r)A.al_copy()};
+A.al_copy=()=>{const txt=JSON.stringify(alPayload());showModal(`<h2>Dados para o coordenador</h2><p class="small muted" style="margin:0">Copia este texto e envia-o ao coordenador (WhatsApp ou email).</p><textarea id="cpTxt" rows="6" readonly>${esc(txt)}</textarea><div class="factions"><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button><button class="btn primary" type="button" data-act="al_copyGo">Copiar</button></div>`)};
+A.al_copyGo=()=>{const t=$('#cpTxt');const ok=()=>{AL.enviadoEm=Date.now();alSave();toast('Copiado')};if(navigator.clipboard)navigator.clipboard.writeText(t.value).then(ok,()=>{t.select();toast('Selecionado: copia com o menu do telemóvel')});else{t.select();toast('Selecionado: copia com o menu do telemóvel')}};
+A.al_pdf=async()=>{
+  if(!window.jspdf){toast('O gerador de PDF não carregou. Verifica a internet.');return}
+  const m=alMe(),y=AUI.year,mo=AUI.mon,td=hoje();const rows=alMonthRows(y,mo).filter(s=>s.date<=td||s.rg);const t=alTot();
+  let c=0,p=0,f=0;rows.forEach(s=>{const st=alStatus(s,s.rg);if(st==='conf')c+=dur(s.rg.start,s.rg.end);else if(st==='pend')p+=dur(s.rg.start,s.rg.end);else if(st==='falta'||st==='por')f++});
+  const doc=new window.jspdf.jsPDF({unit:'pt',format:'a4'}),W=595,Mg=40;
+  const head=()=>{doc.setFillColor(10,108,150);doc.rect(0,0,W,58,'F');doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('PLAYLIFE  ·  Relatório de Presenças de Estágio',Mg,28);doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text('Playlife Fitness Center'+(m.local?' · '+locNome(m.local):''),Mg,44);doc.setTextColor(30)};
+  head();let yy=84;doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(m.nome,Mg,yy);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Mês: '+MESL[mo]+' '+y,W-Mg,yy,{align:'right'});yy+=16;
+  doc.text('Horas confirmadas no mês: '+fmtH(c)+'   |   Sem confirmação: '+fmtH(p)+'   |   Faltas/por registar: '+f,Mg,yy);yy+=14;
+  doc.text('Acumulado do estágio: '+fmtH(t.total)+(m.horasReq?' de '+m.horasReq+' h':'')+' (inclui '+fmtH(t.form)+' de formações)',Mg,yy);yy+=20;
+  const cols=[['Data',Mg],['Dia',Mg+60],['Turno',Mg+94],['Horário',Mg+150],['Horas',Mg+225],['Estado',Mg+265],['TEF que confirmou',Mg+370]];
+  const th=()=>{doc.setFillColor(217,236,245);doc.rect(Mg,yy-11,W-2*Mg,16,'F');doc.setFont('helvetica','bold');doc.setFontSize(9);cols.forEach(cl=>doc.text(cl[0],cl[1]+3,yy));yy+=14;doc.setFont('helvetica','normal')};th();
+  rows.forEach(s=>{if(yy>770){doc.addPage();head();yy=84;th()}const st=alStatus(s,s.rg),x=s.rg||s,dt=pd(s.date);doc.setFontSize(9);
+    const v=[fmtDY(s.date),D3[dt.getDay()],s.extra?'Extra':(TCOD[s.ini]||'Turno'),(x.start||s.ini)+' - '+(x.end||s.fim),(st==='conf'||st==='pend')?fmtH(dur(x.start,x.end)):'-',ST[st][1],s.rg&&s.rg.tef?s.rg.tef:''];
+    v.forEach((val,i)=>doc.text(String(val),cols[i][1]+3,yy));if(s.rg&&s.rg.nota){yy+=11;doc.setTextColor(100);doc.text('Nota: '+s.rg.nota,Mg+60,yy);doc.setTextColor(30)}doc.setDrawColor(211,218,225);doc.line(Mg,yy+4,W-Mg,yy+4);yy+=15});
+  if(!rows.length)doc.text('Sem turnos neste mês.',Mg,yy);
+  if(yy>700){doc.addPage();head();yy=84}yy=Math.max(yy+30,730);doc.setFontSize(9);doc.setDrawColor(100);
+  doc.line(Mg,yy,Mg+200,yy);doc.text('Assinatura do estagiário',Mg,yy+12);doc.line(W-Mg-200,yy,W-Mg,yy);doc.text('Visto do coordenador',W-Mg-200,yy+12);
+  doc.setTextColor(120);doc.text('Gerado em '+new Date().toLocaleString('pt-PT'),Mg,820);
+  const r=await shareBlob(doc.output('blob'),`Presencas_${m.nome.replace(/\s+/g,'_')}_${y}-${String(mo+1).padStart(2,'0')}.pdf`,'Presenças '+MESL[mo]+' – '+m.nome);
+  if(r==='down')toast('PDF guardado');
+};
+
+/* Escolha de modo e configuração */
+const MK='estagios_modo';
+let MODO='';try{MODO=localStorage.getItem(MK)||''}catch(e){}
+function setModo(m){MODO=m;try{if(m)localStorage.setItem(MK,m);else localStorage.removeItem(MK)}catch(e){}render();window.scrollTo(0,0)}
+const decodeCfg=str=>JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
+function applyCfg(c){if(!c||c.tipo!=='estagio-cfg'||!Array.isArray(c.est))return false;AL.cfg=c;if(AL.me&&!c.est.some(e=>e.id===AL.me))AL.me=null;alSave();return true}
+function renderPick(){
+  const est=AL.cfg?.est||[];
+  $('#main').innerHTML=`<div class="pick"><div><h2 class="sec">Bem-vindo</h2><p class="muted" style="margin:4px 0 0">Escolhe como vais usar a app neste dispositivo.</p></div>
+  <div class="panel"><h3>Sou estagiário</h3>${est.length?`<p class="small muted" style="margin:0 0 10px">Escolhe o teu nome. Fica guardado neste telemóvel.</p><div class="pick-list">${est.map(e=>`<button class="btn" type="button" data-act="al_pick" data-id="${e.id}">${esc(e.nome)}</button>`).join('')}</div>`:`<p class="small muted" style="margin:0 0 8px">Abre a ligação que o coordenador enviou no grupo. Se a app não abrir com os teus horários, cola aqui a ligação:</p><textarea id="cfgTxt" rows="3" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn primary" type="button" data-act="al_cfgPaste">Aplicar</button>`}</div>
+  <div class="panel"><h3>Coordenação</h3><div class="inline"><input id="cpin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN da coordenação" autocomplete="off"><button class="btn" type="button" data-act="coordIn">Entrar</button></div><p class="ferr" id="cerr" hidden></p></div></div>`;
+}
+A.al_pick=el=>{AL.me=el.dataset.id;AUI.v='hoje';alMigrate();alSave();setModo('aluno')};
+A.al_trocar=()=>{AL.me=null;alSave();setModo('')};
+A.al_cfgPaste=()=>{const v=($('#cfgTxt').value||'').trim();const i=v.indexOf('#cfg=');try{if(applyCfg(decodeCfg(i>=0?v.slice(i+5):v))){toast('Configuração atualizada');render()}else throw 0}catch(e){ferr('Isto não é uma ligação de configuração válida.')}};
+A.coordIn=()=>{if($('#cpin').value===String(S.coordPin||'2026')){migrOld();setModo('coord')}else{const e=$('#cerr');e.textContent='PIN incorreto.';e.hidden=false}};
+A.sair=()=>setModo('');
+
+/* Compatibilidade com a app de presenças anterior */
+const OLDT={};for(let d=0;d<5;d++)OLDT[d]=[['06:30','10:30'],['10:30','13:30'],['13:30','16:30'],['16:30','19:30'],['19:30','22:30']];OLDT[5]=[['09:00','13:00'],['15:30','19:30']];OLDT[6]=[['09:30','12:30']];
+function convOld(reg){const o={};Object.values(reg||{}).forEach(x=>{if(!x||!x.date)return;const t=typeof x.r==='number'&&OLDT[x.d]?OLDT[x.d][x.r]:null;const ini=t?t[0]:x.start,fim=t?t[1]:x.end;const k=x.date+'|'+(t?ini:'x'+(x.criado||ini));o[k]={date:x.date,ini,fim,local:'',start:x.start,end:x.end,nota:x.nota||'',tef:x.tef||'',confEm:x.confEm||null,falta:!!x.falta,extra:!t,criado:x.criado||Date.now()};if(!o[k].tef)delete o[k].tef});return o}
+function alMigrate(){if(AL.migr)return;AL.migr=true;try{const m=alMe(),oc=JSON.parse(localStorage.getItem('estagio_cfg_v1')||'null'),or=JSON.parse(localStorage.getItem('estagio_reg_v1')||'null');if(m&&oc&&or){const o=(oc.estagiarios||[]).find(e=>e.nome===m.nome);if(o&&or[o.id]){const cv=convOld(or[o.id]);Object.keys(cv).forEach(k=>{if(!AL.reg[k])AL.reg[k]=cv[k]})}}}catch(e){}alSave()}
+
+/* ================= COORDENAÇÃO: receber e partilhar ================= */
+function recebeAluno(o){
+  if(!o||typeof o!=='object')return null;
+  if(o.tipo==='estagio-aluno'){const e=estById(o.id)||S.est.find(x=>x.nome===o.nome);if(!e)return null;const cur=S.recebidos[e.id];if(cur&&cur.exportadoEm>o.exportadoEm)return e.nome+' (já tinhas dados mais recentes)';S.recebidos[e.id]={exportadoEm:o.exportadoEm,reg:o.reg||{},dos:o.dos||{}};return e.nome}
+  if(o.tipo==='presencas-estagio'){const e=S.est.find(x=>x.nome===o.nome);if(!e)return null;const r=S.recebidos[e.id]=S.recebidos[e.id]||{exportadoEm:o.exportadoEm,reg:{},dos:{}};const cv=convOld(o.registos);Object.keys(cv).forEach(k=>{if(!r.reg[k]||(!r.reg[k].tef&&cv[k].tef))r.reg[k]=cv[k]});return e.nome}
+  return null;
+}
+function migrOld(){if(S.migrOld)return;S.migrOld=true;try{const oc=JSON.parse(localStorage.getItem('estagio_cfg_v1')||'null');if(oc&&Array.isArray(oc.tefs)){oc.tefs.forEach(t=>{if(!t.nome)return;if(!S.tutores.includes(t.nome))S.tutores.push(t.nome);if(t.pin&&!S.pins[t.nome])S.pins[t.nome]=String(t.pin)});if(oc.coordPin&&String(S.coordPin)==='2026')S.coordPin=String(oc.coordPin);if(oc.coordEmail&&!S.coordEmail)S.coordEmail=oc.coordEmail}const co=JSON.parse(localStorage.getItem('estagio_coord_v1')||'null');if(co)Object.values(co).forEach(o=>recebeAluno(o))}catch(e){}save()}
+function cfgAlunos(){return {tipo:'estagio-cfg',v:2,geradoEm:new Date().toISOString(),
+  est:S.est.map(e=>({id:e.id,nome:e.nome,local:e.local,tutor:e.tutor,escola:e.escola,horasReq:e.horasReq,inicio:e.inicio,fim:e.fim})),
+  horarios:S.horarios.map(({id,estId,dia,ini,fim,local,de,ate})=>({id,estId,dia,ini,fim,local,de,ate})),
+  form:S.form.map(({id,n,data,ini,fim,duracao,tema,formador,local,sumario,pres})=>({id,n,data,ini,fim,duracao,tema,formador,local,sumario,pres})),
+  tefs:S.tutores.map(n=>({nome:n,pin:S.pins[n]||''}))}}
+const regsApp=id=>Object.values(S.recebidos?.[id]?.reg||{});
+V.partilha=()=>{
+  const rows=S.est.map(e=>{const r=S.recebidos[e.id],h=horasEst(e.id),dp=dosProg(r?.dos);return `<tr><td><b>${esc(e.nome)}</b></td><td>${r?fmtDY(String(r.exportadoEm).slice(0,10)):'<span class="muted">nunca</span>'}</td><td class="num">${fmtH(h.app)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${r?`<div class="prog">${barHTML(dp)}</div>`:'—'}</td></tr>`}).join('');
+  const semPin=S.tutores.filter(n=>!S.pins[n]).length;
+  return `<h2 class="sec">Partilha com os estagiários</h2>
+  <div class="panel"><h3>Ligação para os estagiários</h3><p class="small muted" style="margin:0 0 10px">A ligação leva para os telemóveis: nomes, clubes, tutores, horários, formações e a lista de TEF com PIN. Não leva fichas pessoais, NIF, contactos nem avaliações. Volta a enviá-la no grupo sempre que mudares horários ou formações.</p>${semPin?`<p style="margin:0 0 10px"><span class="pill warn">${semPin} TEF sem PIN: não vão conseguir confirmar presenças</span></p>`:''}<button class="btn primary" type="button" data-act="cfgLink">Copiar ligação</button><textarea id="cfgOut" rows="3" readonly hidden style="margin-top:10px"></textarea></div>
+  <div class="panel"><h3>Receber dados dos estagiários</h3><p class="small muted" style="margin:0 0 10px">Cada estagiário envia o ficheiro em Perfil → Enviar ao coordenador. Também aceita os ficheiros da app de presenças antiga.</p><div class="inline" style="margin-bottom:8px"><input type="file" id="alFiles" multiple accept=".json,application/json" data-chg="alFiles" aria-label="Ficheiros dos estagiários"></div><textarea id="alTxt" rows="2" placeholder="Ou cola aqui o texto enviado pelo estagiário" aria-label="Texto do estagiário"></textarea><div class="inline" style="margin-top:8px"><button class="btn" type="button" data-act="alTxtImp">Importar texto</button></div>
+  <div class="tbl-wrap" style="margin-top:12px"><table><thead><tr><th>Estagiário</th><th>Dados de</th><th class="num">Confirmadas</th><th class="num">Por confirmar</th><th>Dossier</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>
+  <div class="panel"><h3>TEF e PIN</h3><p class="small muted" style="margin:0 0 8px">Um por linha: <b>Nome;PIN</b>. O PIN é o que o TEF escreve para confirmar presenças e validar o dossier. Estes nomes são também a lista de tutores.</p><textarea id="tefTxt" rows="10" aria-label="TEF e PIN">${esc(S.tutores.map(n=>n+';'+(S.pins[n]||'')).join('\n'))}</textarea><div class="inline" style="margin-top:8px"><button class="btn primary" type="button" data-act="savePins">Guardar TEF</button></div></div>
+  <div class="panel"><h3>Coordenação</h3><div class="fgrid"><div class="fld"><label for="cpNew">PIN da coordenação</label><input id="cpNew" value="${esc(S.coordPin)}" inputmode="numeric" autocomplete="off"></div></div><div class="inline" style="margin-top:8px"><button class="btn" type="button" data-act="saveCoord">Guardar PIN</button></div></div>
+  <p class="small muted" style="margin:0">A confirmação por PIN assenta na confiança: a ligação leva os PIN dos TEF, por isso não impede fraude. Se suspeitares de abuso, muda os PIN e envia uma ligação nova.</p>`;
+};
+A.cfgLink=()=>{const b=btoa(unescape(encodeURIComponent(JSON.stringify(cfgAlunos()))));const url=location.href.split('#')[0]+'#cfg='+b;const t=$('#cfgOut');t.value=url;t.hidden=false;
+  const sel=()=>{t.select();toast('Ligação selecionada: copia com Ctrl+C')};if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>toast('Ligação copiada. Cola-a no grupo dos estagiários'),sel);else sel()};
+function importAlunos(objs){const ok=[];let bad=0;objs.forEach(o=>{const r=recebeAluno(o);if(r)ok.push(r);else bad++});save();render();toast(ok.length?`Recebido: ${ok.join(', ')}${bad?` · ${bad} ignorado(s)`:''}`:'Nenhum ficheiro reconhecido')}
+C.alFiles=async el=>{const objs=[];for(const f of el.files){try{objs.push(JSON.parse(await f.text()))}catch(e){}}importAlunos(objs)};
+A.alTxtImp=()=>{try{importAlunos([JSON.parse($('#alTxt').value)])}catch(e){toast('O texto não é um ficheiro de dados válido')}};
+A.savePins=()=>{const n=[],p={};$('#tefTxt').value.split('\n').forEach(l=>{const[a,b]=l.split(';');const nm=(a||'').trim();if(!nm)return;if(!n.includes(nm))n.push(nm);if((b||'').trim())p[nm]=b.trim()});S.tutores=n;S.pins=p;save();render();toast('TEF guardados')};
+A.saveCoord=()=>{const v=$('#cpNew').value.trim();if(!v){toast('O PIN não pode ficar vazio');return}S.coordPin=v;save();toast('PIN guardado')};
+V.dossier=()=>{
+  const sel=UI.dEst||S.est[0]?.id,e=estById(sel),r=e?S.recebidos[e.id]:null;
+  const resumo=S.est.map(x=>{const rr=S.recebidos[x.id];return `<tr><td>${esc(x.nome)}</td><td>${rr?`<div class="prog">${barHTML(dosProg(rr.dos))}</div>`:'<span class="muted">sem dados</span>'}</td><td>${rr?fmtDY(String(rr.exportadoEm).slice(0,10)):'—'}</td></tr>`}).join('');
+  let det='';
+  if(e){if(!r)det='<div class="panel empty">Ainda não recebeste dados deste estagiário. Importa-os no separador Partilha.</div>';
+    else{const dp=dosProg(r.dos),id=r.dos.ident||{};
+      det=`<div class="panel"><div class="bar-head"><b>Total</b><span class="sp"></span><span class="small muted">dados de ${fmtDY(String(r.exportadoEm).slice(0,10))}</span></div><div class="prog">${barHTML(dp)}</div>${id.contacto||id.entidade||id.obs?`<dl class="kv" style="margin-top:10px"><dt>Contacto</dt><dd>${esc(id.contacto)||'—'}</dd><dt>Entidade</dt><dd>${esc(id.entidade)||'—'}</dd>${id.obs?`<dt>Obs.</dt><dd>${esc(id.obs)}</dd>`:''}</dl>`:''}</div>
+      <div class="secs">${DOS.map(s=>{const op=UI.dSec===s.id;return `<div class="fitem"><button class="row-btn" type="button" data-act="dSec" data-s="${s.id}" aria-expanded="${op}"><span class="fnum">${s.n}</span><span style="min-width:0"><b>${esc(s.t)}</b><span class="prog">${barHTML(dp.secs[s.id])}</span></span><span class="small muted">${op?'fechar':'ver'}</span></button>${op?`<div class="fbody">${dosSecHTML(s,r.dos,{ro:true})}</div>`:''}</div>`}).join('')}</div>`}}
+  return `<h2 class="sec">Dossier de estágio</h2>
+  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Progresso</th><th>Dados de</th></tr></thead><tbody>${resumo||'<tr><td colspan="3" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div>
+  <div class="chips">${S.est.map(x=>`<button type="button" class="chip${x.id===sel?' sel':''}" data-act="dEst" data-id="${x.id}">${esc(x.nome)}</button>`).join('')}</div>
+  ${e?`<h3 style="margin:0">${esc(e.nome)}</h3>`:''}${det}`;
+};
+A.dEst=el=>{UI.dEst=el.dataset.id;UI.dSec=null;render()};
+A.dSec=el=>{UI.dSec=UI.dSec===el.dataset.s?null:el.dataset.s;render()};
+
 document.addEventListener('click',ev=>{const el=ev.target.closest('[data-act]');if(el&&A[el.dataset.act]){A[el.dataset.act](el,ev)}else if(ev.target.id==='modal')closeModal()});
 document.addEventListener('change',ev=>{const el=ev.target.closest('[data-chg]');if(el&&C[el.dataset.chg])C[el.dataset.chg](el)});
-document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidden)closeModal();if(ev.key==='Enter'&&ev.target.id==='novoTutor')A.addTutor()});
-render();
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidden)closeModal();if(ev.key==='Enter'&&ev.target.id==='novoTutor')A.addTutor();if(ev.key==='Enter'&&ev.target.id==='cpin')A.coordIn()});
+(function boot(){
+  if(!MODO&&HAD)MODO='coord';
+  const h=location.hash;
+  if(h.startsWith('#cfg=')){try{if(applyCfg(decodeCfg(h.slice(5)))){toast('Horários e formações atualizados');if(MODO!=='coord'&&AL.me)MODO='aluno'}}catch(e){toast('A ligação de configuração não é válida')}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+  if(MODO==='coord')migrOld();
+  if(MODO==='aluno'&&alMe())alMigrate();
+  render();
+})();
 </script>
 
 </body>
