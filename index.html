@@ -285,6 +285,26 @@ body[data-modo="pick"] main .wrap{max-width:560px}
 details.panel summary{cursor:pointer}
 .btn.wa{background:#1F8F4E;border-color:#1F8F4E;color:#fff;text-decoration:none;display:inline-flex;align-items:center}
 .btn.wa:hover{filter:brightness(1.08)}
+.sheet-tut{max-width:520px}
+.tut{display:grid;gap:12px}
+.tut-top{display:flex;justify-content:space-between;align-items:center}
+.tut-n{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.06em;color:var(--accent)}
+.tut h2{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;text-transform:uppercase;margin:0;text-wrap:balance}
+.tut-b{display:grid;gap:10px;font-size:15px}
+.tut-b p,.tut-b ul,.tut-b ol{margin:0}
+.tut-b ul,.tut-b ol{padding-left:20px;display:grid;gap:5px}
+.tut-b .rules li{padding-left:2px}
+.tut-dots{display:flex;gap:6px;justify-content:center}
+.tut-dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.tut-dots i.on{background:var(--accent);width:20px;border-radius:4px}
+.shift.demo{cursor:default;pointer-events:none}
+.demo-box{border:1px dashed var(--line);border-radius:8px;padding:10px 12px;background:var(--sunk)}
+.demo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.dg{display:grid;justify-items:center;gap:2px;padding:8px 2px;border:1px solid var(--line);border-radius:7px;font-family:var(--display);font-weight:600;font-size:16px;background:var(--surface)}
+.dg small{font-family:var(--body);font-size:11px;color:var(--muted)}
+.dg.on{background:var(--accent-soft);border-color:var(--accent)}.dg.on small{color:var(--accent)}
+.dg.full{opacity:.55;background:var(--sunk)}.dg.full small{color:var(--bad)}
+.al-brand .btn{justify-self:start;margin-top:6px;padding:4px 8px;font-size:13px}
 .cod{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;letter-spacing:.12em;background:var(--sunk);padding:2px 8px;border-radius:5px}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(8,14,20,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px))}
 .sheet{background:var(--surface);color:var(--ink);border-radius:12px;width:100%;max-width:560px;padding:18px;display:grid;gap:14px}
@@ -445,7 +465,7 @@ function render(){
   $('#tabsNav').hidden=!coord;$('#alnav').hidden=!aluno;
   const m=aluno?alMe():null;
   $('#hdrSub').textContent=coord?'Coordenação · '+(UI.clube?clubeNome(UI.clube):'todos os clubes')+' · 2026/27':aluno?`${m.nome}${m.local?' · '+locNome(m.local):''}`:'Sala de exercício · 2026/27';
-  $('#hdrBtns').innerHTML=coord?(coordSrv()?syncPill():'')+`<select id="clubeSel" data-chg="clube" aria-label="Clube que coordenas"><option value="">Todos os clubes</option><option value="PNF"${UI.clube==='PNF'?' selected':''}>Penafiel</option><option value="LSD"${UI.clube==='LSD'?' selected':''}>Lousada</option></select>`+'<button class="btn" data-act="dados" type="button">Dados</button><button class="btn ghost" data-act="sair" type="button">Sair</button>':'';
+  $('#hdrBtns').innerHTML=aluno?'<button class="btn" type="button" data-act="tutAbrir" aria-label="Ver tutorial">Ajuda</button>':coord?(coordSrv()?syncPill():'')+`<select id="clubeSel" data-chg="clube" aria-label="Clube que coordenas"><option value="">Todos os clubes</option><option value="PNF"${UI.clube==='PNF'?' selected':''}>Penafiel</option><option value="LSD"${UI.clube==='LSD'?' selected':''}>Lousada</option></select>`+'<button class="btn" data-act="dados" type="button">Dados</button><button class="btn ghost" data-act="sair" type="button">Sair</button>':'';
   if(coord)renderCoord();else if(aluno)renderAluno();else renderPick();
 }
 function renderCoord(){
@@ -477,7 +497,7 @@ V.inicio=()=>{
   const rows=EV().map(e=>{
     const pres=S.form.filter(f=>formRealizada(f)&&f.pres[e.id]).length;
     const av=S.aval.filter(a=>a.estId===e.id).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
-    return `<tr><td><b>${esc(e.nome)}</b></td><td>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:'<span class="muted">—</span>'}</td><td>${esc(e.tutor)||'<span class="muted">—</span>'}</td><td>${progHTML(e)}</td><td class="num">${(()=>{const pos=pres+(S.form.length-feitas);const c=pres>=CERT_MIN?'ok':pos<CERT_MIN?'bad':'';return feitas?`<span class="pill ${c}" title="${pres>=CERT_MIN?'Já tem as presenças para certificação':pos<CERT_MIN?'Já não chega às '+CERT_MIN+' presenças':'Pode faltar a '+(pos-CERT_MIN)+' sessão(ões)'}">${pres}/${feitas}</span>`:'—'})()}</td><td>${S.recebidos[e.id]?`<div class="prog">${barHTML(dosProg(S.recebidos[e.id].dos))}</div>`:'<span class="muted small">sem dados</span>'}</td><td class="num">${av?`<b>${n1(notaAval(av))}</b> <span class="muted small">${esc(av.momento)}</span>`:'<span class="muted">—</span>'}</td></tr>`}).join('');
+    return `<tr><td><b>${esc(e.nome)}</b></td><td>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:'<span class="muted">—</span>'}</td><td>${esc(e.tutor)||'<span class="muted">—</span>'}</td><td>${progHTML(e)}</td><td class="num">${feitas?`${pres}/${feitas}`:'—'}</td><td>${S.recebidos[e.id]?`<div class="prog">${barHTML(dosProg(S.recebidos[e.id].dos))}</div>`:'<span class="muted small">sem dados</span>'}</td><td class="num">${av?`<b>${n1(notaAval(av))}</b> <span class="muted small">${esc(av.momento)}</span>`:'<span class="muted">—</span>'}</td></tr>`}).join('');
   if(!S.est.length)todo.unshift(['warn','Ainda não há estagiários: importa o ficheiro de dados em "Dados" ou adiciona-os','estagiarios']);
   const semClube=UI.clube?EV().filter(e=>!e.local).length:0;
   return `${UI.clube?`<p class="small muted" style="margin:0">A mostrar os estagiários de <b>${clubeNome(UI.clube)}</b>${semClube?` e ${semClube} ainda sem clube`:''}. Muda no seletor do topo.</p>`:''}${proxHTML}
@@ -532,7 +552,7 @@ V.formacoes=()=>{
       <div class="bar-head"><h3 style="margin:0">Presenças</h3><span class="sp"></span><button class="btn sm" type="button" data-act="presTodos" data-id="${f.id}">Marcar todos</button><button class="btn sm" type="button" data-act="editForm" data-id="${f.id}">Editar formação</button></div>
       <div class="pres">${EV().map(e=>`<div class="presrow"><label><input type="checkbox" data-chg="pres" data-f="${f.id}" data-e="${e.id}"${f.pres[e.id]?' checked':''}>${esc(e.nome)}</label><select data-chg="fnota" data-f="${f.id}" data-e="${e.id}" aria-label="Avaliação de ${esc(e.nome)} nesta formação"${f.pres[e.id]?'':' disabled'}><option value="">nota</option>${[1,2,3,4,5].map(n=>`<option${(f.notas||{})[e.id]===n?' selected':''}>${n}</option>`).join('')}</select></div>`).join('')}</div><p class="small muted" style="margin:0">Nota do formador de 1 a 5: participação e execução prática.</p></div>`:''}</div>`}).join('');
   return `<div class="bar-head"><h2 class="sec">Formações de sexta</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editForm">Adicionar formação</button></div>
-  <p class="small muted" style="margin:0">14 sessões às sextas, das 14h30 às 16h30, de 30 out 2026 a 12 fev 2027, alternando entre Penafiel e Lousada. Certificado com pelo menos ${CERT_MIN} presenças e avaliação final positiva.</p>
+  <p class="small muted" style="margin:0">14 sessões às sextas, das 14h30 às 16h30, de 30 out 2026 a 12 fev 2027, alternando entre Penafiel e Lousada.</p>
   <div style="display:grid;gap:8px">${items}</div>`;
 };
 
@@ -573,7 +593,7 @@ V.equipamentos=()=>{
 /* ---------- modal e formulários ---------- */
 let FC=null;
 function showModal(html){$('#sheet').innerHTML=html;$('#modal').hidden=false;const f=$('#sheet').querySelector('input,select,textarea');if(f)f.focus()}
-function closeModal(){$('#modal').hidden=true;$('#sheet').innerHTML='';FC=null}
+function closeModal(){$('#modal').hidden=true;$('#sheet').innerHTML='';$('#sheet').classList.remove('sheet-tut');FC=null}
 function fieldHTML(f,v){
   const id='f_'+f.k,cls='fld'+(f.full?' full':'');
   if(f.t==='scale')return `<div class="${cls}"><span class="lab">${esc(f.l)}</span><div class="scale">${[1,2,3,4,5].map(n=>`<label><input type="radio" name="${id}" value="${n}"${Number(v)===n?' checked':''}><span>${n}</span></label>`).join('')}</div></div>`;
@@ -799,7 +819,8 @@ const ANAV=[['hoje','Hoje','M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10'],['horario','Ho
 function renderAluno(){
   $('#main').innerHTML=(isTef()?`<div class="tefbar"><span>Modo TEF: <b>${esc(AUI.tef.nome)}</b> está a validar</span><button class="btn sm" type="button" data-act="al_tefEnd">Terminar</button></div>`:'')+VA[AUI.v]();
   const me=alMe();
-  $('#alnav').innerHTML=`<div class="al-brand"><b>Estágios Playlife</b><span>${esc(me.nome)}${me.local?' · '+esc(locNome(me.local)):''}</span></div>`+ANAV.map(([k,l,ic])=>`<button type="button" data-act="al_v" data-k="${k}" aria-current="${AUI.v===k}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ic}"/></svg>${l}</button>`).join('');
+  if(!AL.tutVisto&&$('#modal').hidden&&!AUI.tutAuto){AUI.tutAuto=1;setTimeout(()=>abreTutorial(0),300)}
+  $('#alnav').innerHTML=`<div class="al-brand"><b>Estágios Playlife</b><span>${esc(me.nome)}${me.local?' · '+esc(locNome(me.local)):''}</span><button class="btn sm ghost" type="button" data-act="tutAbrir">Ver tutorial</button></div>`+ANAV.map(([k,l,ic])=>`<button type="button" data-act="al_v" data-k="${k}" aria-current="${AUI.v===k}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ic}"/></svg>${l}</button>`).join('');
 }
 const VA={};
 VA.hoje=()=>{
@@ -870,6 +891,7 @@ VA.perfil=()=>{
   <div class="panel"><dl class="kv"><dt>Clube</dt><dd>${esc(locNome(m.local))||'—'}</dd><dt>Tutor</dt><dd>${esc(m.tutor)||'—'}</dd><dt>Escola</dt><dd>${esc(m.escola)||'—'}</dd><dt>Período</dt><dd>${m.inicio||m.fim?`${fmtDY(m.inicio)} → ${fmtDY(m.fim)}`:'—'}</dd><dt>Horas exigidas</dt><dd>${m.horasReq?m.horasReq+' h':'—'}</dd></dl></div>
   ${alSrv()?`<div class="panel"><h3>Sincronização</h3><p class="small muted" style="margin:0 0 10px">As tuas presenças e o dossier vão para o coordenador automaticamente, e os horários atualizam-se sozinhos. ${AL.pend?'<b>Há alterações por enviar: liga-te à internet.</b>':AL.syncEm?'Última sincronização: '+new Date(AL.syncEm).toLocaleString('pt-PT')+'.':''}</p><button class="btn" type="button" data-act="al_sync">Sincronizar agora</button></div>`:`<div class="panel"><h3>Enviar ao coordenador</h3><p class="small muted" style="margin:0 0 10px">Envia as tuas presenças e o dossier pelo menos uma vez por semana. ${AL.enviadoEm?'Último envio: '+new Date(AL.enviadoEm).toLocaleString('pt-PT')+'.':'Ainda não enviaste.'}</p><div class="inline"><button class="btn primary" type="button" data-act="al_send">Enviar ficheiro</button><button class="btn" type="button" data-act="al_copy">Copiar como texto</button></div></div>`}</div><div class="al-col">
   ${alSrv()?'':`<div class="panel"><h3>Atualizar horários</h3><p class="small muted" style="margin:0 0 8px">Configuração de ${AL.cfg.geradoEm?new Date(AL.cfg.geradoEm).toLocaleString('pt-PT'):'—'}. Abre a nova ligação do coordenador ou cola-a aqui.</p><textarea id="cfgTxt" rows="2" placeholder="Cola a ligação"></textarea><p class="ferr" id="ferr" hidden></p><button class="btn" type="button" data-act="al_cfgPaste">Aplicar</button></div>`}
+  <div class="panel"><h3>Tutorial</h3><p class="small muted" style="margin:0 0 10px">Revê como registar presenças, escolher turnos, registar aulas de grupo e preencher o dossier.</p><button class="btn" type="button" data-act="tutAbrir">Ver tutorial</button></div>
   <div class="inline"><button class="btn ghost" type="button" data-act="al_trocar">Não és ${esc(m.nome.split(' ')[0])}? Mudar</button></div>
   <p class="small muted">${alSrv()?'Os teus dados ficam guardados neste dispositivo e na conta da Playlife.':'Os teus dados ficam guardados neste dispositivo. Não limpes os dados do browser sem enviares primeiro ao coordenador.'}</p></div></div>`;
 };
@@ -1323,6 +1345,47 @@ function escolhasHTML(){
   if(!alSrv())return `<div class="panel"><h3>Escolher turnos</h3><p class="small muted" style="margin:0">A escolha semanal de turnos precisa da ligação pessoal que o coordenador te envia.</p></div>`;
   return `<div class="panel"><h3>Escolher turnos</h3><p class="small muted" style="margin:0 0 8px">Escolhe os teus turnos de cada semana. Sem escolha, mantém-se o horário da semana anterior.</p>${proxSemanas().map(W=>{const[c,t]=alEstadoSemana(W);const p=alPlanoSemana(W);return `<div class="ritem"><span><b>${semTxt(W)}</b><small class="muted" style="display:block">${p.slots.length?p.slots.map(turnoTxt).join(', ')+' · '+fmtH(horasSlots(p.slots)):'Sem turnos'}</small></span><span class="rcols"><span class="pill ${c}">${t}</span><button class="btn sm" type="button" data-act="al_esc" data-w="${W}">${(AL.pedidos||{})[W]?'Alterar':'Escolher'}</button></span></div>`}).join('')}</div>`;
 }
+
+/* ================= TUTORIAL DO ESTAGIÁRIO ================= */
+const demoShift=(dia,num,lab,hora,pill,cls,extra)=>`<div class="shift demo" aria-hidden="true"><span class="sd"><b>${dia}</b><small>${num}</small></span><span class="sm"><b>${lab}</b> · ${hora}${extra?`<small>${extra}</small>`:''}</span><span class="pill ${cls}">${pill}</span></div>`;
+const TUT=[
+ {t:'Bem-vindo à tua app de estágio',b:`<p>Aqui tens tudo o que precisas durante o estágio na Playlife: o teu horário, o registo de presenças, as aulas de grupo, as formações de sexta e o dossier de estágio.</p>
+  <p>Começa por <b>guardar a app no ecrã principal</b> do telemóvel, para a abrires como qualquer outra app:</p>
+  <ul><li><b>Android (Chrome):</b> menu <b>⋮</b> → <b>Adicionar ao ecrã principal</b>.</li><li><b>iPhone (Safari):</b> botão <b>Partilhar</b> → <b>Adicionar ao ecrã principal</b>.</li></ul>
+  <p class="small muted">Abre sempre a app a partir desse ícone ou da ligação que o coordenador te enviou. A ligação já tem o teu código pessoal.</p>`},
+ {t:'Hoje: o teu ponto de situação',b:`<div class="demo-box" aria-hidden="true"><div class="lbl" style="margin-top:0">Horas de estágio</div><div class="track lg"><i style="width:38%"></i></div><div class="lbl">Dossier de estágio</div><div class="track lg"><i style="width:22%"></i></div></div>
+  <p>No separador <b>Hoje</b> vês duas barras: as <b>horas feitas</b> face às horas exigidas e o <b>progresso do dossier</b>. Vão enchendo à medida que registas presenças e preenches o dossier.</p>
+  <p>Logo abaixo aparece o turno de hoje, os próximos turnos e a próxima formação de sexta.</p>`},
+ {t:'Registar a presença no turno',b:`${demoShift('seg','26 out','T4','16:30–19:30','Agendado','')}
+  <ol><li>No início ou no fim do turno, <b>toca no turno</b>.</li><li>Confirma as horas de <b>entrada</b> e de <b>saída</b>.</li><li>Entrega o telemóvel ao <b>TEF que está em sala</b>: ele escolhe o nome dele e escreve o <b>PIN</b>.</li><li>Carrega em <b>Registar e confirmar</b>.</li></ol>
+  ${demoShift('seg','26 out','T4','16:30–19:30','Confirmado','ok','Confirmado por Diogo Neto')}
+  <p class="small muted">Se o TEF estiver ocupado, usa <b>Guardar sem confirmar</b> e pede a confirmação mais tarde. <b>Só as horas confirmadas contam.</b> Se faltares, toca no turno, escreve o motivo e carrega em <b>Não compareci</b>.</p>`},
+ {t:'Aulas de grupo também contam',b:`${demoShift('qui','29 out','Aula · Pilates','19:00–20:00','Confirmado','ok','Confirmado por Ricardo Malta')}
+  <p>Sempre que participares numa aula de grupo, carrega em <b>Registar aula de grupo</b> (no Hoje ou nas Presenças).</p>
+  <ul><li>Escolhe a data, a modalidade, as horas e o que fizeste: <b>Assistiu</b>, <b>Apoiou o instrutor</b> ou <b>Lecionou</b>.</li><li>O <b>instrutor da aula</b> confirma com o PIN dele.</li><li>Se lecionaste, a app cria um <b>relatório</b> no dossier para preencheres.</li></ul>`},
+ {t:'Escolher os teus turnos da semana',b:`<div class="demo-grid" aria-hidden="true"><span class="dg on">T1<small>1/2</small></span><span class="dg">T2<small>0/1</small></span><span class="dg full">T3<small>completo</small></span><span class="dg on">T4<small>2/2</small></span></div>
+  <p>Em <b>Horário → Escolher turnos</b> escolhes os turnos de cada uma das próximas semanas.</p>
+  <ul><li>Cada turno tem um <b>limite de estagiários</b>. Os números mostram a ocupação; os <b>completos</b> não podem ser escolhidos.</li><li>Escolhe o clube, marca os turnos e carrega em <b>Enviar escolha</b>. Podes deixar uma nota, por exemplo um exame.</li><li>O <b>coordenador do clube valida</b> ou ajusta a tua escolha.</li><li>Se não escolheres, <b>mantém-se o horário da semana anterior</b>.</li></ul>
+  <p class="small muted">A semana em curso já não pode ser alterada: escolhe com antecedência.</p>`},
+ {t:'Dossier de estágio',b:`<div class="demo-box" aria-hidden="true"><div class="ritem"><span>Ensina o cliente a utilizar os equipamentos</span><span class="rcols"><span class="mini"><input type="checkbox" checked disabled>Aluno</span><span class="pill ok">PT · Diogo</span></span></div></div>
+  <p>O dossier tem 15 secções, cada uma com a sua barra de progresso.</p>
+  <ul><li><b>Missão e Manifesto:</b> lê e marca <b>Li e compreendi</b>.</li><li><b>Equipamentos e exercícios:</b> toca em cada item e escreve os grupos musculares, os pontos-chave e os erros comuns.</li><li><b>Funções do TEF e módulos:</b> marca <b>Aluno</b> quando dominares o item.</li><li><b>Validação:</b> carrega em <b>Validação pelo TEF</b>. O TEF escreve o PIN e durante 15 minutos pode marcar a coluna <b>PT</b> e a checklist das aulas de grupo.</li></ul>`},
+ {t:'Formações de sexta',b:`<p>São <b>14 formações</b>, às sextas das <b>14h30 às 16h30</b>, entre outubro e fevereiro, em Penafiel ou em Lousada. Vês o calendário, o tema e o formador em <b>Horário</b>.</p>
+  <p>As presenças são marcadas pelo coordenador e as horas de cada formação entram no teu total de horas de estágio.</p>`},
+ {t:'Regras importantes',b:`<ul class="rules"><li><b>O PIN é do TEF.</b> Nunca peças o PIN a um TEF nem o escrevas tu. Entrega-lhe o telemóvel.</li><li><b>O teu código é pessoal.</b> Não partilhes a tua ligação nem o código com colegas.</li><li><b>Os dados sincronizam sozinhos</b> com o coordenador. Sem internet, a app guarda e envia quando tiveres rede; a confirmação pelo TEF precisa de internet.</li><li><b>Não limpes os dados do browser</b> enquanto houver alterações por enviar (aparece um aviso em Perfil).</li></ul>
+  <p>Podes rever este tutorial quando quiseres em <b>Perfil → Ver tutorial</b>. Bom estágio!</p>`}
+];
+let TI=0;
+function tutHTML(){const st=TUT[TI],last=TI===TUT.length-1;
+  return `<div class="tut"><div class="tut-top"><span class="tut-n">${TI+1} / ${TUT.length}</span><button class="btn sm ghost" type="button" data-act="tutFim">${last?'Fechar':'Saltar'}</button></div>
+  <h2>${st.t}</h2><div class="tut-b">${st.b}</div>
+  <div class="tut-dots" aria-hidden="true">${TUT.map((_,i)=>`<i class="${i===TI?'on':''}"></i>`).join('')}</div>
+  <div class="factions">${TI?'<button class="btn" type="button" data-act="tutAnt">Anterior</button>':''}<span class="sp"></span><button class="btn primary" type="button" data-act="${last?'tutFim':'tutSeg'}">${last?'Começar':'Seguinte'}</button></div></div>`}
+function abreTutorial(i){TI=i||0;showModal(tutHTML());$('#sheet').classList.add('sheet-tut')}
+A.tutSeg=()=>{TI=Math.min(TUT.length-1,TI+1);$('#sheet').innerHTML=tutHTML();$('#sheet').scrollTop=0};
+A.tutAnt=()=>{TI=Math.max(0,TI-1);$('#sheet').innerHTML=tutHTML();$('#sheet').scrollTop=0};
+A.tutFim=()=>{AL.tutVisto=Date.now();alSaveLocal();$('#sheet').classList.remove('sheet-tut');closeModal()};
+A.tutAbrir=()=>abreTutorial(0);
 
 document.addEventListener('click',ev=>{const el=ev.target.closest('[data-act]');if(el&&A[el.dataset.act]){A[el.dataset.act](el,ev)}else if(ev.target.id==='modal')closeModal()});
 document.addEventListener('change',ev=>{const el=ev.target.closest('[data-chg]');if(el&&C[el.dataset.chg])C[el.dataset.chg](el)});
