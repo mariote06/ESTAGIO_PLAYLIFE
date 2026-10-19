@@ -41,7 +41,7 @@ nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 nav.tabs .wrap::-webkit-scrollbar{display:none}
 .tab{flex:none;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.03em;text-transform:uppercase;background:none;border:0;color:var(--muted);padding:10px 12px 9px;border-bottom:3px solid transparent;cursor:pointer}
 .tab[aria-current="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-.tab:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.row-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg button:focus-visible,.nm-btn:focus-visible,.add-btn:focus-visible,.tab:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.row-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 main .wrap{padding-block:18px 60px;display:grid;gap:18px}
 h2.sec{font-family:var(--display);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.02em;margin:0;text-wrap:balance}
 h3{font-family:var(--display);font-weight:600;font-size:18px;text-transform:uppercase;letter-spacing:.03em;margin:0 0 8px}
@@ -125,6 +125,26 @@ textarea{width:100%;resize:vertical}
 .size span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 td select,td input{padding:4px 6px;font-size:14px}
 td input[type=number]{width:64px}
+.seg{display:inline-flex;background:var(--sunk);border-radius:9px;padding:3px;gap:3px;justify-self:start}
+.seg button{font-family:var(--display);font-weight:600;font-size:18px;text-transform:uppercase;letter-spacing:.03em;border:0;background:none;color:var(--muted);padding:7px 16px;border-radius:7px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.seg button span{font-family:var(--body);font-size:12px;background:var(--surface);color:var(--muted);border-radius:10px;padding:1px 7px}
+.seg button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button[aria-selected="true"] span{background:var(--accent-ink);color:var(--accent)}
+.grade-t{min-width:760px;table-layout:fixed}
+.grade-t th{text-align:center;padding:8px 4px;font-size:13px}
+.grade-t th.tc{width:44px;font-size:18px;color:var(--accent);background:var(--sunk)}
+.grade-t th.hj{color:var(--accent)}
+.grade-t td{border-left:1px solid var(--line);padding:6px;vertical-align:top}
+.grade-t td.off{background:var(--sunk)}
+.grade-t td.hj{background:var(--accent-soft)}
+.cell{display:table-cell}
+.cell .hr{display:block;font-size:11px;color:var(--muted);text-align:center;margin-bottom:4px}
+.nm-btn{display:block;width:100%;font:inherit;font-size:12px;font-weight:600;text-align:left;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:5px;padding:3px 5px;margin-bottom:3px;color:var(--ink);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.add-btn{display:block;width:100%;border:1px dashed var(--line);background:none;color:var(--muted);border-radius:5px;font-size:15px;line-height:1;padding:3px 0;cursor:pointer}
+.add-btn:hover{border-color:var(--accent);color:var(--accent)}
+.warnp{border-color:var(--warn);background:var(--warn-soft)}
+.loclist li{align-items:center;flex-wrap:wrap}
+.loclist .sp{flex:1}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(8,14,20,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 24px max(12px,env(safe-area-inset-left,0px))}
 .sheet{background:var(--surface);color:var(--ink);border-radius:12px;width:100%;max-width:560px;padding:18px;display:grid;gap:14px}
 .sheet h2{font-family:var(--display);font-weight:700;font-size:22px;text-transform:uppercase;margin:0}
@@ -194,7 +214,7 @@ if(!S||!Array.isArray(S.est))S=seed();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 save();
 
-const UI={tab:'inicio',week:segunda(hoje()),hEst:'',fOpen:null,aEst:''};
+const UI={loc:'PNF',tab:'inicio',week:segunda(hoje()),hEst:'',fOpen:null,aEst:''};
 try{const t=localStorage.getItem(KEY+'_tab');if(t)UI.tab=t}catch(e){}
 
 const TABS=[['inicio','Início'],['estagiarios','Estagiários'],['horarios','Horários'],['horas','Horas'],['formacoes','Formações'],['avaliacao','Avaliação'],['equipamentos','Equipamentos']];
@@ -257,7 +277,7 @@ V.inicio=()=>{
 };
 
 V.estagiarios=()=>{
-  const cards=S.est.map(e=>`<div class="card"><div class="bar-head"><span class="nm">${esc(e.nome)}</span><span class="sp"></span>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:''}<button class="btn sm" type="button" data-act="editEst" data-id="${e.id}">Editar</button></div>
+  const cards=S.est.map(e=>`<div class="card"><div class="bar-head"><span class="nm">${esc(e.nome)}</span><span class="sp"></span>${e.dataFicha?`<span class="pill ok">ficha ${fmtD(e.dataFicha).slice(4)}</span>`:e.nomeCompleto?'<span class="pill warn">ficha sem data</span>':'<span class="pill">sem ficha</span>'}${e.local?`<span class="pill acc">${esc(e.local)}</span>`:''}<button class="btn sm" type="button" data-act="editEst" data-id="${e.id}">Editar</button></div>
     <dl class="kv">${e.nomeCompleto?`<dt>Nome</dt><dd>${esc(e.nomeCompleto)}</dd>`:''}<dt>Telemóvel</dt><dd>${esc(e.tel)||'—'}</dd>${e.email?`<dt>Email</dt><dd>${esc(e.email)}</dd>`:''}${e.nascimento?`<dt>Nascimento</dt><dd>${fmtDY(e.nascimento)}</dd>`:''}${e.emNome?`<dt>Emergência</dt><dd>${esc(e.emNome)}${e.emParent?' ('+esc(e.emParent)+')':''} · ${esc(e.emTel)}</dd>`:''}<dt>Escola / curso</dt><dd>${esc(e.escola)||'—'}</dd><dt>Tutor</dt><dd>${esc(e.tutor)||'—'}</dd><dt>Período</dt><dd>${e.inicio||e.fim?`${fmtDY(e.inicio)} → ${fmtDY(e.fim)}`:'—'}</dd><dt>Tamanhos</dt><dd>T-shirt ${esc(e.tshirt)} · Casaco ${esc(e.casaco)}</dd>${e.notas?`<dt>Notas</dt><dd>${esc(e.notas)}</dd>`:''}</dl>${progHTML(e)}</div>`).join('');
   return `<div class="bar-head"><h2 class="sec">Estagiários</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editEst">Adicionar estagiário</button></div>
   <div class="cards">${cards||'<p class="empty">Ainda não há estagiários.</p>'}</div>
@@ -266,26 +286,36 @@ V.estagiarios=()=>{
   <div class="inline"><input id="novoTutor" placeholder="Nome do TEF" aria-label="Nome do tutor"><button class="btn" type="button" data-act="addTutor">Adicionar</button></div></div>`;
 };
 
+const GRID=[
+  ['T1',{1:['06:30','10:30'],2:['06:30','10:30'],3:['06:30','10:30'],4:['06:30','10:30'],5:['06:30','10:30'],6:['09:00','13:00'],0:['09:30','12:30']}],
+  ['T2',{1:['10:30','13:30'],2:['10:30','13:30'],3:['10:30','13:30'],4:['10:30','13:30'],5:['10:30','13:30'],6:['15:30','19:30']}],
+  ['T3',{1:['13:30','16:30'],2:['13:30','16:30'],3:['13:30','16:30'],4:['13:30','16:30'],5:['13:30','16:30']}],
+  ['T4',{1:['16:30','19:30'],2:['16:30','19:30'],3:['16:30','19:30'],4:['16:30','19:30'],5:['16:30','19:30']}],
+  ['T5',{1:['19:30','22:30'],2:['19:30','22:30'],3:['19:30','22:30'],4:['19:30','22:30'],5:['19:30','22:30']}]];
+const LOCS=[['PNF','Penafiel'],['LSD','Lousada']];
+const naGrelha=s=>GRID.some(([,m])=>m[s.dia]&&m[s.dia][0]===s.ini&&m[s.dia][1]===s.fim);
 V.horarios=()=>{
-  const w=UI.week,dias=[...Array(7)].map((_,i)=>addD(w,i));
-  const plan={};
-  const cols=dias.map(d=>{
-    const sl=S.horarios.filter(s=>ativo(s,d)).sort((a,b)=>a.ini.localeCompare(b.ini));
-    sl.forEach(s=>plan[s.estId]=(plan[s.estId]||0)+dur(s.ini,s.fim));
-    const fs=S.form.filter(f=>f.data===d);
-    const dt=pd(d);
-    return `<div class="day${d===hoje()?' today':''}"><h4><span>${D3[dt.getDay()]}</span><span class="muted">${dt.getDate()} ${MES[dt.getMonth()]}</span></h4>
-      ${fs.map(f=>`<div class="slot form"><b>Formação ${f.n}</b><span>${esc(f.tema||'Tema por definir')}</span></div>`).join('')}
-      ${sl.map(s=>`<button class="slot" type="button" data-act="editSlot" data-id="${s.id}"><b>${esc(nomeEst(s.estId))}</b><span>${turnoCod(s)}${s.ini}–${s.fim}${s.local?' · '+esc(s.local):''}</span>${s.tutor?`<span class="muted">c/ ${esc(s.tutor)}</span>`:''}</button>`).join('')}
-      ${!sl.length&&!fs.length?'<span class="empty">Sem turnos</span>':''}</div>`}).join('');
-  const resumo=S.est.map(e=>`<tr><td>${esc(e.nome)}</td><td class="num">${plan[e.id]?fmtH(plan[e.id]):'<span class="muted">—</span>'}</td></tr>`).join('');
-  return `<div class="bar-head"><h2 class="sec">Horários de estágio</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editSlot">Adicionar turno</button></div>
+  const w=UI.week,loc=UI.loc||'PNF',locNome=LOCS.find(x=>x[0]===loc)[1];
+  const dias=[...Array(7)].map((_,i)=>addD(w,i));
+  const doLoc=d=>S.horarios.filter(s=>s.local===loc&&ativo(s,d));
+  const plan={};dias.forEach(d=>doLoc(d).forEach(s=>plan[s.estId]=(plan[s.estId]||0)+dur(s.ini,s.fim)));
+  const head=dias.map(d=>{const dt=pd(d),f=S.form.find(x=>x.data===d);return `<th class="${d===hoje()?'hj':''}">${D3[dt.getDay()]} ${dt.getDate()}${f?`<br><span class="pill warn">Formação ${f.n}</span>`:''}</th>`}).join('');
+  const rows=GRID.map(([cod,m])=>`<tr><th class="tc">${cod}</th>${dias.map(d=>{const dia=pd(d).getDay(),h=m[dia];if(!h)return '<td class="off"></td>';
+    const sl=doLoc(d).filter(s=>s.dia===dia&&s.ini===h[0]&&s.fim===h[1]);
+    return `<td class="cell${d===hoje()?' hj':''}"><span class="hr">${h[0]}–${h[1]}</span>${sl.map(s=>`<button class="nm-btn" type="button" data-act="editSlot" data-id="${s.id}">${esc(nomeEst(s.estId))}</button>`).join('')}<button class="add-btn" type="button" data-act="editSlot" data-dia="${dia}" data-ini="${h[0]}" data-fim="${h[1]}" aria-label="Adicionar estagiário ${cod} ${D3[dia]}">+</button></td>`}).join('')}</tr>`).join('');
+  const outros=dias.flatMap(d=>doLoc(d).filter(s=>!naGrelha(s)).map(s=>`<button class="slot" type="button" data-act="editSlot" data-id="${s.id}"><b>${esc(nomeEst(s.estId))}</b><span>${fmtD(d)} · ${s.ini}–${s.fim}</span></button>`)).join('');
+  const semLoc={};S.horarios.filter(s=>!s.local&&dias.some(d=>ativo(s,d))).forEach(s=>(semLoc[s.estId]=semLoc[s.estId]||[]).push(s));
+  const semLocHTML=Object.keys(semLoc).map(id=>`<li><span>${esc(nomeEst(id))} <span class="muted small">(${semLoc[id].length} turno(s))</span></span><span class="sp"></span><button class="btn sm" type="button" data-act="setLoc" data-id="${id}" data-l="PNF">Penafiel</button><button class="btn sm" type="button" data-act="setLoc" data-id="${id}" data-l="LSD">Lousada</button></li>`).join('');
+  const resumo=S.est.filter(e=>plan[e.id]).map(e=>`<tr><td>${esc(e.nome)}</td><td class="num">${fmtH(plan[e.id])}</td></tr>`).join('');
+  return `<div class="bar-head"><h2 class="sec">Horário de ${locNome}</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editSlot">Adicionar turno</button></div>
+  <div class="seg" role="tablist">${LOCS.map(([k,n])=>`<button type="button" role="tab" aria-selected="${loc===k}" data-act="loc" data-k="${k}">${n}<span>${S.horarios.filter(s=>s.local===k&&dias.some(d=>ativo(s,d))).length}</span></button>`).join('')}</div>
+  ${semLocHTML?`<div class="panel warnp"><h3>Turnos sem local nesta semana</h3><p class="small muted" style="margin:0 0 8px">Escolhe o clube de cada estagiário. Os turnos dele sem local passam para esse horário.</p><ul class="todo loclist">${semLocHTML}</ul></div>`:''}
   <div class="bar-head"><button class="btn sm" type="button" data-act="week" data-d="-7" aria-label="Semana anterior">‹</button><b>${fmtD(w)} – ${fmtD(addD(w,6))}</b><button class="btn sm" type="button" data-act="week" data-d="7" aria-label="Semana seguinte">›</button><button class="btn sm ghost" type="button" data-act="week" data-d="0">Esta semana</button><span class="sp"></span><button class="btn sm" type="button" data-act="copSemana">Copiar para a semana seguinte</button><button class="btn sm" type="button" data-act="genSemana">Registar horas desta semana</button></div>
-  <div class="week">${cols}</div>
-  <p class="small muted" style="margin:0">Cada turno repete-se no dia indicado dentro das datas de validade. Para turnos semanais, "Copiar para a semana seguinte" duplica os desta semana. "Registar horas desta semana" passa os turnos já cumpridos (até hoje) para o separador Horas, sem duplicar.</p>
-  <div><h3>Horas planeadas nesta semana</h3><div class="tbl-wrap"><table><tbody>${resumo}</tbody></table></div></div>`;
+  <div class="tbl-wrap"><table class="grade-t"><thead><tr><th></th>${head}</tr></thead><tbody>${rows}</tbody></table></div>
+  ${outros?`<div><h3>Fora da grelha</h3><div class="week">${outros}</div></div>`:''}
+  <p class="small muted" style="margin:0">Toca em + para pôr um estagiário num turno e num nome para o editar ou apagar. Cada turno repete-se no mesmo dia dentro das datas de validade. "Copiar para a semana seguinte" e "Registar horas" tratam os turnos dos dois clubes.</p>
+  <div><h3>Horas planeadas em ${locNome} nesta semana</h3>${resumo?`<div class="tbl-wrap"><table><tbody>${resumo}</tbody></table></div>`:'<p class="empty">Nenhum estagiário com turnos neste clube nesta semana.</p>'}</div>`;
 };
-
 V.horas=()=>{
   const f=UI.hEst;
   const regs=S.registos.filter(r=>!f||r.estId===f).sort((a,b)=>(b.data+b.ini).localeCompare(a.data+a.ini));
@@ -377,7 +407,8 @@ A.editEst=el=>{
   openForm(e?'Editar estagiário':'Novo estagiário',[
     {k:'nome',l:'Nome curto',full:1},{k:'nomeCompleto',l:'Nome completo',full:1},
     {k:'tel',l:'Telemóvel',t:'tel'},{k:'email',l:'Email',t:'email'},{k:'nascimento',l:'Data de nascimento',t:'date'},{k:'escola',l:'Escola / curso'},
-    {k:'morada',l:'Morada',full:1},{k:'cp',l:'Código postal'},{k:'emNome',l:'Emergência: nome'},{k:'emParent',l:'Emergência: parentesco'},{k:'emTel',l:'Emergência: telemóvel',t:'tel'},
+    {k:'morada',l:'Morada',full:1},{k:'cp',l:'Código postal'},{k:'estadoCivil',l:'Estado civil'},
+    {k:'nif',l:'NIF'},{k:'cc',l:'N.º Cartão de Cidadão'},{k:'funcao',l:'Função'},{k:'dataFicha',l:'Data da ficha',t:'date'},{k:'emNome',l:'Emergência: nome'},{k:'emParent',l:'Emergência: parentesco'},{k:'emTel',l:'Emergência: telemóvel',t:'tel'},
     {k:'local',l:'Local',t:'select',opts:[['','—'],'PNF','LSD']},{k:'tutor',l:'Tutor TEF',t:'select',opts:tut},
     {k:'horasReq',l:'Horas exigidas',t:'number',min:0},{k:'inicio',l:'Início do estágio',t:'date'},{k:'fim',l:'Fim do estágio',t:'date'},
     {k:'tshirt',l:'Tamanho t-shirt',t:'select',opts:TAM},{k:'casaco',l:'Tamanho casaco',t:'select',opts:TAM},
@@ -388,6 +419,8 @@ A.editEst=el=>{
 };
 A.addTutor=()=>{const i=$('#novoTutor'),v=i.value.trim();if(!v)return;if(!S.tutores.includes(v))S.tutores.push(v);save();render();toast('Tutor adicionado')};
 A.delTutor=el=>{S.tutores.splice(Number(el.dataset.i),1);save();render()};
+A.loc=el=>{UI.loc=el.dataset.k;render()};
+A.setLoc=el=>{const id=el.dataset.id,l=el.dataset.l;S.horarios.forEach(s=>{if(s.estId===id&&!s.local)s.local=l});const e=estById(id);if(e&&!e.local)e.local=l;save();UI.loc=l;render();toast(`${e?e.nome:''} → ${l==='PNF'?'Penafiel':'Lousada'}`)};
 A.week=el=>{const d=Number(el.dataset.d);UI.week=d?addD(UI.week,d):segunda(hoje());render()};
 A.editSlot=el=>{
   if(!S.est.length){toast('Adiciona primeiro um estagiário');return}
@@ -399,9 +432,8 @@ A.editSlot=el=>{
     {k:'ini',l:'Entrada',t:'time'},{k:'fim',l:'Saída',t:'time'},
     {k:'tutor',l:'TEF de turno (tutor)',t:'select',opts:tut,full:1},
     {k:'de',l:'Válido de',t:'date'},{k:'ate',l:'Válido até',t:'date'}],
-    s||{estId:S.est[0].id,dia:pd(UI.week).getDay(),ini:'09:00',fim:'13:00',de:UI.week,local:''},
+    s||{estId:S.est[0].id,dia:el.dataset.dia!=null?Number(el.dataset.dia):1,ini:el.dataset.ini||'06:30',fim:el.dataset.fim||'10:30',de:UI.week,ate:addD(UI.week,6),local:UI.loc||'PNF'},
     v=>{v.dia=Number(v.dia);if(!v.ini||!v.fim||mins(v.fim)<=mins(v.ini))return 'A saída tem de ser depois da entrada.';
-      if(!s&&!v.local){const e=estById(v.estId);if(e?.local)v.local=e.local}
       if(!s&&!v.tutor){const e=estById(v.estId);if(e?.tutor)v.tutor=e.tutor}
       if(s)Object.assign(s,v);else S.horarios.push({id:uid(),...v})},
     s?()=>{S.horarios=S.horarios.filter(x=>x.id!==s.id)}:null);
@@ -472,11 +504,21 @@ A.dados=()=>{
   <div class="inline"><button class="btn" type="button" data-act="copiar">Copiar</button><button class="btn" type="button" data-act="baixar">Descarregar ficheiro</button></div>
   <div class="fld"><label for="impTxt">Importar: cola o JSON ou escolhe um ficheiro</label><textarea id="impTxt" rows="4"></textarea><input type="file" id="impFile" accept=".json,application/json" data-chg="impFile"></div>
   <p class="ferr" id="ferr" hidden></p>
-  <div class="factions"><button class="btn danger" type="button" data-act="repor">Repor dados iniciais</button><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button><button class="btn primary" type="button" data-act="importar">Importar</button></div>`);
+  <div class="factions"><button class="btn danger" type="button" data-act="repor">Repor dados iniciais</button><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button><button class="btn" type="button" data-act="importar" data-modo="juntar">Juntar aos dados atuais</button><button class="btn primary" type="button" data-act="importar">Substituir tudo</button></div>
+  <p class="small muted" style="margin:0">"Juntar" atualiza as fichas dos estagiários que já existem e acrescenta o que for novo, sem apagar o que preencheste. "Substituir tudo" troca todos os dados pelos do ficheiro.</p>`);
 };
 A.copiar=()=>{const t=$('#expTxt');navigator.clipboard?.writeText(t.value).then(()=>toast('Copiado'),()=>{t.select();toast('Seleccionado: usa Ctrl+C')})??(t.select(),toast('Seleccionado: usa Ctrl+C'))};
 A.baixar=()=>{try{const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`estagios_${hoje()}.json`;document.body.appendChild(a);a.click();a.remove();toast('Ficheiro descarregado')}catch(e){toast('Não foi possível descarregar; usa Copiar')}};
-A.importar=()=>{const p=$('#ferr');try{const o=JSON.parse($('#impTxt').value);if(!o||!Array.isArray(o.est)||!Array.isArray(o.form))throw 0;S=Object.assign(seed(),o);save();closeModal();render();toast('Dados importados')}catch(e){p.textContent='O texto não é uma exportação válida desta app.';p.hidden=false}};
+function juntar(o){
+  let nE=0,uE=0;
+  o.est.forEach(x=>{const e=S.est.find(y=>y.id===x.id)||S.est.find(y=>y.nome===x.nome);
+    if(e){Object.keys(x).forEach(k=>{if(k!=='id'&&x[k]!==''&&x[k]!=null&&(e[k]===''||e[k]==null||['nomeCompleto','email','nascimento','morada','cp','estadoCivil','nif','cc','funcao','dataFicha','emNome','emParent','emTel'].includes(k)))e[k]=x[k]});if(e.id!==x.id){const old=x.id;['horarios','registos','aval'].forEach(c=>(o[c]||[]).forEach(r=>{if(r.estId===old)r.estId=e.id}))}uE++}
+    else{S.est.push(x);nE++}});
+  ['horarios','registos','aval'].forEach(c=>(o[c]||[]).forEach(r=>{if(!S[c].some(y=>y.id===r.id))S[c].push(r)}));
+  (o.tutores||[]).forEach(t=>{if(!S.tutores.includes(t))S.tutores.push(t)});
+  return `${uE} ficha(s) atualizada(s), ${nE} estagiário(s) novo(s)`;
+}
+A.importar=el=>{const p=$('#ferr');try{const o=JSON.parse($('#impTxt').value);if(!o||!Array.isArray(o.est)||!Array.isArray(o.form))throw 0;let msg='Dados importados';if(el.dataset.modo==='juntar')msg=juntar(o);else S=Object.assign(seed(),o);save();closeModal();render();toast(msg)}catch(e){p.textContent='O texto não é uma exportação válida desta app.';p.hidden=false}};
 A.repor=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar: apagar tudo';return}S=seed();save();closeModal();render();toast('Dados repostos')};
 
 const C={};
