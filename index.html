@@ -923,6 +923,8 @@ function setModo(m){MODO=m;try{if(m)localStorage.setItem(MK,m);else localStorage
 const decodeCfg=str=>JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
 function applyCfg(c){if(!c||c.tipo!=='estagio-cfg'||!Array.isArray(c.est))return false;AL.cfg=c;if(AL.me&&!c.est.some(e=>e.id===AL.me))AL.me=null;alSaveLocal();return true}
 function renderPick(){
+  if(CONVITE){$('#main').innerHTML=`<div class="pick"><div><h2 class="sec">Convite de coordenador</h2><p class="muted" style="margin:4px 0 0">Foste convidado para coordenar os estágios. Escreve a chave da coordenação que te deram.</p></div>
+  <div class="panel"><div class="fgrid"><div class="fld"><label for="cjKey">Chave da coordenação</label><input id="cjKey" type="password" autocomplete="off"></div></div><p class="ferr" id="cjErr" hidden></p><div class="inline" style="margin-top:8px"><button class="btn primary" type="button" data-act="coordJoin">Entrar</button><button class="btn ghost" type="button" data-act="convCancel">Cancelar</button></div></div></div>`;return}
   const est=AL.cfg?.est||[];
   $('#main').innerHTML=`<div class="pick"><div><h2 class="sec">Bem-vindo</h2><p class="muted" style="margin:4px 0 0">Escolhe como vais usar a app neste dispositivo.</p></div>
   ${(AL.srv&&AL.srv.url)||SERVIDOR_FIXO?`<div class="panel"><h3>Sou estagiário</h3><p class="small muted" style="margin:0 0 10px">Escreve o código pessoal que o coordenador te enviou.</p><div class="inline"><input id="alCod" autocomplete="off" autocapitalize="characters" placeholder="Código" aria-label="Código pessoal" style="text-transform:uppercase;letter-spacing:.15em;max-width:180px"><button class="btn primary" type="button" data-act="al_codigo">Entrar</button></div><p class="ferr" id="ferr" hidden></p></div>`:''}
@@ -930,9 +932,10 @@ function renderPick(){
   <div class="panel"><h3>Coordenação</h3><div class="inline"><input id="cpin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN da coordenação" autocomplete="off"><button class="btn" type="button" data-act="coordIn">Entrar</button></div><p class="ferr" id="cerr" hidden></p></div></div>`;
 }
 A.al_pick=el=>{if(AL.dono&&AL.dono!==el.dataset.id){AL.reg={};AL.dos={};AL.upd=0}AL.me=AL.dono=el.dataset.id;AUI.v='hoje';alMigrate();alSaveLocal();setModo('aluno')};
+A.convCancel=()=>{CONVITE=null;render()};
 A.al_trocar=async()=>{if(alSrv()){await alPushNow();AL={cfg:null,me:null,reg:{},dos:{},migr:true,srv:{url:AL.srv.url,codigo:''}}}else AL.me=null;alSaveLocal();setModo('')};
 A.al_cfgPaste=async()=>{const v=($('#cfgTxt').value||'').trim();const ia=v.indexOf('#acesso=');if(ia>=0){try{const o=unb64(v.slice(ia+8));if(!(await alEntrar(o.s,o.c)))ferr(AL.erro||'Não foi possível entrar.')}catch(e){ferr('Esta ligação não é válida.')}return}const i=v.indexOf('#cfg=');try{if(applyCfg(decodeCfg(i>=0?v.slice(i+5):v))){toast('Configuração atualizada');render()}else throw 0}catch(e){ferr('Isto não é uma ligação de configuração válida.')}};
-A.coordIn=()=>{if($('#cpin').value===String(S.coordPin||'2026')){migrOld();setModo('coord')}else{const e=$('#cerr');e.textContent='PIN incorreto.';e.hidden=false}};
+A.coordIn=()=>{const v=$('#cpin').value;if(v===String(S.coordPin||'2026')||(coordSrv()&&v===coordSrv().chave)){migrOld();setModo('coord');if(coordSrv())coordPull()}else{const e=$('#cerr');e.textContent='PIN incorreto.';e.hidden=false}};
 A.sair=()=>setModo('');
 
 /* Compatibilidade com a app de presenças anterior */
@@ -995,7 +998,7 @@ const SK='estagios_srv';
 let SRV=null;try{SRV=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){}
 const srvSave=()=>{try{if(SRV)localStorage.setItem(SK,JSON.stringify(SRV));else localStorage.removeItem(SK)}catch(e){}};
 async function api(url,body){
-  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  let r;try{r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)})}catch(e){throw new Error(navigator.onLine===false?'Sem ligação à internet.':'Não foi possível contactar o script. Abre o endereço /exec numa janela nova: tem de aparecer {"ok":true,…}. Se pedir para iniciar sessão, a implementação não está com acesso a "Qualquer pessoa".')}
   if(!r.ok)throw new Error('O servidor respondeu com erro '+r.status+'.');
   let j;try{j=await r.json()}catch(e){throw new Error('O servidor não respondeu como esperado. Confirma o endereço do script e se está publicado para "Qualquer pessoa".')}
   return j;
@@ -1041,6 +1044,14 @@ A.srvOn=async el=>{
   catch(x){erro(x.message);el.disabled=false;el.textContent='Ligar'}
 };
 A.srvSync=()=>coordPull(true);
+A.coordConvite=()=>{const url=location.href.split('#')[0]+'#coord='+b64({s:coordSrv().url});const txt=`Convite para coordenador da app Estágios Playlife.\nAbre esta ligação no computador ou no telemóvel e escreve a chave da coordenação que te vou dar à parte:\n${url}`;const t=$('#convOut');t.value=txt;t.hidden=false;
+  const sel=()=>{t.select();toast('Convite selecionado: copia com Ctrl+C')};if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>toast('Convite copiado'),sel);else sel()};
+let CONVITE=null;
+A.coordJoin=async el=>{const chave=$('#cjKey').value,e=$('#cjErr');if(!chave){e.textContent='Escreve a chave da coordenação.';e.hidden=false;return}
+  el.disabled=true;el.textContent='A entrar…';
+  try{const j=await api(CONVITE,{acao:'coordLer',chave});if(!j.ok)throw new Error(j.erro||'Não foi possível entrar.');if(!j.estado)throw new Error('A Google Sheet ainda não tem dados. O coordenador principal tem de ligar a app primeiro.');
+    SRV={tipo:'coord',url:CONVITE,chave,rev:0};srvSave();CONVITE=null;S.migrOld=true;setModo('coord');await coordPull();toast('Entraste como coordenador')}
+  catch(x){e.textContent=x.message;e.hidden=false;el.disabled=false;el.textContent='Entrar'}};
 A.srvOff=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar: desligar';return}SRV=null;srvSave();syncSet('','');render();toast('Desligado. Os dados ficam só neste dispositivo.')};
 const CODE_ABC='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const novoCodigo=()=>{let c;const usados=new Set(Object.values(S.codigos||{}));do{c=[...Array(6)].map(()=>CODE_ABC[Math.floor(Math.random()*CODE_ABC.length)]).join('')}while(usados.has(c));return c};
@@ -1054,6 +1065,7 @@ function srvPanelHTML(){
   const s=coordSrv();
   if(s){const cods=S.codigos||{};
     return `<div class="panel"><div class="bar-head"><h3 style="margin:0">Sincronização online</h3><span class="sp"></span>${syncPill()}</div><p class="small muted" style="margin:6px 0 10px">Ligado à Google Sheet. As tuas alterações são guardadas sozinhas, e os horários, as formações e a lista de TEF chegam aos estagiários quando abrem a app. As presenças e o dossier deles chegam-te da mesma forma.</p><div class="inline"><button class="btn" type="button" data-act="srvSync">Sincronizar agora</button><button class="btn ghost danger" type="button" data-act="srvOff">Desligar</button></div></div>
+    <div class="panel"><h3>Coordenadores</h3><p class="small muted" style="margin:0 0 10px">Para dar a outro coordenador as mesmas permissões que tu, envia-lhe o convite. A ligação abre a app já apontada para a tua Google Sheet; ele só tem de escrever a chave da coordenação, que lhe deves dizer à parte (pessoalmente ou por chamada), nunca na mesma mensagem.</p><div class="inline"><button class="btn primary" type="button" data-act="coordConvite">Copiar convite</button></div><textarea id="convOut" rows="4" readonly hidden style="margin-top:10px"></textarea></div>
     <div class="panel"><h3>Acesso dos estagiários</h3><p class="small muted" style="margin:0 0 10px">Cada estagiário tem um código pessoal. Copia a mensagem e envia-a em privado a cada um: a ligação já leva o código, por isso basta abri-la.</p>
     <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Código</th><th></th></tr></thead><tbody>${S.est.map(e=>`<tr><td>${esc(e.nome)}</td><td>${cods[e.id]?`<code class="cod">${cods[e.id]}</code>`:'<span class="muted">sem código</span>'}</td><td class="num"><div class="inline" style="justify-content:flex-end">${cods[e.id]?`<button class="btn sm primary" type="button" data-act="codCopiar" data-id="${e.id}">Copiar mensagem</button>`:''}<button class="btn sm" type="button" data-act="codGerar" data-id="${e.id}">${cods[e.id]?'Novo código':'Criar código'}</button></div></td></tr>`).join('')||'<tr><td colspan="3" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>`}
   return `<div class="panel"><h3>Sincronização online (Google Sheet)</h3><p class="small muted" style="margin:0 0 10px">Liga a app à tua Google Sheet para deixar de enviar ligações e ficheiros. Se a folha já tiver dados, são esses que ficam neste dispositivo; se estiver vazia, recebe os dados deste dispositivo.</p>
@@ -1114,11 +1126,12 @@ async function checkPinAny(){
 
 document.addEventListener('click',ev=>{const el=ev.target.closest('[data-act]');if(el&&A[el.dataset.act]){A[el.dataset.act](el,ev)}else if(ev.target.id==='modal')closeModal()});
 document.addEventListener('change',ev=>{const el=ev.target.closest('[data-chg]');if(el&&C[el.dataset.chg])C[el.dataset.chg](el)});
-document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidden)closeModal();if(ev.key==='Enter'&&ev.target.id==='novoTutor')A.addTutor();if(ev.key==='Enter'&&ev.target.id==='cpin')A.coordIn()});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidden)closeModal();if(ev.key==='Enter'&&ev.target.id==='novoTutor')A.addTutor();if(ev.key==='Enter'&&ev.target.id==='cpin')A.coordIn();if(ev.key==='Enter'&&ev.target.id==='cjKey')$('[data-act="coordJoin"]').click()});
 (function boot(){
   if(!MODO&&HAD)MODO='coord';
   const h=location.hash;
   if(h.startsWith('#cfg=')){try{if(applyCfg(decodeCfg(h.slice(5)))){toast('Horários e formações atualizados');if(MODO!=='coord'&&AL.me)MODO='aluno'}}catch(e){toast('A ligação de configuração não é válida')}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+  if(h.startsWith('#coord=')){try{const o=unb64(h.slice(7));if(o.s&&!coordSrv()){CONVITE=o.s;MODO=''}else if(coordSrv())toast('Este dispositivo já está ligado como coordenador')}catch(e){toast('Este convite não é válido')}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
   let acesso=null;
   if(h.startsWith('#acesso=')){try{acesso=unb64(h.slice(8))}catch(e){toast('Esta ligação não é válida')}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
   if(MODO==='coord')migrOld();
