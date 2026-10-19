@@ -182,8 +182,7 @@ const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ds(d)};
 const n1=x=>x==null?'—':x.toFixed(1).replace('.',',');
 
 function seed(){
-  const raw=[['André Nunes Carvalho','964002021','M'],['Francisco Pereira','914185799','M'],['João Cunha','916586362','M'],['Carlos Silva','912132736','L'],['André Barbosa','967620078','M'],['Rafael Couto','910872854','M'],['Miguel Rocha','913015119','M'],['Gonçalo Borges','916645640','M'],['Inês Marinho','932681352','S']];
-  const est=raw.map(([nome,tel,t])=>({id:uid(),nome,tel,escola:'',local:'',tutor:'',horasReq:null,inicio:'',fim:'',tshirt:t,casaco:t,entT:0,entC:0,entData:'',notas:''}));
+  const est=[]; /* os estagiários entram por importação (Dados → Importar), para não ficarem no código público */
   const datas=['2026-10-30','2026-11-06','2026-11-13','2026-11-20','2026-11-27','2026-12-04','2026-12-11','2026-12-18','2027-01-08','2027-01-15','2027-01-22','2027-01-29','2027-02-05','2027-02-12'];
   const form=datas.map((d,i)=>({id:uid(),n:i+1,data:d,ini:'',fim:'',duracao:2,tema:'',formador:'',local:'',sumario:'',pres:{}}));
   const criterios=[['Assiduidade e pontualidade',1],['Apresentação e postura profissional',1],['Relação e comunicação com clientes',1.5],['Conhecimento técnico',1.5],['Prescrição e correção do exercício',2],['Iniciativa e autonomia',1],['Trabalho em equipa',1],['Participação nas formações',1]].map(([nome,peso])=>({id:uid(),nome,peso}));
@@ -201,6 +200,8 @@ try{const t=localStorage.getItem(KEY+'_tab');if(t)UI.tab=t}catch(e){}
 const TABS=[['inicio','Início'],['estagiarios','Estagiários'],['horarios','Horários'],['horas','Horas'],['formacoes','Formações'],['avaliacao','Avaliação'],['equipamentos','Equipamentos']];
 const estById=id=>S.est.find(e=>e.id===id);
 const nomeEst=id=>estById(id)?.nome||'(removido)';
+const TCOD={'06:30':'T1','10:30':'T2','13:30':'T3','16:30':'T4','19:30':'T5','09:00':'T1','09:30':'T1','15:30':'T2'};
+const turnoCod=s=>TCOD[s.ini]?TCOD[s.ini]+' · ':'';
 const fDur=f=>(f.ini&&f.fim)?dur(f.ini,f.fim):(Number(f.duracao)||0)*60;
 function horasEst(id){
   const sala=S.registos.filter(r=>r.estId===id).reduce((a,r)=>a+dur(r.ini,r.fim),0);
@@ -242,6 +243,7 @@ V.inicio=()=>{
     const pres=S.form.filter(f=>formRealizada(f)&&f.pres[e.id]).length;
     const av=S.aval.filter(a=>a.estId===e.id).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];
     return `<tr><td><b>${esc(e.nome)}</b></td><td>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:'<span class="muted">—</span>'}</td><td>${esc(e.tutor)||'<span class="muted">—</span>'}</td><td>${progHTML(e)}</td><td class="num">${feitas?`${pres}/${feitas}`:'—'}</td><td class="num">${av?`<b>${n1(notaAval(av))}</b> <span class="muted small">${esc(av.momento)}</span>`:'<span class="muted">—</span>'}</td></tr>`}).join('');
+  if(!S.est.length)todo.unshift(['warn','Ainda não há estagiários: importa o ficheiro de dados em "Dados" ou adiciona-os','estagiarios']);
   return `${proxHTML}
   <div class="stats">
     <div class="stat"><b>${S.est.length}</b><span>estagiários</span></div>
@@ -251,12 +253,12 @@ V.inicio=()=>{
   </div>
   ${todo.length?`<div class="panel"><h3>Por tratar</h3><ul class="todo">${todo.map(([c,t,tab])=>`<li><span class="pill ${c}">${c==='acc'?'pendente':'falta'}</span><button class="btn ghost sm" type="button" data-act="tab" data-k="${tab}">${esc(t)}</button></li>`).join('')}</ul></div>`:''}
   <div><div class="bar-head" style="margin-bottom:8px"><h2 class="sec">Ponto de situação</h2></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Local</th><th>Tutor</th><th>Horas</th><th class="num">Formações</th><th class="num">Avaliação</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th>Local</th><th>Tutor</th><th>Horas</th><th class="num">Formações</th><th class="num">Avaliação</th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="empty">Sem estagiários.</td></tr>'}</tbody></table></div></div>`;
 };
 
 V.estagiarios=()=>{
   const cards=S.est.map(e=>`<div class="card"><div class="bar-head"><span class="nm">${esc(e.nome)}</span><span class="sp"></span>${e.local?`<span class="pill acc">${esc(e.local)}</span>`:''}<button class="btn sm" type="button" data-act="editEst" data-id="${e.id}">Editar</button></div>
-    <dl class="kv"><dt>Telemóvel</dt><dd>${esc(e.tel)||'—'}</dd><dt>Escola / curso</dt><dd>${esc(e.escola)||'—'}</dd><dt>Tutor</dt><dd>${esc(e.tutor)||'—'}</dd><dt>Período</dt><dd>${e.inicio||e.fim?`${fmtDY(e.inicio)} → ${fmtDY(e.fim)}`:'—'}</dd><dt>Tamanhos</dt><dd>T-shirt ${esc(e.tshirt)} · Casaco ${esc(e.casaco)}</dd>${e.notas?`<dt>Notas</dt><dd>${esc(e.notas)}</dd>`:''}</dl>${progHTML(e)}</div>`).join('');
+    <dl class="kv">${e.nomeCompleto?`<dt>Nome</dt><dd>${esc(e.nomeCompleto)}</dd>`:''}<dt>Telemóvel</dt><dd>${esc(e.tel)||'—'}</dd>${e.email?`<dt>Email</dt><dd>${esc(e.email)}</dd>`:''}${e.nascimento?`<dt>Nascimento</dt><dd>${fmtDY(e.nascimento)}</dd>`:''}${e.emNome?`<dt>Emergência</dt><dd>${esc(e.emNome)}${e.emParent?' ('+esc(e.emParent)+')':''} · ${esc(e.emTel)}</dd>`:''}<dt>Escola / curso</dt><dd>${esc(e.escola)||'—'}</dd><dt>Tutor</dt><dd>${esc(e.tutor)||'—'}</dd><dt>Período</dt><dd>${e.inicio||e.fim?`${fmtDY(e.inicio)} → ${fmtDY(e.fim)}`:'—'}</dd><dt>Tamanhos</dt><dd>T-shirt ${esc(e.tshirt)} · Casaco ${esc(e.casaco)}</dd>${e.notas?`<dt>Notas</dt><dd>${esc(e.notas)}</dd>`:''}</dl>${progHTML(e)}</div>`).join('');
   return `<div class="bar-head"><h2 class="sec">Estagiários</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editEst">Adicionar estagiário</button></div>
   <div class="cards">${cards||'<p class="empty">Ainda não há estagiários.</p>'}</div>
   <div class="panel"><h3>Tutores TEF</h3><p class="small muted" style="margin:0 0 10px">Os nomes daqui aparecem para escolher na ficha de cada estagiário e nos turnos.</p>
@@ -274,13 +276,13 @@ V.horarios=()=>{
     const dt=pd(d);
     return `<div class="day${d===hoje()?' today':''}"><h4><span>${D3[dt.getDay()]}</span><span class="muted">${dt.getDate()} ${MES[dt.getMonth()]}</span></h4>
       ${fs.map(f=>`<div class="slot form"><b>Formação ${f.n}</b><span>${esc(f.tema||'Tema por definir')}</span></div>`).join('')}
-      ${sl.map(s=>`<button class="slot" type="button" data-act="editSlot" data-id="${s.id}"><b>${esc(nomeEst(s.estId))}</b><span>${s.ini}–${s.fim}${s.local?' · '+esc(s.local):''}</span>${s.tutor?`<span class="muted">c/ ${esc(s.tutor)}</span>`:''}</button>`).join('')}
+      ${sl.map(s=>`<button class="slot" type="button" data-act="editSlot" data-id="${s.id}"><b>${esc(nomeEst(s.estId))}</b><span>${turnoCod(s)}${s.ini}–${s.fim}${s.local?' · '+esc(s.local):''}</span>${s.tutor?`<span class="muted">c/ ${esc(s.tutor)}</span>`:''}</button>`).join('')}
       ${!sl.length&&!fs.length?'<span class="empty">Sem turnos</span>':''}</div>`}).join('');
   const resumo=S.est.map(e=>`<tr><td>${esc(e.nome)}</td><td class="num">${plan[e.id]?fmtH(plan[e.id]):'<span class="muted">—</span>'}</td></tr>`).join('');
   return `<div class="bar-head"><h2 class="sec">Horários de estágio</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editSlot">Adicionar turno</button></div>
-  <div class="bar-head"><button class="btn sm" type="button" data-act="week" data-d="-7" aria-label="Semana anterior">‹</button><b>${fmtD(w)} – ${fmtD(addD(w,6))}</b><button class="btn sm" type="button" data-act="week" data-d="7" aria-label="Semana seguinte">›</button><button class="btn sm ghost" type="button" data-act="week" data-d="0">Esta semana</button><span class="sp"></span><button class="btn sm" type="button" data-act="genSemana">Registar horas desta semana</button></div>
+  <div class="bar-head"><button class="btn sm" type="button" data-act="week" data-d="-7" aria-label="Semana anterior">‹</button><b>${fmtD(w)} – ${fmtD(addD(w,6))}</b><button class="btn sm" type="button" data-act="week" data-d="7" aria-label="Semana seguinte">›</button><button class="btn sm ghost" type="button" data-act="week" data-d="0">Esta semana</button><span class="sp"></span><button class="btn sm" type="button" data-act="copSemana">Copiar para a semana seguinte</button><button class="btn sm" type="button" data-act="genSemana">Registar horas desta semana</button></div>
   <div class="week">${cols}</div>
-  <p class="small muted" style="margin:0">Os turnos repetem-se todas as semanas no dia indicado, dentro das datas de validade. "Registar horas desta semana" passa os turnos já cumpridos (até hoje) para o separador Horas, sem duplicar.</p>
+  <p class="small muted" style="margin:0">Cada turno repete-se no dia indicado dentro das datas de validade. Para turnos semanais, "Copiar para a semana seguinte" duplica os desta semana. "Registar horas desta semana" passa os turnos já cumpridos (até hoje) para o separador Horas, sem duplicar.</p>
   <div><h3>Horas planeadas nesta semana</h3><div class="tbl-wrap"><table><tbody>${resumo}</tbody></table></div></div>`;
 };
 
@@ -373,7 +375,9 @@ A.editEst=el=>{
   const e=el.dataset.id?estById(el.dataset.id):null;
   const tut=optTut();if(e?.tutor&&!S.tutores.includes(e.tutor))tut.push([e.tutor,e.tutor]);
   openForm(e?'Editar estagiário':'Novo estagiário',[
-    {k:'nome',l:'Nome',full:1},{k:'tel',l:'Telemóvel',t:'tel'},{k:'escola',l:'Escola / curso'},
+    {k:'nome',l:'Nome curto',full:1},{k:'nomeCompleto',l:'Nome completo',full:1},
+    {k:'tel',l:'Telemóvel',t:'tel'},{k:'email',l:'Email',t:'email'},{k:'nascimento',l:'Data de nascimento',t:'date'},{k:'escola',l:'Escola / curso'},
+    {k:'morada',l:'Morada',full:1},{k:'cp',l:'Código postal'},{k:'emNome',l:'Emergência: nome'},{k:'emParent',l:'Emergência: parentesco'},{k:'emTel',l:'Emergência: telemóvel',t:'tel'},
     {k:'local',l:'Local',t:'select',opts:[['','—'],'PNF','LSD']},{k:'tutor',l:'Tutor TEF',t:'select',opts:tut},
     {k:'horasReq',l:'Horas exigidas',t:'number',min:0},{k:'inicio',l:'Início do estágio',t:'date'},{k:'fim',l:'Fim do estágio',t:'date'},
     {k:'tshirt',l:'Tamanho t-shirt',t:'select',opts:TAM},{k:'casaco',l:'Tamanho casaco',t:'select',opts:TAM},
@@ -401,6 +405,12 @@ A.editSlot=el=>{
       if(!s&&!v.tutor){const e=estById(v.estId);if(e?.tutor)v.tutor=e.tutor}
       if(s)Object.assign(s,v);else S.horarios.push({id:uid(),...v})},
     s?()=>{S.horarios=S.horarios.filter(x=>x.id!==s.id)}:null);
+};
+A.copSemana=()=>{
+  let n=0;const nw=addD(UI.week,7);
+  for(let i=0;i<7;i++){const d=addD(UI.week,i),d2=addD(d,7);
+    S.horarios.filter(s=>ativo(s,d)&&!ativo(s,d2)).forEach(s=>{if(!S.horarios.some(x=>x.estId===s.estId&&x.ini===s.ini&&ativo(x,d2))){S.horarios.push({...s,id:uid(),de:nw,ate:addD(nw,6)});n++}})}
+  save();UI.week=nw;render();toast(n?`${n} turno(s) copiado(s) para a semana seguinte`:'A semana seguinte já tem estes turnos');
 };
 A.genSemana=()=>{
   let n=0;const lim=hoje();
