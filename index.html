@@ -421,9 +421,11 @@ const fDur=f=>(f.ini&&f.fim)?dur(f.ini,f.fim):(Number(f.duracao)||0)*60;
 function horasEst(id){
   const man=S.registos.filter(r=>r.estId===id),ks=new Set(man.map(r=>r.data+'|'+r.ini));
   const manual=man.reduce((a,r)=>a+dur(r.ini,r.fim),0);
-  let app=0,pend=0;Object.values(S.recebidos?.[id]?.reg||{}).forEach(r=>{if(r.falta)return;const m=dur(r.start,r.end);if(!r.tef)pend+=m;else if(!ks.has(r.date+'|'+r.ini))app+=m});
+  const manAula=man.filter(r=>r.tipo==='Aula de grupo').reduce((a,r)=>a+dur(r.ini,r.fim),0);
+  let app=0,appAula=0,pend=0;Object.values(S.recebidos?.[id]?.reg||{}).forEach(r=>{if(r.falta)return;const m=dur(r.start,r.end);if(!r.tef)pend+=m;else if(!ks.has(r.date+'|'+r.ini)){app+=m;if(r.tipo==='aula')appAula+=m}});
   const form=S.form.filter(f=>f.pres[id]).reduce((a,f)=>a+fDur(f),0);
-  return {sala:manual+app,app,pend,form,total:manual+app+form};
+  const aulas=manAula+appAula;
+  return {sala:manual+app-aulas,aulas,app,pend,form,total:manual+app+form};
 }
 function notaAval(a){let s=0,w=0;S.criterios.forEach(c=>{const v=a.notas?.[c.id];if(v){s+=v*c.peso;w+=c.peso}});return w?Math.round(s/w/5*200)/10:null}
 const ativo=(s,date)=>s.dia===pd(date).getDay()&&(!s.de||s.de<=date)&&(!s.ate||s.ate>=date);
@@ -509,13 +511,13 @@ const naGrelha=s=>GRID.some(([,m])=>m[s.dia]&&m[s.dia][0]===s.ini&&m[s.dia][1]==
 V.horas=()=>{
   const f=UI.hEst;
   const regs=S.registos.filter(r=>!f||r.estId===f).sort((a,b)=>(b.data+b.ini).localeCompare(a.data+a.ini));
-  const resumo=EV().map(e=>{const h=horasEst(e.id);return `<tr><td>${esc(e.nome)}</td><td class="num">${fmtH(h.sala)}</td><td class="num">${fmtH(h.form)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${progHTML(e)}</td></tr>`}).join('');
-  const appRows=EV().filter(e=>!f||e.id===f).flatMap(e=>regsApp(e.id).map(r=>({k:r.date+r.ini,h:`<tr><td>${fmtD(r.date)}</td><td>${esc(e.nome)}</td><td>${r.start}–${r.end}</td><td class="num">${r.falta?'—':fmtH(dur(r.start,r.end))}</td><td>${r.falta?'<span class="pill bad">Falta</span>':r.tef?`<span class="pill ok">Confirmado</span> <span class="small muted">${esc(r.tef)}</span>`:'<span class="pill warn">Por confirmar</span>'}${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><span class="small muted">app</span></td></tr>`})));
+  const resumo=EV().map(e=>{const h=horasEst(e.id);return `<tr><td>${esc(e.nome)}</td><td class="num">${fmtH(h.sala)}</td><td class="num">${h.aulas?fmtH(h.aulas):'—'}</td><td class="num">${fmtH(h.form)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${progHTML(e)}</td></tr>`}).join('');
+  const appRows=EV().filter(e=>!f||e.id===f).flatMap(e=>regsApp(e.id).map(r=>({k:r.date+r.ini,h:`<tr><td>${fmtD(r.date)}</td><td>${esc(e.nome)}${r.tipo==='aula'?`<small class="muted" style="display:block">Aula · ${esc(r.aula||'')}${r.papel?' ('+esc(r.papel.toLowerCase())+')':''}</small>`:''}</td><td>${r.start}–${r.end}</td><td class="num">${r.falta?'—':fmtH(dur(r.start,r.end))}</td><td>${r.falta?'<span class="pill bad">Falta</span>':r.tef?`<span class="pill ok">Confirmado</span> <span class="small muted">${esc(r.tef)}</span>`:'<span class="pill warn">Por confirmar</span>'}${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><span class="small muted">app</span></td></tr>`})));
   const lista0=regs.map(r=>({k:r.data+r.ini,h:`<tr><td>${fmtD(r.data)}</td><td>${esc(nomeEst(r.estId))}</td><td>${r.ini}–${r.fim}</td><td class="num">${fmtH(dur(r.ini,r.fim))}</td><td><span class="pill">${esc(r.tipo)}</span>${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><button class="btn sm" type="button" data-act="editReg" data-id="${r.id}">Editar</button></td></tr>`}));
   const lista=[...lista0,...appRows].sort((a,b)=>b.k.localeCompare(a.k)).map(x=>x.h).join('');
   return `<div class="bar-head"><h2 class="sec">Registo de horas</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editReg">Registar horas</button></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Sala</th><th class="num">Formações</th><th class="num">Por confirmar</th><th>Total / exigido</th></tr></thead><tbody>${resumo}</tbody></table></div>
-  <p class="small muted" style="margin:0">As horas de formação contam a partir das presenças marcadas em Formações. As presenças registadas pelos estagiários na app só contam depois de confirmadas pelo TEF.</p>
+  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Sala</th><th class="num">Aulas de grupo</th><th class="num">Formações</th><th class="num">Por confirmar</th><th>Total / exigido</th></tr></thead><tbody>${resumo}</tbody></table></div>
+  <p class="small muted" style="margin:0">As horas de formação contam a partir das presenças marcadas em Formações. As aulas de grupo contam quando o estagiário as regista na app e o instrutor confirma, ou quando as registas aqui com o tipo Aula de grupo. As presenças registadas pelos estagiários na app só contam depois de confirmadas pelo TEF.</p>
   <div class="bar-head"><h3 style="margin:0">Registos</h3><span class="sp"></span><select id="hEst" data-chg="hEst" aria-label="Filtrar por estagiário"><option value="">Todos os estagiários</option>${EV().map(e=>`<option value="${e.id}"${f===e.id?' selected':''}>${esc(e.nome)}</option>`).join('')}</select></div>
   ${lista?`<div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Estagiário</th><th>Horário</th><th class="num">Horas</th><th>Tipo</th><th></th></tr></thead><tbody>${lista}</tbody></table></div>`:'<div class="panel empty">Sem registos. Usa "Registar horas" ou gera-os a partir do horário no separador Horários.</div>'}`;
 };
@@ -783,11 +785,11 @@ const isTef=()=>!!(AUI.tef&&Date.now()<AUI.tef.ate);
 function alSlots(d){const m=alMe(),dow=pd(d).getDay();return LT.semana(AL.cfg,m.id,segunda(d)).slots.filter(s=>s.dia===dow).sort((a,b)=>a.ini.localeCompare(b.ini))}
 function alExpected(from,to){const out=[];let n=0;for(let d=from;d<=to&&n<800;d=addD(d,1),n++)alSlots(d).forEach(s=>out.push({date:d,ini:s.ini,fim:s.fim,local:s.local,key:d+'|'+s.ini}));return out}
 function alInicio(){const m=alMe();const des=(AL.cfg.horarios||[]).filter(s=>s.estId===m.id&&s.de).map(s=>s.de).sort();let a=m.inicio||des[0]||addD(hoje(),-60);if(a<addD(hoje(),-300))a=addD(hoje(),-300);return a}
-function alTot(){const m=alMe();let conf=0,pend=0,falt=0;Object.values(AL.reg).forEach(r=>{if(r.falta)falt++;else if(r.tef)conf+=dur(r.start,r.end);else pend+=dur(r.start,r.end)});const form=(AL.cfg.form||[]).filter(f=>f.pres&&f.pres[m.id]).reduce((a,f)=>a+fDur(f),0);return {conf,pend,falt,form,total:conf+form}}
+function alTot(){const m=alMe();let conf=0,aulas=0,pend=0,falt=0;Object.values(AL.reg).forEach(r=>{if(r.falta)falt++;else if(r.tef){const x=dur(r.start,r.end);conf+=x;if(r.tipo==='aula')aulas+=x}else pend+=dur(r.start,r.end)});const form=(AL.cfg.form||[]).filter(f=>f.pres&&f.pres[m.id]).reduce((a,f)=>a+fDur(f),0);return {conf,sala:conf-aulas,aulas,pend,falt,form,total:conf+form}}
 const ST={conf:['ok','Confirmado'],pend:['warn','Falta confirmação'],falta:['bad','Faltou'],por:['bad','Por registar'],fut:['','Agendado']};
 function alStatus(s,rg){if(rg){if(rg.falta)return 'falta';return rg.tef?'conf':'pend'}return s.date<hoje()?'por':'fut'}
 function shiftBtn(s,rg){const st=alStatus(s,rg),p=ST[st],x=rg||{},dt=pd(s.date);
-  return `<button class="shift" type="button" data-act="al_shift" data-k="${esc(s.key)}"><span class="sd"><b>${D3[dt.getDay()]}</b><small>${dt.getDate()} ${MES[dt.getMonth()]}</small></span><span class="sm"><b>${s.extra?'Extra':(TCOD[s.ini]||'Turno')}</b> · ${x.start||s.ini}–${x.end||s.fim}${s.local?' · '+esc(locNome(s.local)):''}${x.tef?`<small>Confirmado por ${esc(x.tef)}</small>`:''}${x.nota?`<small>“${esc(x.nota)}”</small>`:''}</span><span class="pill ${p[0]}">${p[1]}</span></button>`}
+  return `<button class="shift" type="button" data-act="al_shift" data-k="${esc(s.key)}"><span class="sd"><b>${D3[dt.getDay()]}</b><small>${dt.getDate()} ${MES[dt.getMonth()]}</small></span><span class="sm"><b>${x.tipo==='aula'?'Aula · '+esc(x.aula||''):s.extra?'Extra':(TCOD[s.ini]||'Turno')}</b> · ${x.start||s.ini}–${x.end||s.fim}${s.local?' · '+esc(locNome(s.local)):''}${x.tef?`<small>Confirmado por ${esc(x.tef)}</small>`:''}${x.nota?`<small>“${esc(x.nota)}”</small>`:''}</span><span class="pill ${p[0]}">${p[1]}</span></button>`}
 function alMonthRows(y,mo){const f=`${y}-${String(mo+1).padStart(2,'0')}-01`,t=ds(new Date(y,mo+1,0));const rows=alExpected(f,t).map(s=>({...s,rg:AL.reg[s.key]}));const seen=new Set(rows.map(r=>r.key));
   Object.entries(AL.reg).forEach(([k,x])=>{if(!seen.has(k)&&x.date>=f&&x.date<=t)rows.push({date:x.date,ini:x.ini,fim:x.fim,local:x.local,key:k,extra:true,rg:x})});return rows.sort((a,b)=>(a.date+a.ini).localeCompare(b.date+b.ini))}
 
@@ -807,11 +809,11 @@ VA.hoje=()=>{
   const fN=(AL.cfg.form||[]).filter(f=>f.data>=td).sort((a,b)=>a.data.localeCompare(b.data))[0];
   return `<div class="al-grid"><div class="al-col"><div class="panel"><div class="kpi"><div><span class="lab">Horas feitas</span><b>${fmtH(t.total)}</b><small class="muted">${req?`de ${req} h · ${pct}%`:'meta por definir'}</small></div><div><span class="lab">Dossier</span><b>${dp.pct}%</b><small class="muted">preenchido e validado</small></div></div>
   <div class="lbl">Horas de estágio</div><div class="track lg"><i class="${pct>=100?'done':''}" style="width:${pct}%"></i></div>
-  <p class="small muted" style="margin:6px 0 0">${fmtH(t.conf)} em sala confirmadas pelo TEF · ${fmtH(t.form)} em formações${t.pend?` · ${fmtH(t.pend)} à espera de confirmação`:''}</p>
+  <p class="small muted" style="margin:6px 0 0">${fmtH(t.sala)} em sala · ${fmtH(t.aulas)} em aulas de grupo · ${fmtH(t.form)} em formações${t.pend?` · ${fmtH(t.pend)} à espera de confirmação`:''}</p>
   <div class="lbl">Dossier de estágio</div><div class="track lg"><i class="${dp.pct>=100?'done':''}" style="width:${dp.pct}%"></i></div></div>
   ${porReg||pend?`<div class="panel warnp"><b>Atenção</b><p class="small" style="margin:4px 0 8px">${porReg?`${porReg} turno(s) por registar. `:''}${pend?`${pend} registo(s) sem confirmação do TEF.`:''}</p><button class="btn sm" type="button" data-act="al_v" data-k="pres">Ver presenças</button></div>`:''}
   ${fN?`<div class="al-wide-only">${nextForm(fN)}</div>`:''}</div><div class="al-col">
-  <div class="panel"><h3>Hoje · ${fmtD(td)}</h3>${hojeS.length?`<div class="shifts">${hojeS.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turno de estágio hoje.</p>'}<button class="btn sm" type="button" data-act="al_extra">Registar turno extra</button></div>
+  <div class="panel"><h3>Hoje · ${fmtD(td)}</h3>${hojeS.length?`<div class="shifts">${hojeS.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turno de estágio hoje.</p>'}<div class="inline"><button class="btn sm" type="button" data-act="al_extra">Registar turno extra</button><button class="btn sm" type="button" data-act="al_aula">Registar aula de grupo</button></div></div>
   ${fN?`<div class="al-narrow-only">${nextForm(fN)}</div>`:''}
   <div class="panel"><h3>Próximos turnos</h3>${prox.length?`<div class="shifts">${prox.map(s=>shiftBtn(s,AL.reg[s.key])).join('')}</div>`:'<p class="empty">Sem turnos nos próximos 14 dias.</p>'}</div></div></div>`;
 };
@@ -838,8 +840,8 @@ VA.pres=()=>{
   rows.forEach(s=>{const st=alStatus(s,s.rg);if(st==='conf')c+=dur(s.rg.start,s.rg.end);else if(st==='pend')p+=dur(s.rg.start,s.rg.end);else if(st==='falta'||st==='por')f++});
   return `<div class="bar-head"><button class="btn sm" type="button" data-act="al_mon" data-d="-1" aria-label="Mês anterior">‹</button><h2 class="sec" style="flex:1;text-align:center">${MESL[mo]} ${y}</h2><button class="btn sm" type="button" data-act="al_mon" data-d="1" aria-label="Mês seguinte">›</button></div>
   <div class="al-grid pres-g"><div class="al-col al-side"><div class="stats"><div class="stat"><b>${fmtH(c)}</b><span>confirmadas</span></div><div class="stat"><b>${fmtH(p)}</b><span>sem confirmação</span></div><div class="stat"><b>${f}</b><span>faltas / por registar</span></div></div>
-  <p class="small muted" style="margin:0">Toca num turno para registar a entrada e a saída. O TEF em sala confirma com o PIN dele. Só as horas confirmadas contam.</p>
-  <div class="inline"><button class="btn" type="button" data-act="al_pdf">Relatório do mês (PDF)</button><button class="btn primary" type="button" data-act="al_send">Enviar dados ao coordenador</button></div></div>
+  <p class="small muted" style="margin:0">Toca num turno para registar a entrada e a saída. O TEF em sala confirma com o PIN dele. As aulas de grupo também contam: regista-as e o instrutor confirma. Só as horas confirmadas contam.</p>
+  <div class="inline"><button class="btn" type="button" data-act="al_aula">Registar aula de grupo</button><button class="btn" type="button" data-act="al_pdf">Relatório do mês (PDF)</button><button class="btn primary" type="button" data-act="al_send">Enviar dados ao coordenador</button></div></div>
   <div class="al-col al-main"><div class="panel">${rows.length?`<div class="shifts">${rows.map(s=>shiftBtn(s,s.rg)).join('')}</div>`:'<p class="empty">Sem turnos neste mês.</p>'}</div></div></div>`;
 };
 VA.dossier=()=>{
@@ -880,18 +882,29 @@ A.al_tefStart=()=>tefPinModal(n=>{AUI.tef={nome:n,ate:Date.now()+15*60000};rende
 A.al_tefEnd=()=>{AUI.tef=null;renderAluno()};
 
 /* Registo de presença */
-function alOpenReg(s){AUI.cur=s;const rg=AL.reg[s.key]||{},lock=!!rg.tef,dt=pd(s.date);
-  showModal(`<h2>${DIAS[dt.getDay()]} ${fmtDY(s.date)}</h2><p class="small muted" style="margin:0">${s.extra?'Turno extra':(TCOD[s.ini]||'Turno')+' · previsto '+s.ini+'–'+s.fim}${s.local?' · '+esc(locNome(s.local)):''}</p>
+const MODAL_AULAS=['Indoor Cycling','Pilates','Hyrox','Crossfit','Desportos de academia','Localizada','Step','Zumba','Yoga','I-Motion (EMS)'];
+const PAPEIS=['Assistiu','Apoiou o instrutor','Lecionou'];
+function alOpenReg(s){AUI.cur=s;const rg=AL.reg[s.key]||{},lock=!!rg.tef,dt=pd(s.date),au=s.aula||rg.tipo==='aula';
+  showModal(`<h2>${au?'Aula de grupo':DIAS[dt.getDay()]+' '+fmtDY(s.date)}</h2><p class="small muted" style="margin:0">${au?'Regista uma aula de grupo em que participaste. O instrutor da aula confirma com o PIN dele.':s.extra?'Turno extra':(TCOD[s.ini]||'Turno')+' · previsto '+s.ini+'–'+s.fim}${!au&&s.local?' · '+esc(locNome(s.local)):''}</p>
+  ${au?`<div class="fgrid"><div class="fld"><label for="r_data">Data</label><input type="date" id="r_data" value="${rg.date||s.date}" max="${hoje()}"${lock?' disabled':''}></div><div class="fld"><label for="r_loc">Clube</label><select id="r_loc"${lock?' disabled':''}>${LOCS.map(([k,n])=>`<option value="${k}"${(rg.local||s.local||alMe().local)===k?' selected':''}>${n}</option>`).join('')}</select></div>
+  <div class="fld"><label for="r_aula">Modalidade</label><input id="r_aula" list="r_aulas" value="${esc(rg.aula||'')}" placeholder="ex.: Pilates"${lock?' disabled':''}><datalist id="r_aulas">${MODAL_AULAS.map(x=>`<option value="${esc(x)}">`).join('')}</datalist></div><div class="fld"><label for="r_papel">O que fizeste</label><select id="r_papel"${lock?' disabled':''}>${PAPEIS.map(x=>`<option${(rg.papel||'Apoiou o instrutor')===x?' selected':''}>${x}</option>`).join('')}</select></div></div>`:''}
   ${lock?`<p style="margin:0"><span class="pill ok">Confirmado por ${esc(rg.tef)}</span> <span class="small muted">${new Date(rg.confEm).toLocaleString('pt-PT')}</span></p><p class="small muted" style="margin:0">Um registo confirmado já não pode ser alterado.</p>`:''}
-  <div class="fgrid"><div class="fld"><label for="r_in">Entrada</label><input type="time" id="r_in" value="${rg.start||s.ini}"${lock?' disabled':''}></div><div class="fld"><label for="r_out">Saída</label><input type="time" id="r_out" value="${rg.end||s.fim}"${lock?' disabled':''}></div><div class="fld full"><label for="r_nota">Nota (opcional)</label><input id="r_nota" value="${esc(rg.nota||'')}" placeholder="ex.: troca de turno, saí mais cedo"${lock?' disabled':''}></div></div>
-  ${lock?'':`<div class="tefbox"><b>Confirmação do TEF</b><p class="small muted">O TEF em sala escolhe o nome e escreve o PIN.</p><div class="fgrid"><div class="fld"><label for="tp_n">TEF</label><select id="tp_n">${tefOpts()}</select></div><div class="fld"><label for="tp_p">PIN</label><input id="tp_p" type="password" inputmode="numeric" autocomplete="off"></div></div></div><p class="ferr" id="ferr" hidden></p>`}
-  <div class="factions">${lock?'':`<button class="btn danger sm" type="button" data-act="al_rFalta">Não compareci</button>${AL.reg[s.key]?'<button class="btn danger sm" type="button" data-act="al_rDel">Apagar</button>':''}`}<span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button>${lock?'':'<button class="btn" type="button" data-act="al_rSave">Guardar sem confirmar</button><button class="btn primary" type="button" data-act="al_rConf">Registar e confirmar</button>'}</div>`)}
-function alCollect(){const s=AUI.cur,a=$('#r_in').value,b=$('#r_out').value;if(!a||!b||mins(b)<=mins(a)){ferr('Verifica as horas de entrada e de saída.');return null}const old=AL.reg[s.key]||{};return {date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',extra:!!s.extra,start:a,end:b,nota:$('#r_nota').value.trim(),criado:old.criado||Date.now()}}
+  <div class="fgrid"><div class="fld"><label for="r_in">Entrada</label><input type="time" id="r_in" value="${rg.start||s.ini}"${lock?' disabled':''}></div><div class="fld"><label for="r_out">Saída</label><input type="time" id="r_out" value="${rg.end||s.fim}"${lock?' disabled':''}></div><div class="fld full"><label for="r_nota">Nota (opcional)</label><input id="r_nota" value="${esc(rg.nota||'')}" placeholder="${au?'ex.: dei o aquecimento':'ex.: troca de turno, saí mais cedo'}"${lock?' disabled':''}></div></div>
+  ${lock?'':`<div class="tefbox"><b>${au?'Confirmação do instrutor':'Confirmação do TEF'}</b><p class="small muted">${au?'O instrutor da aula escolhe o nome e escreve o PIN.':'O TEF em sala escolhe o nome e escreve o PIN.'}</p><div class="fgrid"><div class="fld"><label for="tp_n">TEF</label><select id="tp_n">${tefOpts()}</select></div><div class="fld"><label for="tp_p">PIN</label><input id="tp_p" type="password" inputmode="numeric" autocomplete="off"></div></div></div><p class="ferr" id="ferr" hidden></p>`}
+  <div class="factions">${lock?'':`${au?'':'<button class="btn danger sm" type="button" data-act="al_rFalta">Não compareci</button>'}${AL.reg[s.key]?'<button class="btn danger sm" type="button" data-act="al_rDel">Apagar</button>':''}`}<span class="sp"></span><button class="btn ghost" type="button" data-act="close">Fechar</button>${lock?'':'<button class="btn" type="button" data-act="al_rSave">Guardar sem confirmar</button><button class="btn primary" type="button" data-act="al_rConf">Registar e confirmar</button>'}</div>`)}
+function alCollect(){const s=AUI.cur,a=$('#r_in').value,b=$('#r_out').value;if(!a||!b||mins(b)<=mins(a)){ferr('Verifica as horas de entrada e de saída.');return null}const old=AL.reg[s.key]||{};
+  if($('#r_aula')){const data=$('#r_data').value,aula=$('#r_aula').value.trim();if(!data||data>hoje()){ferr('Escolhe a data da aula (hoje ou antes).');return null}if(!aula){ferr('Escreve a modalidade da aula.');return null}
+    if(data!==s.date){delete AL.reg[s.key];s.date=data;s.key=data+'|a'+(old.criado||Date.now())}
+    return {date:data,ini:a,fim:b,local:$('#r_loc').value,extra:true,tipo:'aula',aula,papel:$('#r_papel').value,start:a,end:b,nota:$('#r_nota').value.trim(),criado:old.criado||Date.now()}}
+  return {date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',extra:!!s.extra,start:a,end:b,nota:$('#r_nota').value.trim(),criado:old.criado||Date.now()}}
 A.al_rSave=()=>{const x=alCollect();if(!x)return;AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Guardado. Falta a confirmação do TEF')};
-A.al_rConf=async()=>{const x=alCollect();if(!x)return;const n=await checkPinAny();if(!n)return;x.tef=n;x.confEm=Date.now();AL.reg[AUI.cur.key]=x;alSave();closeModal();renderAluno();toast('Presença confirmada por '+n)};
+A.al_rConf=async()=>{const x=alCollect();if(!x)return;const n=await checkPinAny();if(!n)return;x.tef=n;x.confEm=Date.now();AL.reg[AUI.cur.key]=x;
+  if(x.tipo==='aula'&&x.papel==='Lecionou'){AL.dos.rel=AL.dos.rel||[];if(!AL.dos.rel.some(r=>r.reg===AUI.cur.key))AL.dos.rel.push({id:uid(),reg:AUI.cur.key,aula:x.aula,data:x.date})}
+  alSave();closeModal();renderAluno();toast(x.tipo==='aula'?(x.papel==='Lecionou'?'Aula confirmada. Criei o relatório no dossier para preencheres.':'Aula confirmada por '+n):'Presença confirmada por '+n)};
 A.al_rFalta=()=>{const s=AUI.cur,n=$('#r_nota').value.trim();if(!n){ferr('Escreve o motivo da falta na nota.');return}AL.reg[s.key]={date:s.date,ini:s.ini,fim:s.fim,local:s.local||'',start:s.ini,end:s.fim,falta:true,nota:n,criado:Date.now()};alSave();closeModal();renderAluno()};
 A.al_rDel=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar apagar';return}delete AL.reg[AUI.cur.key];alSave();closeModal();renderAluno()};
-A.al_shift=el=>{const k=el.dataset.k,date=k.split('|')[0],rg=AL.reg[k];let s=alExpected(date,date).find(x=>x.key===k);if(!s&&rg)s={date,ini:rg.ini,fim:rg.fim,local:rg.local,key:k,extra:true};if(s)alOpenReg(s)};
+A.al_shift=el=>{const k=el.dataset.k,date=k.split('|')[0],rg=AL.reg[k];let s=alExpected(date,date).find(x=>x.key===k);if(!s&&rg)s={date,ini:rg.ini,fim:rg.fim,local:rg.local,key:k,extra:true,aula:rg.tipo==='aula'};if(s)alOpenReg(s)};
+A.al_aula=()=>{const t=hoje(),n=Date.now();alOpenReg({date:t,ini:'19:00',fim:'20:00',local:alMe().local||'',key:t+'|a'+n,extra:true,aula:true})};
 A.al_extra=()=>{const t=hoje();alOpenReg({date:t,ini:'09:00',fim:'12:00',key:t+'|x'+Date.now(),extra:true})};
 
 /* Navegação e dossier */
@@ -932,11 +945,11 @@ A.al_pdf=async()=>{
   const head=()=>{doc.setFillColor(10,108,150);doc.rect(0,0,W,58,'F');doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('PLAYLIFE  ·  Relatório de Presenças de Estágio',Mg,28);doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text('Playlife Fitness Center'+(m.local?' · '+locNome(m.local):''),Mg,44);doc.setTextColor(30)};
   head();let yy=84;doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(m.nome,Mg,yy);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Mês: '+MESL[mo]+' '+y,W-Mg,yy,{align:'right'});yy+=16;
   doc.text('Horas confirmadas no mês: '+fmtH(c)+'   |   Sem confirmação: '+fmtH(p)+'   |   Faltas/por registar: '+f,Mg,yy);yy+=14;
-  doc.text('Acumulado do estágio: '+fmtH(t.total)+(m.horasReq?' de '+m.horasReq+' h':'')+' (inclui '+fmtH(t.form)+' de formações)',Mg,yy);yy+=20;
+  doc.text('Acumulado do estágio: '+fmtH(t.total)+(m.horasReq?' de '+m.horasReq+' h':'')+' (sala '+fmtH(t.sala)+', aulas de grupo '+fmtH(t.aulas)+', formações '+fmtH(t.form)+')',Mg,yy);yy+=20;
   const cols=[['Data',Mg],['Dia',Mg+60],['Turno',Mg+94],['Horário',Mg+150],['Horas',Mg+225],['Estado',Mg+265],['TEF que confirmou',Mg+370]];
   const th=()=>{doc.setFillColor(217,236,245);doc.rect(Mg,yy-11,W-2*Mg,16,'F');doc.setFont('helvetica','bold');doc.setFontSize(9);cols.forEach(cl=>doc.text(cl[0],cl[1]+3,yy));yy+=14;doc.setFont('helvetica','normal')};th();
   rows.forEach(s=>{if(yy>770){doc.addPage();head();yy=84;th()}const st=alStatus(s,s.rg),x=s.rg||s,dt=pd(s.date);doc.setFontSize(9);
-    const v=[fmtDY(s.date),D3[dt.getDay()],s.extra?'Extra':(TCOD[s.ini]||'Turno'),(x.start||s.ini)+' - '+(x.end||s.fim),(st==='conf'||st==='pend')?fmtH(dur(x.start,x.end)):'-',ST[st][1],s.rg&&s.rg.tef?s.rg.tef:''];
+    const v=[fmtDY(s.date),D3[dt.getDay()],x.tipo==='aula'?'Aula '+(x.aula||''):s.extra?'Extra':(TCOD[s.ini]||'Turno'),(x.start||s.ini)+' - '+(x.end||s.fim),(st==='conf'||st==='pend')?fmtH(dur(x.start,x.end)):'-',ST[st][1],s.rg&&s.rg.tef?s.rg.tef:''];
     v.forEach((val,i)=>doc.text(String(val),cols[i][1]+3,yy));if(s.rg&&s.rg.nota){yy+=11;doc.setTextColor(100);doc.text('Nota: '+s.rg.nota,Mg+60,yy);doc.setTextColor(30)}doc.setDrawColor(211,218,225);doc.line(Mg,yy+4,W-Mg,yy+4);yy+=15});
   if(!rows.length)doc.text('Sem turnos neste mês.',Mg,yy);
   if(yy>700){doc.addPage();head();yy=84}yy=Math.max(yy+30,730);doc.setFontSize(9);doc.setDrawColor(100);
