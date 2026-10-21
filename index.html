@@ -368,8 +368,9 @@ var LT=(function(){
     if(p)out[e.id]={estado:'pendente',slots:(p.slots||[]).map(function(s){return {dia:Number(s.dia),ini:s.ini,fim:s.fim,local:p.local||e.local||''}}),pedido:p};
     else{var s=semana(cfg,e.id,W);out[e.id]={estado:s.origem,slots:s.slots,de:s.de}}});return out}
   function ocupacao(cfg,peds,W,exceto){var pl=plano(cfg,peds,W),o={};Object.keys(pl).forEach(function(id){if(id===exceto)return;pl[id].slots.forEach(function(s){var L=s.local||'?';o[L]=o[L]||{};var k=s.dia+'|'+s.ini;o[L][k]=(o[L][k]||0)+1})});return o}
-  function cheios(cfg,peds,W,exceto,local,slots,lim){var o=(ocupacao(cfg,peds,W,exceto)[local])||{};return (slots||[]).filter(function(s){return (o[s.dia+'|'+s.ini]||0)>=cap(lim,s.dia,s.ini)})}
-  return {pd:pd,ds:ds,add:add,seg:seg,diaData:diaData,limitesPadrao:limitesPadrao,cap:cap,semana:semana,pendente:pendente,plano:plano,ocupacao:ocupacao,cheios:cheios};
+  function limDe(lim,local){if(lim&&(typeof lim.LSD==='object'||typeof lim.PNF==='object'))return (lim[local]||{});return lim}
+  function cheios(cfg,peds,W,exceto,local,slots,lim){var o=(ocupacao(cfg,peds,W,exceto)[local])||{},L=limDe(lim,local);return (slots||[]).filter(function(s){return (o[s.dia+'|'+s.ini]||0)>=cap(L,s.dia,s.ini)})}
+  return {pd:pd,ds:ds,add:add,seg:seg,diaData:diaData,limitesPadrao:limitesPadrao,cap:cap,limDe:limDe,semana:semana,pendente:pendente,plano:plano,ocupacao:ocupacao,cheios:cheios};
 })();
 
 const KEY='estagios_playlife_v1';
@@ -397,7 +398,7 @@ function seed(){
   const datas=['2026-10-30','2026-11-06','2026-11-13','2026-11-20','2026-11-27','2026-12-04','2026-12-11','2026-12-18','2027-01-08','2027-01-15','2027-01-22','2027-01-29','2027-02-05','2027-02-12'];
   const form=datas.map((d,i)=>({id:uid(),n:i+1,data:d,ini:'',fim:'',duracao:2,tema:'',formador:'',local:'',sumario:'',pres:{}}));
   const criterios=[['Assiduidade e pontualidade',1],['Apresentação e postura profissional',1],['Relação e comunicação com clientes',1.5],['Conhecimento técnico',1.5],['Prescrição e correção do exercício',2],['Iniciativa e autonomia',1],['Trabalho em equipa',1],['Participação nas formações',1]].map(([nome,peso])=>({id:uid(),nome,peso}));
-  return {v:1,est,mapaAulas:{LSD:parseMapa(MAPA_LSD_TXT),PNF:parseMapa(MAPA_PNF_TXT)},decisoes:{},limites:LT.limitesPadrao(),tutores:[],pins:{},coordPin:'2026',coordEmail:'',recebidos:{},horarios:[],registos:[],form,aval:[],criterios};
+  return {v:1,est,mapaAulas:{LSD:parseMapa(MAPA_LSD_TXT),PNF:parseMapa(MAPA_PNF_TXT)},decisoes:{},limites:limNorm(null),tutores:[],pins:{},coordPin:'2026',coordEmail:'',recebidos:{},horarios:[],registos:[],form,aval:[],criterios};
 }
 const PLANO={
 '2026-10-30':['Características e Funções de um TEF em Sala de Exercício','Pedro Alex','Penafiel','conhecer o papel do TEF e as regras de organização e segurança da sala.',['O Papel do TEF: Muito Mais do que "Dar Treinos"','Sala de Exercício: Organização, Segurança e Experiência do Cliente']],
@@ -417,6 +418,7 @@ const PLANO={
 function aplicaPlano(){let n=0;S.form.forEach(f=>{const p=PLANO[f.data];if(!p)return;const[tema,formador,local,obj,cont]=p;let m=0;
   if(!f.tema){f.tema=tema;m=1}if(!f.formador){f.formador=formador;m=1}if(!f.local){f.local=local;m=1}if(!f.sumario){f.sumario='Objetivo: '+obj+'\nConteúdos: '+cont.join('; ')+'.';m=1}if(!f.ini){f.ini='14:30';f.fim='16:30';f.duracao=2;m=1}n+=m});return n}
 const CERT_MIN=12;
+function limNorm(l){const P=()=>LT.limitesPadrao();if(!l)return {LSD:P(),PNF:P()};if(typeof l.LSD==='object'||typeof l.PNF==='object')return {LSD:l.LSD||P(),PNF:l.PNF||P()};return {LSD:Object.assign({},l),PNF:Object.assign({},l)}}
 const DSIG=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MAPA_PNF_TXT=`Seg;06:40;07:30;Small Group Pilates
 Seg;07:00;07:50;Hyrox
@@ -635,7 +637,7 @@ const mapaTxt=arr=>(arr||[]).map(a=>`${DSIG[a.dia]};${a.ini};${a.fim};${a.aula}`
 let S,HAD=false;
 try{const raw=localStorage.getItem(KEY);HAD=!!raw;S=JSON.parse(raw)}catch(e){S=null}
 if(!S||!Array.isArray(S.est)){S=seed();HAD=false}
-S.pins=S.pins||{};S.recebidos=S.recebidos||{};S.decisoes=S.decisoes||{};S.limites=S.limites||LT.limitesPadrao();if(S.coordPin==null)S.coordPin='2026';
+S.pins=S.pins||{};S.recebidos=S.recebidos||{};S.decisoes=S.decisoes||{};S.limites=limNorm(S.limites);if(S.coordPin==null)S.coordPin='2026';
 function mapaPadrao(){let m=0;S.mapaAulas=S.mapaAulas||{};if(!(S.mapaAulas.LSD||[]).length){S.mapaAulas.LSD=parseMapa(MAPA_LSD_TXT);m=1}if(!(S.mapaAulas.PNF||[]).length){S.mapaAulas.PNF=parseMapa(MAPA_PNF_TXT);m=1}const FIX={'3|Aula a confirmar (1)':'Crosstraining','3|Aula a confirmar (2)':'Yourfit Booty','4|Aula a confirmar':'Schwinn Cycling'};(S.mapaAulas.PNF||[]).forEach(a=>{const n=FIX[a.dia+'|'+a.aula];if(n){a.aula=n;m=1}});return m}
 if(mapaPadrao()&&HAD)try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
 if(aplicaPlano()&&HAD)try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
@@ -1331,7 +1333,7 @@ async function coordPushNow(){
     throw new Error(j.erro||'Erro ao guardar.')}
   catch(e){syncSet('err','Sem ligação');return false}
 }
-function coordAplica(estado,rev){const rec=S.recebidos||{},peds=S.pedidos||{};S=Object.assign(seed(),estado||{});S.pins=S.pins||{};S.recebidos=rec;S.pedidos=peds;S.decisoes=S.decisoes||{};S.limites=S.limites||LT.limitesPadrao();S.migrOld=true;aplicaPlano();const mm=mapaPadrao();SRV.rev=rev;srvSave();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(MODO==='coord')render();if(mm&&MODO==='coord')setTimeout(save,0)}
+function coordAplica(estado,rev){const rec=S.recebidos||{},peds=S.pedidos||{};S=Object.assign(seed(),estado||{});S.pins=S.pins||{};S.recebidos=rec;S.pedidos=peds;S.decisoes=S.decisoes||{};S.limites=limNorm(S.limites);S.migrOld=true;aplicaPlano();const mm=mapaPadrao();SRV.rev=rev;srvSave();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(MODO==='coord')render();if(mm&&MODO==='coord')setTimeout(save,0)}
 async function coordPull(avisar){
   const s=coordSrv();if(!s)return;syncSet('work','A sincronizar…');
   try{const j=await api(s.url,{acao:'coordLer',chave:s.chave});if(!j.ok)throw new Error(j.erro||'Erro ao ler.');
@@ -1470,7 +1472,7 @@ function semEditHTML(){
   <div class="fgrid"><div class="fld"><label for="cw_e">Estagiário</label><select id="cw_e" data-chg="cw_e"><option value="">Escolhe</option>${EV().map(e=>`<option value="${e.id}"${e.id===CW.estId?' selected':''}>${esc(e.nome)}</option>`).join('')}</select></div>
   <div class="fld"><label for="cw_l">Clube</label><select id="cw_l" data-chg="cw_l">${LOCS.map(([k,n])=>`<option value="${k}"${k===CW.local?' selected':''}>${n}</option>`).join('')}</select></div></div>
   ${CW.ped&&CW.ped.obs?`<p class="small" style="margin:0"><b>Nota do estagiário:</b> ${esc(CW.ped.obs)}</p>`:''}
-  ${gridChecks(W,CW.sel,ocup,S.limites,'cw_k')}
+  ${gridChecks(W,CW.sel,ocup,LT.limDe(S.limites,CW.local),'cw_k')}
   <p class="small muted" style="margin:0">${sl.length?`${sl.length} turno(s) · ${fmtH(horasSlots(sl))}`:'Nenhum turno: a semana fica sem estágio.'} Os números mostram a ocupação de cada turno em ${locNome(CW.local)} com este estagiário incluído.</p>
   <p class="ferr" id="ferr" hidden></p>
   <div class="factions"><span class="sp"></span><button class="btn ghost" type="button" data-act="close">Cancelar</button><button class="btn primary" type="button" data-act="cwSave">${CW.ped?'Guardar e validar':'Guardar semana'}</button></div>`;
@@ -1503,8 +1505,8 @@ A.pedValTodos=()=>{const W=UI.week,loc=UI.loc||'PNF';let n=0,f=0;
   EV().forEach(e=>{const p=LT.pendente(S,S.pedidos||{},e.id,W);if(!p||p.local!==loc)return;const sl=(p.slots||[]).map(s=>({dia:Number(s.dia),ini:s.ini,fim:s.fim}));
     if(LT.cheios(S,S.pedidos||{},W,e.id,p.local,sl,S.limites).length){f++;return}aplicaSemana(e.id,W,sl,p.local,'validado',p.em);n++});
   save();render();toast(`${n} pedido(s) validado(s)${f?` · ${f} com turnos completos ficaram por validar`:''}`)};
-C.lim=el=>{S.limites=S.limites||LT.limitesPadrao();const v=el.value===''?'':Math.max(0,Math.round(Number(el.value)));S.limites[el.dataset.k]=v;save();toast('Limite guardado')};
-A.limPadrao=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar';return}S.limites=LT.limitesPadrao();save();render();toast('Limites repostos')};
+C.lim=el=>{S.limites=limNorm(S.limites);const l=el.dataset.l,v=el.value===''?'':Math.max(0,Math.round(Number(el.value)));S.limites[l][el.dataset.k]=v;save();toast(`Limite de ${locNome(l)} guardado`)};
+A.limPadrao=el=>{if(!el.dataset.armed){el.dataset.armed=1;el.textContent='Confirmar';return}S.limites=limNorm(S.limites);S.limites[el.dataset.l]=LT.limitesPadrao();save();render();toast(`Limites de ${locNome(el.dataset.l)} repostos`)};
 function pedidosPendentes(){const out=[];const W0=segunda(hoje());EV().forEach(e=>Object.keys((S.pedidos||{})[e.id]||{}).forEach(W=>{if(W>=W0&&LT.pendente(S,S.pedidos,e.id,W))out.push({id:e.id,W})}));return out}
 
 V.horarios=()=>{
@@ -1515,7 +1517,7 @@ V.horarios=()=>{
   const naCel=(dia,ini)=>Object.entries(plano).filter(([id,p])=>vis.has(id)).flatMap(([id,p])=>p.slots.filter(s=>s.local===loc&&s.dia===dia&&s.ini===ini).map(s=>({id,estado:p.estado})));
   const head=dias.map(d=>{const dt=pd(d),f=S.form.find(x=>x.data===d);return `<th class="${d===hoje()?'hj':''}">${D3[dt.getDay()]} ${dt.getDate()}${f?`<br><span class="pill warn">Formação ${f.n}</span>`:''}</th>`}).join('');
   const rows=GRID.map(([cod,m])=>`<tr><th class="tc">${cod}</th>${dias.map(d=>{const dia=pd(d).getDay(),h=m[dia];if(!h)return '<td class="off"></td>';
-    const quem=naCel(dia,h[0]),c=LT.cap(S.limites,dia,h[0]),n=quem.length;
+    const quem=naCel(dia,h[0]),c=LT.cap(LT.limDe(S.limites,loc),dia,h[0]),n=quem.length;
     return `<td class="cell${d===hoje()?' hj':''}"><span class="hr">${h[0]}–${h[1]} <b class="capn${n>c?' over':n===c?' full':''}">${n}/${c}</b></span>${quem.map(q=>`<button class="nm-btn ${q.estado==='pendente'?'pend':q.estado==='transitado'?'trans':''}" type="button" data-act="semEdit" data-id="${q.id}" data-w="${w}" title="${q.estado==='pendente'?'Pedido por validar':q.estado==='transitado'?'Mantém a escolha de uma semana anterior':'Validado'}">${q.estado==='transitado'?'↻ ':''}${esc(nomeEst(q.id))}</button>`).join('')}${n<c?`<button class="add-btn" type="button" data-act="semEdit" data-w="${w}" data-k="${dia}|${h[0]}" aria-label="Adicionar estagiário ${cod} ${D3[dia]}">+</button>`:''}</td>`}).join('')}</tr>`).join('');
   const fora=Object.entries(plano).filter(([id])=>vis.has(id)).flatMap(([id,p])=>p.slots.filter(s=>s.local===loc&&!GRID.some(([,m])=>m[s.dia]&&m[s.dia][0]===s.ini)).map(s=>`<button class="slot" type="button" data-act="semEdit" data-id="${id}" data-w="${w}"><b>${esc(nomeEst(id))}</b><span>${D3[s.dia]} · ${s.ini}–${s.fim}</span></button>`)).join('');
   const semLoc=EV().filter(e=>(plano[e.id]?.slots||[]).some(s=>!s.local));
@@ -1524,7 +1526,7 @@ V.horarios=()=>{
   const pedHTML=peds.map(({e,p})=>{const sl=p.slots,ch=LT.cheios(S,S.pedidos||{},w,e.id,p.pedido.local,sl,S.limites);return `<div class="ritem"><span><b>${esc(e.nome)}</b> · ${fmtH(horasSlots(sl))}<small class="muted" style="display:block">${sl.length?sl.map(turnoTxt).join(', '):'Sem turnos nesta semana'}${p.pedido.obs?' · “'+esc(p.pedido.obs)+'”':''}</small>${ch.length?`<small style="display:block;color:var(--bad)">Completo: ${ch.map(turnoTxt).join(', ')}</small>`:''}</span><span class="rcols"><button class="btn sm" type="button" data-act="semEdit" data-id="${e.id}" data-w="${w}">Editar</button>${ch.length?'':`<button class="btn sm primary" type="button" data-act="pedVal" data-id="${e.id}" data-w="${w}">Validar</button>`}</span></div>`}).join('');
   const sem=EV().map(e=>({e,p:plano[e.id]})).filter(x=>x.p&&x.p.slots.some(s=>s.local===loc));
   const resumo=sem.map(({e,p})=>{const sl=p.slots.filter(s=>s.local===loc);return `<tr><td>${esc(e.nome)}</td><td>${p.estado==='pendente'?'<span class="pill warn">pedido por validar</span>':p.estado==='transitado'?`<span class="pill">mantém semana de ${fmtD(p.de)}</span>`:(S.decisoes?.[e.id]?.[w]?`<span class="pill ok">${S.decisoes[e.id][w].estado==='validado'?'validado':'definido pela coordenação'}</span>`:'<span class="pill ok">definido</span>')}</td><td class="num">${fmtH(horasSlots(sl))}</td></tr>`}).join('');
-  const limRows=GRID.map(([cod,m])=>`<tr><th class="tc">${cod}</th>${DSEM.map(d=>{const h=m[d];if(!h)return '<td class="off"></td>';const k=d+'|'+h[0];return `<td><input type="number" min="0" value="${LT.cap(S.limites,d,h[0])}" data-chg="lim" data-k="${k}" aria-label="Limite ${cod} ${D3[d]}"></td>`}).join('')}</tr>`).join('');
+  const limRows=GRID.map(([cod,m])=>`<tr><th class="tc">${cod}</th>${DSEM.map(d=>{const h=m[d];if(!h)return '<td class="off"></td>';const k=d+'|'+h[0];return `<td><input type="number" min="0" value="${LT.cap(LT.limDe(S.limites,loc),d,h[0])}" data-chg="lim" data-l="${loc}" data-k="${k}" aria-label="Limite ${cod} ${D3[d]}"></td>`}).join('')}</tr>`).join('');
   return `<div class="bar-head"><h2 class="sec">Horário de ${ln}</h2><span class="sp"></span><button class="btn primary" type="button" data-act="semEdit" data-w="${w}">Definir semana de um estagiário</button></div>
   <div class="seg" role="tablist">${LOCS.map(([k,n])=>`<button type="button" role="tab" aria-selected="${loc===k}" data-act="loc" data-k="${k}">${n}<span>${EV().filter(e=>(plano[e.id]?.slots||[]).some(s=>s.local===k)).length}</span></button>`).join('')}</div>
   ${semLocHTML?`<div class="panel warnp"><h3>Estagiários sem clube</h3><p class="small muted" style="margin:0 0 8px">Escolhe o clube de cada um. Os turnos deles sem clube passam para esse horário.</p><ul class="todo loclist">${semLocHTML}</ul></div>`:''}
@@ -1535,7 +1537,7 @@ V.horarios=()=>{
   ${fora?`<div><h3>Fora da grelha</h3><div class="week">${fora}</div></div>`:''}
   <div><h3>Estagiários em ${ln} nesta semana</h3>${resumo?`<div class="tbl-wrap"><table><tbody>${resumo}</tbody></table></div>`:'<p class="empty">Nenhum estagiário com turnos neste clube nesta semana.</p>'}</div>
   <details class="panel"><summary><b>Mapa de aulas de grupo · ${ln}</b> <span class="small muted">(${(S.mapaAulas?.[loc]||[]).length} aulas por semana)</span></summary><p class="small muted" style="margin:10px 0 8px">Os estagiários escolhem a aula desta lista quando registam uma aula de grupo. Uma aula por linha: <b>Dia;Início;Fim;Aula</b>, por exemplo <i>Seg;18:00;19:00;Crosstraining</i>.</p><textarea id="mapaTxt" rows="10" aria-label="Mapa de aulas de ${ln}">${esc(mapaTxt(S.mapaAulas?.[loc]))}</textarea><div class="inline" style="margin-top:8px"><button class="btn primary" type="button" data-act="mapaGuardar" data-l="${loc}">Guardar mapa de ${ln}</button></div></details>
-  <details class="panel"><summary><b>Limites por turno</b> <span class="small muted">(estagiários por turno, em cada clube)</span></summary><div class="tbl-wrap" style="margin-top:10px"><table class="grade-t limg"><thead><tr><th></th>${DSEM.map(d=>`<th>${D3[d]}</th>`).join('')}</tr></thead><tbody>${limRows}</tbody></table></div><div class="inline" style="margin-top:8px"><button class="btn sm ghost" type="button" data-act="limPadrao">Repor limites iniciais</button></div></details>`;
+  <details class="panel"><summary><b>Limites por turno · ${ln}</b> <span class="small muted">(máximo de estagiários em cada turno de ${ln}; muda de clube no topo para editar o outro)</span></summary><div class="tbl-wrap" style="margin-top:10px"><table class="grade-t limg"><thead><tr><th></th>${DSEM.map(d=>`<th>${D3[d]}</th>`).join('')}</tr></thead><tbody>${limRows}</tbody></table></div><div class="inline" style="margin-top:8px"><button class="btn sm ghost" type="button" data-act="limPadrao" data-l="${loc}">Repor limites iniciais de ${ln}</button></div></details>`;
 };
 A.mapaGuardar=el=>{const l=el.dataset.l,txt=$('#mapaTxt').value,arr=parseMapa(txt),linhas=txt.split('\n').filter(x=>x.trim()).length;S.mapaAulas=S.mapaAulas||{};S.mapaAulas[l]=arr;save();render();toast(`${arr.length} aula(s) guardada(s)${linhas>arr.length?` · ${linhas-arr.length} linha(s) ignorada(s) por erro de formato`:''}`)};
 A.genSemana=()=>{
@@ -1561,7 +1563,7 @@ function escolhaHTML(){
   return `<div class="panel"><div class="bar-head"><h3 style="margin:0">Turnos para ${semTxt(W)}</h3><span class="sp"></span><button class="btn sm ghost" type="button" data-act="al_escFechar">Cancelar</button></div>
   <p class="small muted" style="margin:6px 0 10px">Escolhe os turnos em que vais estagiar. Os turnos completos não podem ser escolhidos. Depois de enviares, o coordenador do clube valida ou ajusta. Se não escolheres, mantém-se o horário da semana anterior.</p>
   <div class="fgrid"><div class="fld"><label for="esc_l">Clube</label><select id="esc_l" data-chg="al_escLoc"><option value="">Escolhe</option>${LOCS.map(([k,n])=>`<option value="${k}"${k===loc?' selected':''}>${n}</option>`).join('')}</select></div></div>
-  ${loc?gridChecks(W,AUI.sel,oc[loc]||{},AUI.lim||AL.cfg.limites,'al_escK'):'<p class="empty">Escolhe o clube para veres os turnos.</p>'}
+  ${loc?gridChecks(W,AUI.sel,oc[loc]||{},LT.limDe(AUI.lim||AL.cfg.limites,loc),'al_escK'):'<p class="empty">Escolhe o clube para veres os turnos.</p>'}
   <div class="fld" style="margin-top:10px"><label for="esc_o">Nota para o coordenador (opcional)</label><input id="esc_o" value="${esc(AUI.escObs||'')}" data-chg="al_escObs" placeholder="ex.: na sexta tenho exame"></div>
   <p class="small" style="margin:10px 0"><b>${sl.length} turno(s) · ${fmtH(horasSlots(sl))}</b>${sl.length?'':' · vais indicar que não estagias nesta semana'}</p>
   <p class="ferr" id="ferr" hidden></p>
@@ -1650,6 +1652,7 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidd
   document.addEventListener('visibilitychange',refresca);window.addEventListener('online',refresca);
 })();
 </script>
+
 
 
 
