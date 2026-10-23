@@ -670,8 +670,8 @@ function horasEst(id){
   S.registos.filter(r=>r.estId===id).forEach(r=>its.push({date:r.data,ini:r.ini,fim:r.fim,cat:r.tipo==='Aula de grupo'?'aula':'sala'}));
   Object.values(S.recebidos?.[id]?.reg||{}).forEach(r=>{if(r.falta)return;const m=dur(r.start,r.end);if(!r.tef){pend+=m;return}app+=m;its.push({date:r.date,ini:r.start,fim:r.end,cat:r.tipo==='aula'?'aula':'sala'})});
   S.form.filter(f=>presF(f,id)).forEach(f=>its.push(fItem(f,fpApp(f,id))));
-  const h=contaHoras(its);
-  return {sala:h.sala,aulas:h.aulas,form:h.form,app,pend,total:h.total};
+  const h=contaHoras(its),ant=Math.round((Number(estById(id)?.horasAnt)||0)*60);
+  return {sala:h.sala,aulas:h.aulas,form:h.form,ant,app,pend,total:h.total+ant};
 }
 function notaAval(a){let s=0,w=0;S.criterios.forEach(c=>{const v=a.notas?.[c.id];if(v){s+=v*c.peso;w+=c.peso}});return w?Math.round(s/w/5*200)/10:null}
 const ativo=(s,date)=>s.dia===pd(date).getDay()&&(!s.de||s.de<=date)&&(!s.ate||s.ate>=date);
@@ -760,12 +760,13 @@ const naGrelha=s=>GRID.some(([,m])=>m[s.dia]&&m[s.dia][0]===s.ini&&m[s.dia][1]==
 V.horas=()=>{
   const f=UI.hEst;
   const regs=S.registos.filter(r=>!f||r.estId===f).sort((a,b)=>(b.data+b.ini).localeCompare(a.data+a.ini));
-  const resumo=EV().map(e=>{const h=horasEst(e.id);return `<tr><td>${esc(e.nome)}</td><td class="num">${fmtH(h.sala)}</td><td class="num">${h.aulas?fmtH(h.aulas):'—'}</td><td class="num">${fmtH(h.form)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${progHTML(e)}</td></tr>`}).join('');
+  const resumo=EV().map(e=>{const h=horasEst(e.id);return `<tr><td>${esc(e.nome)}</td><td class="num">${h.ant?fmtH(h.ant):'—'}</td><td class="num">${fmtH(h.sala)}</td><td class="num">${h.aulas?fmtH(h.aulas):'—'}</td><td class="num">${fmtH(h.form)}</td><td class="num">${h.pend?`<span class="pill warn">${fmtH(h.pend)}</span>`:'—'}</td><td>${progHTML(e)}</td></tr>`}).join('');
   const appRows=EV().filter(e=>!f||e.id===f).flatMap(e=>regsApp(e.id).map(r=>({k:r.date+r.ini,h:`<tr><td>${fmtD(r.date)}</td><td>${esc(e.nome)}${r.tipo==='aula'?`<small class="muted" style="display:block">Aula · ${esc(r.aula||'')}${r.papel?' ('+esc(r.papel.toLowerCase())+')':''}</small>`:''}</td><td>${r.start}–${r.end}</td><td class="num">${r.falta?'—':fmtH(dur(r.start,r.end))}</td><td>${r.falta?'<span class="pill bad">Falta</span>':r.tef?`<span class="pill ok">Confirmado</span> <span class="small muted">${esc(r.tef)}</span>${r.aval!=null?` <span class="pill acc">${String(r.aval).replace('.',',')}/20</span>`:''}`:'<span class="pill warn">Por confirmar</span>'}${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><span class="small muted">app</span></td></tr>`})));
   const lista0=regs.map(r=>({k:r.data+r.ini,h:`<tr><td>${fmtD(r.data)}</td><td>${esc(nomeEst(r.estId))}</td><td>${r.ini}–${r.fim}</td><td class="num">${fmtH(dur(r.ini,r.fim))}</td><td><span class="pill">${esc(r.tipo)}</span>${r.nota?` <span class="small muted">${esc(r.nota)}</span>`:''}</td><td class="num"><button class="btn sm" type="button" data-act="editReg" data-id="${r.id}">Editar</button></td></tr>`}));
-  const lista=[...lista0,...appRows].sort((a,b)=>b.k.localeCompare(a.k)).map(x=>x.h).join('');
-  return `<div class="bar-head"><h2 class="sec">Registo de horas</h2><span class="sp"></span><button class="btn primary" type="button" data-act="editReg">Registar horas</button></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Sala</th><th class="num">Aulas de grupo</th><th class="num">Formações</th><th class="num">Por confirmar</th><th>Total / exigido</th></tr></thead><tbody>${resumo}</tbody></table></div>
+  const antRows=EV().filter(e=>(!f||e.id===f)&&Number(e.horasAnt)>0).map(e=>({k:(e.horasAntAte||e.inicio||'0000')+'00:00',h:`<tr><td>${e.horasAntAte?'até '+fmtD(e.horasAntAte):'—'}</td><td>${esc(e.nome)}</td><td>—</td><td class="num">${fmtH(Math.round(Number(e.horasAnt)*60))}</td><td><span class="pill">Antes da app</span>${e.horasAntNota?` <span class="small muted">${esc(e.horasAntNota)}</span>`:''}</td><td class="num"><button class="btn sm" type="button" data-act="horasAnt" data-id="${e.id}">Editar</button></td></tr>`}));
+  const lista=[...lista0,...appRows,...antRows].sort((a,b)=>b.k.localeCompare(a.k)).map(x=>x.h).join('');
+  return `<div class="bar-head"><h2 class="sec">Registo de horas</h2><span class="sp"></span><button class="btn" type="button" data-act="horasAnt">Horas antes da app</button><button class="btn primary" type="button" data-act="editReg">Registar horas</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Estagiário</th><th class="num">Antes da app</th><th class="num">Sala</th><th class="num">Aulas de grupo</th><th class="num">Formações</th><th class="num">Por confirmar</th><th>Total / exigido</th></tr></thead><tbody>${resumo}</tbody></table></div>
   <p class="small muted" style="margin:0">As horas de formação contam a partir das presenças marcadas em Formações. Quando um turno coincide com uma aula de grupo ou uma formação, conta a aula ou a formação, e do turno contam só as horas fora delas. As aulas de grupo contam quando o estagiário as regista na app e o instrutor confirma, ou quando as registas aqui com o tipo Aula de grupo. As presenças registadas pelos estagiários na app só contam depois de confirmadas pelo TEF.</p>
   <div class="bar-head"><h3 style="margin:0">Registos</h3><span class="sp"></span><select id="hEst" data-chg="hEst" aria-label="Filtrar por estagiário"><option value="">Todos os estagiários</option>${EV().map(e=>`<option value="${e.id}"${f===e.id?' selected':''}>${esc(e.nome)}</option>`).join('')}</select></div>
   ${lista?`<div class="tbl-wrap"><table><thead><tr><th>Data</th><th>Estagiário</th><th>Horário</th><th class="num">Horas</th><th>Tipo</th><th></th></tr></thead><tbody>${lista}</tbody></table></div>`:'<div class="panel empty">Sem registos. Usa "Registar horas" ou gera-os a partir do horário no separador Horários.</div>'}`;
@@ -880,6 +881,16 @@ A.editSlot=el=>{
       if(!s&&!v.tutor){const e=estById(v.estId);if(e?.tutor)v.tutor=e.tutor}
       if(s)Object.assign(s,v);else S.horarios.push({id:uid(),...v})},
     s?()=>{S.horarios=S.horarios.filter(x=>x.id!==s.id)}:null);
+};
+A.horasAnt=el=>{
+  if(!S.est.length){toast('Adiciona primeiro um estagiário');return}
+  const e0=el.dataset.id?estById(el.dataset.id):null,e1=e0||estById(UI.hEst)||EV()[0];
+  openForm('Horas feitas antes da app',[
+    {k:'estId',l:'Estagiário',t:'select',opts:optEst(),full:1},{k:'horas',l:'Total de horas',t:'number',step:'0.5',min:0},{k:'ate',l:'Feitas até',t:'date'},
+    {k:'nota',l:'Nota (ex.: folha de presenças em papel)',full:1}],
+    {estId:e1.id,horas:e1.horasAnt||'',ate:e1.horasAntAte||hoje(),nota:e1.horasAntNota||''},
+    v=>{const e=estById(v.estId);if(!e)return 'Escolhe o estagiário.';const h=Number(String(v.horas).replace(',','.'));if(!(h>=0))return 'Indica o total de horas.';e.horasAnt=Math.round(h*100)/100;e.horasAntAte=v.ate||'';e.horasAntNota=v.nota||''},
+    e0?()=>{e0.horasAnt=0;e0.horasAntAte='';e0.horasAntNota=''}:null);
 };
 A.editReg=el=>{
   if(!S.est.length){toast('Adiciona primeiro um estagiário');return}
@@ -1038,7 +1049,7 @@ const alPresF=f=>!!((f.pres&&f.pres[alMe().id])||(AL.formPres||{})[f.id]);
 const formAberta=f=>f.data<=hoje()&&f.data>=addD(hoje(),-7);
 function alTot(){const m=alMe();let pend=0,falt=0;const its=[];Object.values(AL.reg).forEach(r=>{if(r.falta)falt++;else if(r.tef)its.push({date:r.date,ini:r.start,fim:r.end,cat:r.tipo==='aula'?'aula':'sala'});else pend+=dur(r.start,r.end)});
   (AL.cfg.form||[]).filter(f=>alPresF(f)).forEach(f=>its.push(fItem(f,(AL.formPres||{})[f.id])));
-  const h=contaHoras(its);return {conf:h.sala+h.aulas,sala:h.sala,aulas:h.aulas,pend,falt,form:h.form,total:h.total}}
+  const h=contaHoras(its),ant=Math.round((Number(m.horasAnt)||0)*60);return {conf:h.sala+h.aulas,sala:h.sala,aulas:h.aulas,pend,falt,form:h.form,ant,total:h.total+ant}}
 const ST={conf:['ok','Confirmado'],pend:['warn','Falta confirmação'],falta:['bad','Faltou'],por:['bad','Por registar'],fut:['','Agendado']};
 function alStatus(s,rg){if(rg){if(rg.falta)return 'falta';return rg.tef?'conf':'pend'}return s.date<hoje()?'por':'fut'}
 function shiftBtn(s,rg){const st=alStatus(s,rg),p=ST[st],x=rg||{},dt=pd(s.date);
@@ -1063,7 +1074,7 @@ VA.hoje=()=>{
   const fN=(AL.cfg.form||[]).filter(f=>f.data>=td).sort((a,b)=>a.data.localeCompare(b.data))[0];
   return `<div class="al-grid"><div class="al-col"><div class="panel"><div class="kpi"><div><span class="lab">Horas feitas</span><b>${fmtH(t.total)}</b><small class="muted">${req?`de ${req} h · ${pct}%`:'meta por definir'}</small></div><div><span class="lab">Dossier</span><b>${dp.pct}%</b><small class="muted">preenchido e validado</small></div></div>
   <div class="lbl">Horas de estágio</div><div class="track lg"><i class="${pct>=100?'done':''}" style="width:${pct}%"></i></div>
-  <p class="small muted" style="margin:6px 0 0">${fmtH(t.sala)} em sala · ${fmtH(t.aulas)} em aulas de grupo · ${fmtH(t.form)} em formações · horas sobrepostas contam uma vez${t.pend?` · ${fmtH(t.pend)} à espera de confirmação`:''}</p>
+  <p class="small muted" style="margin:6px 0 0">${t.ant?`${fmtH(t.ant)} antes da app · `:''}${fmtH(t.sala)} em sala · ${fmtH(t.aulas)} em aulas de grupo · ${fmtH(t.form)} em formações · horas sobrepostas contam uma vez${t.pend?` · ${fmtH(t.pend)} à espera de confirmação`:''}</p>
   <div class="lbl">Dossier de estágio</div><div class="track lg"><i class="${dp.pct>=100?'done':''}" style="width:${dp.pct}%"></i></div></div>
   ${porReg||pend?`<div class="panel warnp"><b>Atenção</b><p class="small" style="margin:4px 0 8px">${porReg?`${porReg} turno(s) por registar. `:''}${pend?`${pend} registo(s) sem confirmação do TEF.`:''}</p><button class="btn sm" type="button" data-act="al_v" data-k="pres">Ver presenças</button></div>`:''}
   ${fN?`<div class="al-wide-only">${nextForm(fN)}</div>`:''}</div><div class="al-col">
@@ -1211,7 +1222,7 @@ A.al_pdf=async()=>{
   const head=()=>{doc.setFillColor(10,108,150);doc.rect(0,0,W,58,'F');doc.setTextColor(255);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('PLAYLIFE  ·  Relatório de Presenças de Estágio',Mg,28);doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.text('Playlife Fitness Center'+(m.local?' · '+locNome(m.local):''),Mg,44);doc.setTextColor(30)};
   head();let yy=84;doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(m.nome,Mg,yy);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text('Mês: '+MESL[mo]+' '+y,W-Mg,yy,{align:'right'});yy+=16;
   doc.text('Horas confirmadas no mês: '+fmtH(c)+'   |   Sem confirmação: '+fmtH(p)+'   |   Faltas/por registar: '+f,Mg,yy);yy+=14;
-  doc.text('Acumulado do estágio: '+fmtH(t.total)+(m.horasReq?' de '+m.horasReq+' h':'')+' (sala '+fmtH(t.sala)+', aulas de grupo '+fmtH(t.aulas)+', formações '+fmtH(t.form)+')',Mg,yy);yy+=20;
+  doc.text('Acumulado do estágio: '+fmtH(t.total)+(m.horasReq?' de '+m.horasReq+' h':'')+' ('+(t.ant?'antes da app '+fmtH(t.ant)+', ':'')+'sala '+fmtH(t.sala)+', aulas de grupo '+fmtH(t.aulas)+', formações '+fmtH(t.form)+')',Mg,yy);yy+=20;
   const cols=[['Data',Mg],['Dia',Mg+60],['Turno',Mg+94],['Horário',Mg+150],['Horas',Mg+225],['Estado',Mg+265],['TEF que confirmou',Mg+370]];
   const th=()=>{doc.setFillColor(217,236,245);doc.rect(Mg,yy-11,W-2*Mg,16,'F');doc.setFont('helvetica','bold');doc.setFontSize(9);cols.forEach(cl=>doc.text(cl[0],cl[1]+3,yy));yy+=14;doc.setFont('helvetica','normal')};th();
   rows.forEach(s=>{if(yy>770){doc.addPage();head();yy=84;th()}const st=alStatus(s,s.rg),x=s.rg||s,dt=pd(s.date);doc.setFontSize(9);
@@ -1261,7 +1272,7 @@ function recebeAluno(o){
 }
 function migrOld(){if(S.migrOld)return;S.migrOld=true;try{const oc=JSON.parse(localStorage.getItem('estagio_cfg_v1')||'null');if(oc&&Array.isArray(oc.tefs)){oc.tefs.forEach(t=>{if(!t.nome)return;if(!S.tutores.includes(t.nome))S.tutores.push(t.nome);if(t.pin&&!S.pins[t.nome])S.pins[t.nome]=String(t.pin)});if(oc.coordPin&&String(S.coordPin)==='2026')S.coordPin=String(oc.coordPin);if(oc.coordEmail&&!S.coordEmail)S.coordEmail=oc.coordEmail}const co=JSON.parse(localStorage.getItem('estagio_coord_v1')||'null');if(co)Object.values(co).forEach(o=>recebeAluno(o))}catch(e){}save()}
 function cfgAlunos(){return {tipo:'estagio-cfg',v:2,geradoEm:new Date().toISOString(),
-  est:S.est.map(e=>({id:e.id,nome:e.nome,local:e.local,tutor:e.tutor,escola:e.escola,horasReq:e.horasReq,inicio:e.inicio,fim:e.fim})),
+  est:S.est.map(e=>({id:e.id,nome:e.nome,local:e.local,tutor:e.tutor,escola:e.escola,horasReq:e.horasReq,horasAnt:Number(e.horasAnt)||0,horasAntAte:e.horasAntAte||'',inicio:e.inicio,fim:e.fim})),
   horarios:S.horarios.map(({id,estId,dia,ini,fim,local,de,ate})=>({id,estId,dia,ini,fim,local,de,ate})),
   form:S.form.map(f=>{const {id,n,data,ini,fim,duracao,tema,formador,local,sumario}=f;const pres={};S.est.forEach(e=>{if(presF(f,e.id))pres[e.id]=true});return {id,n,data,ini,fim,duracao,tema,formador,local,sumario,pres}}),
   decisoes:S.decisoes||{},limites:S.limites||LT.limitesPadrao(),mapaAulas:S.mapaAulas||{},
@@ -1652,6 +1663,7 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!$('#modal').hidd
   document.addEventListener('visibilitychange',refresca);window.addEventListener('online',refresca);
 })();
 </script>
+
 
 
 
